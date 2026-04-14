@@ -9,4 +9,5 @@ export type Product = {
     name: i18nLabelKey;
     title: i18nLabelKey;
     version: Version;
+    schemaId: UUID;
 }
