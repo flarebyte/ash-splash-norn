@@ -1,4 +1,5 @@
 import { UUID } from "./common";
+import { i18nLabelKey } from "./i18n";
 
 export type SchemaValueType = 'id' | '_' | '~';
 
@@ -22,6 +23,7 @@ export type KeySchemaConfig = {
 
 export type KeySchemaNode = {
   label: string;
+  i18nLabel: i18nLabelKey;
   valueTypes: SchemaValueType[];
   childLabels: string[];
 };
