@@ -1,11 +1,12 @@
 import { UUID } from "./common";
 import { i18nLabelKey } from "./i18n";
 
-type StructKeyKind = 'branch' | 'arb-text' | 'string' | 'number' | 'boolean'
+type StructKeyKindExamples = 'branch' | 'i18n' | 'string' | 'number' | 'boolean' | 'color'
 
 export type StructKeySchemaNode = {
   label: string;
-  kind: StructKeyKind;
+  kind: StructKeyKindExamples;
+  mandatory?: boolean;
   childLabels: string[];
 };
 
@@ -18,8 +19,8 @@ export type StructKeySchema = {
 export const exampleSchema: StructKeySchema = {
   rootLabels: ['text'],
   nodesByLabel: {
-    text: { label: 'Text', kind: 'branch', childLabels: ['label', 'description'] },
-    label: { label: 'Label', kind: 'branch', childLabels: ['labelMinChar', 'labelMaxChar'] },
+    textInput: { label: 'TextInput', kind: 'branch', childLabels: ['textInputLabel', 'labelMinChar', 'labelMaxChar'] },
+    textInputLabel: { label: 'Label', kind: 'i18n', mandatory: true, childLabels: [] },
     labelMinChar: { label: 'MinChars', kind: 'number', childLabels: [] },
     labelMaxChar: { label: 'MaxChars', kind: 'number', childLabels: [] },
   },
