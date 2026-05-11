@@ -22,7 +22,10 @@ reports: [{
       title: "01 CLI Model"
       notes: ["norn.ts.cli", "norn.ts.app"]
     }, {
-      title: "02 CUE Config Samples"
+      title: "02 Schema And Validation Model"
+      notes: ["norn.ts.i18n-key-schema", "norn.ts.validation"]
+    }, {
+      title: "03 CUE Config Samples"
       notes: ["norn.cue.distributed", "norn.cue.config-key"]
     }]
   }]
@@ -42,6 +45,7 @@ This design models a Go CLI that reads CUE configuration sources and distributes
     title: "Generated Output Targets"
     markdown: """
 Supported generated outputs are JSON, YAML, Go code, and Dart code.
+For i18n keys in Flutter/Dart contexts, the preferred target is `*.arb.json`.
 """
     labels: ["overview", "outputs"]
   },
@@ -56,6 +60,18 @@ Supported generated outputs are JSON, YAML, Go code, and Dart code.
     title: "Application Composition Model"
     filepath: "examples/app.ts"
     labels: ["typescript", "example", "application"]
+  },
+  {
+    name: "norn.ts.i18n-key-schema"
+    title: "I18n Key Schema Hierarchy Model"
+    filepath: "examples/i18n-key-schema-model.ts"
+    labels: ["typescript", "example", "i18n", "schema"]
+  },
+  {
+    name: "norn.ts.validation"
+    title: "Validation Commands By Key Path"
+    filepath: "examples/validation.ts"
+    labels: ["typescript", "example", "validation", "cli"]
   },
   {
     name: "norn.cue.distributed"
