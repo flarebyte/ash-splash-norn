@@ -182,16 +182,21 @@ export const inputFieldSchema: KeySchema = {
     {
       args: {
         validation: {
-          kind: "tuple",
-          name: "metaArgs.validation",
-          schema: ["schema", "tuple", "--size", "5", "--required"],
-          schemas: [
-            // Expected shape: ["meta", "--status", "<value>", "--app", "<value>"]
-            ["schema", "string", "--tuple", "0", "--enum", "meta"],
-            ["schema", "string", "--tuple", "1", "--enum", "--status"],
-            ["schema", "string", "--tuple", "2", "--required"],
-            ["schema", "string", "--tuple", "3", "--enum", "--app"],
-            ["schema", "string", "--tuple", "4", "--required"],
+          commandPath: ["meta"],
+          adminOnly: false,
+          flags: [
+            {
+              kind: "string",
+              name: "status",
+              schema: ["schema", "string", "--enum", "draft,stable,experimental", "--required"],
+              schemas: [],
+            },
+            {
+              kind: "string",
+              name: "app",
+              schema: ["schema", "string", "--enum", "v1,v2", "--required"],
+              schemas: [],
+            },
           ],
         },
       },
