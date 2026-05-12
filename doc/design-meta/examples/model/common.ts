@@ -17,5 +17,5 @@ export type CommandSpec = {
 };
 
 export type Command = {
-  args: Record<CommandKind, CommandSpecs>;
+  args: Record<CommandKind, CommandSpec>;
 };
