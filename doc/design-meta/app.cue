@@ -56,43 +56,43 @@ Target compatibility is determined by the CLI capabilities, not by extra user-pr
   {
     name: "norn.ts.cli"
     title: "TypeScript CLI Domain Model"
-    filepath: "examples/distributed-config-cli.ts"
+    filepath: "examples/model/distributed-config-cli.ts"
     labels: ["typescript", "example", "cli"]
   },
   {
     name: "norn.ts.app"
     title: "Application Composition Model"
-    filepath: "examples/app.ts"
+    filepath: "examples/model/app.ts"
     labels: ["typescript", "example", "application"]
   },
   {
     name: "norn.ts.generator-capabilities"
     title: "Generator Capabilities Matrix"
-    filepath: "examples/generator-capabilities.ts"
+    filepath: "examples/model/generator-capabilities.ts"
     labels: ["typescript", "example", "capabilities", "targets"]
   },
   {
     name: "norn.ts.i18n-key-schema"
     title: "I18n Key Schema Hierarchy Model"
-    filepath: "examples/i18n-key-schema-model.ts"
+    filepath: "examples/model/key-schema.ts"
     labels: ["typescript", "example", "i18n", "schema"]
   },
   {
     name: "norn.ts.validation"
     title: "Validation Commands By Key Path"
-    filepath: "examples/validation.ts"
+    filepath: "examples/model/validation.ts"
     labels: ["typescript", "example", "validation", "cli"]
   },
   {
     name: "norn.cue.distributed"
     title: "Distributed Config CUE Example"
-    filepath: "examples/distributed-config-example.cue"
+    filepath: "examples/input/distributed-config-example.cue"
     labels: ["cue", "example", "distribution"]
   },
   {
     name: "norn.cue.config-key"
     title: "Key-oriented Config CUE Example"
-    filepath: "examples/config-key.cue"
+    filepath: "examples/input/config-key.cue"
     labels: ["cue", "example", "config"]
   },
 ]
