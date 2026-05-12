@@ -22,10 +22,13 @@ reports: [{
       title: "01 CLI Model"
       notes: ["norn.ts.cli", "norn.ts.app"]
     }, {
-      title: "02 Schema And Validation Model"
+      title: "02 Generator Capabilities"
+      notes: ["norn.ts.generator-capabilities"]
+    }, {
+      title: "03 Schema And Validation Model"
       notes: ["norn.ts.i18n-key-schema", "norn.ts.validation"]
     }, {
-      title: "03 CUE Config Samples"
+      title: "04 CUE Config Samples"
       notes: ["norn.cue.distributed", "norn.cue.config-key"]
     }]
   }]
@@ -46,6 +49,7 @@ This design models a Go CLI that reads CUE configuration sources and distributes
     markdown: """
 Supported generated outputs are JSON, YAML, Go code, and Dart code.
 For i18n keys in Flutter/Dart contexts, the preferred target is `*.arb.json`.
+Target compatibility is determined by the CLI capabilities, not by extra user-provided per-kind maps.
 """
     labels: ["overview", "outputs"]
   },
@@ -60,6 +64,12 @@ For i18n keys in Flutter/Dart contexts, the preferred target is `*.arb.json`.
     title: "Application Composition Model"
     filepath: "examples/app.ts"
     labels: ["typescript", "example", "application"]
+  },
+  {
+    name: "norn.ts.generator-capabilities"
+    title: "Generator Capabilities Matrix"
+    filepath: "examples/generator-capabilities.ts"
+    labels: ["typescript", "example", "capabilities", "targets"]
   },
   {
     name: "norn.ts.i18n-key-schema"

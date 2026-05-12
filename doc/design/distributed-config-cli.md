@@ -16,6 +16,7 @@ This design models a Go CLI that reads CUE configuration sources and distributes
 
 Supported generated outputs are JSON, YAML, Go code, and Dart code.
 For i18n keys in Flutter/Dart contexts, the preferred target is `*.arb.json`.
+Target compatibility is determined by the CLI capabilities, not by extra user-provided per-kind maps.
 
 ## 02 Examples
 
@@ -90,7 +91,61 @@ export type DistributedConfigCliApp = {
 };
 ```
 
-### 02 Schema And Validation Model
+### 02 Generator Capabilities
+
+#### Generator Capabilities Matrix
+
+```ts
+export type NodeKind = "i18n" | "text";
+export type TargetFormat = "arb.json" | "json" | "yaml" | "go" | "dart";
+export type SupportStatus = "stable" | "experimental";
+
+export type GeneratorCapability = {
+  target: TargetFormat;
+  supportsNodeKinds: NodeKind[];
+  artifactPattern: string;
+  status: SupportStatus;
+  notes?: string;
+};
+
+export const generatorCapabilities: GeneratorCapability[] = [
+  {
+    target: "arb.json",
+    supportsNodeKinds: ["i18n"],
+    artifactPattern: "lib/l10n/app_<locale>.arb.json",
+    status: "stable",
+    notes: "Preferred Flutter/Dart localization target.",
+  },
+  {
+    target: "json",
+    supportsNodeKinds: ["i18n", "text"],
+    artifactPattern: "generated/config/<domain>.json",
+    status: "stable",
+  },
+  {
+    target: "yaml",
+    supportsNodeKinds: ["text"],
+    artifactPattern: "generated/config/<domain>.yaml",
+    status: "stable",
+  },
+  {
+    target: "go",
+    supportsNodeKinds: ["text"],
+    artifactPattern: "internal/generated/<domain>_config.go",
+    status: "experimental",
+    notes: "Generated structs/constants may evolve with compiler releases.",
+  },
+  {
+    target: "dart",
+    supportsNodeKinds: ["text"],
+    artifactPattern: "lib/generated/<domain>_config.dart",
+    status: "experimental",
+    notes: "Non-i18n data models for Flutter runtime configs.",
+  },
+];
+```
+
+### 03 Schema And Validation Model
 
 #### I18n Key Schema Hierarchy Model
 
@@ -101,8 +156,6 @@ export type NodeKind =
   | "branch"
   | "i18n"
   | "text";
-
-export type TargetFormat = "arb.json" | "json" | "yaml" | "go" | "dart";
 
 // A node can be reused by multiple parents, so the structure supports DAGs.
 export type SchemaNode = {
@@ -118,7 +171,6 @@ export type SchemaNode = {
 export type KeySchema = {
   rootKeys: string[];
   nodesByKey: Record<string, SchemaNode>;
-  outputTargetsByKind?: Partial<Record<NodeKind, TargetFormat[]>>;
 };
 
 export const inputFieldSchema: KeySchema = {
@@ -180,10 +232,6 @@ export const inputFieldSchema: KeySchema = {
       kind: "i18n",
       childKeys: [],
     },
-  },
-  outputTargetsByKind: {
-    i18n: ["arb.json", "json"],
-    text: ["json", "yaml", "go", "dart"],
   },
 };
 ```
@@ -290,7 +338,7 @@ export const validationSchema: ValidationSchema = {
 };
 ```
 
-### 03 CUE Config Samples
+### 04 CUE Config Samples
 
 #### Key-oriented Config CUE Example
 

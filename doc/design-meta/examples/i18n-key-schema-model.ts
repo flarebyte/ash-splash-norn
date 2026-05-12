@@ -5,8 +5,6 @@ export type NodeKind =
   | "i18n"
   | "text";
 
-export type TargetFormat = "arb.json" | "json" | "yaml" | "go" | "dart";
-
 // A node can be reused by multiple parents, so the structure supports DAGs.
 export type SchemaNode = {
   key: string;
@@ -21,7 +19,6 @@ export type SchemaNode = {
 export type KeySchema = {
   rootKeys: string[];
   nodesByKey: Record<string, SchemaNode>;
-  outputTargetsByKind?: Partial<Record<NodeKind, TargetFormat[]>>;
 };
 
 export const inputFieldSchema: KeySchema = {
@@ -83,9 +80,5 @@ export const inputFieldSchema: KeySchema = {
       kind: "i18n",
       childKeys: [],
     },
-  },
-  outputTargetsByKind: {
-    i18n: ["arb.json", "json"],
-    text: ["json", "yaml", "go", "dart"],
   },
 };
