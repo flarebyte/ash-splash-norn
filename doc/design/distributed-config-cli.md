@@ -205,10 +205,14 @@ export const validationSchema: ValidationSchema = {
       {
         args: {
           validation: {
+            kind: "string",
+            name: "textInput.label.validation",
             schema: ["--required", "--min-length", "1", "--max-length", "80"],
             schemas: [],
           },
           monitoring: {
+            kind: "string",
+            name: "textInput.label.monitoring",
             schema: ["--warn-on-missing-translation"],
             schemas: [],
           },
@@ -219,6 +223,8 @@ export const validationSchema: ValidationSchema = {
       {
         args: {
           validation: {
+            kind: "number",
+            name: "textInput.minChars.validation",
             schema: ["--required", "--type", "number", "--min", "0", "--max", "500"],
             schemas: [],
           },
@@ -227,6 +233,8 @@ export const validationSchema: ValidationSchema = {
       {
         args: {
           transform: {
+            kind: "number",
+            name: "textInput.minChars.transform",
             schema: ["--cast", "int"],
             schemas: [],
           },
@@ -237,6 +245,8 @@ export const validationSchema: ValidationSchema = {
       {
         args: {
           validation: {
+            kind: "boolean",
+            name: "textInput.required.validation",
             schema: ["--required", "--type", "boolean"],
             schemas: [],
           },
@@ -248,6 +258,8 @@ export const validationSchema: ValidationSchema = {
         args: {
           // Repeated list item constraints.
           validation: {
+            kind: "string",
+            name: "tags.validation",
             schema: ["--type", "list", "--required"],
             schemas: [
               ["--item-type", "string", "--min-length", "2", "--max-length", "20"],
@@ -261,6 +273,8 @@ export const validationSchema: ValidationSchema = {
         args: {
           // Repeated tuple constraints, e.g. [["0","10"],["20","30"]].
           validation: {
+            kind: "tuple",
+            name: "rangePairs.validation",
             schema: ["--type", "list"],
             schemas: [
               ["--tuple", "number", "number", "--tuple-rule", "item0<=item1"],

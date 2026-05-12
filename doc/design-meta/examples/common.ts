@@ -3,7 +3,7 @@ export type Version = string;
 export type KeyStructKind = string //note:text:comment
 export type CommandKind = string;//validation,monitoring
 
-export type Constraints = {
+export type ConstraintSpec = {
     kind: 'string' | 'number' | 'boolean' |'tuple';
     name: string;
     schema: string[];
@@ -11,5 +11,5 @@ export type Constraints = {
 }
 
 export type Command = {
-    args: Record<CommandKind, Constraints>;
+    args: Record<CommandKind, ConstraintSpec>;
 }
