@@ -1,10 +1,9 @@
+import { Command } from "./common";
+
 export type NodeKind =
   | "branch"
   | "i18n"
-  | "string"
-  | "number"
-  | "boolean"
-  | "color";
+  | "text";
 
 export type TargetFormat = "arb.json" | "json" | "yaml" | "go" | "dart";
 
@@ -16,6 +15,7 @@ export type SchemaNode = {
   mandatory?: boolean;
   helpKey?: string;
   childKeys: string[];
+  validation?: Command[];
 };
 
 export type KeySchema = {
