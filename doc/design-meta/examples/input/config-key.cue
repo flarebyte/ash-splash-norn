@@ -69,11 +69,8 @@ validations = [
                     validation: {
                         kind: "string"
                         name: "textInput.value.validation"
-                        flags: [
-                            {name: "--required", valueKind: "boolean", required: true},
-                            {name: "--min-length", valueKind: "number", values: ["1"]},
-                            {name: "--max-length", valueKind: "number", values: ["120"]},
-                        ]
+                        schema: ["schema", "string", "--required", "--min-length", "1", "--max-length", "120"]
+                        schemas: []
                     }
                 }
             },
@@ -82,9 +79,8 @@ validations = [
                     monitoring: {
                         kind: "string"
                         name: "textInput.value.monitoring"
-                        flags: [
-                            {name: "--warn-on-missing-translation", valueKind: "boolean", required: true},
-                        ]
+                        schema: ["schema", "string", "--required"]
+                        schemas: []
                     }
                 }
             },
@@ -98,12 +94,9 @@ validations = [
                 validation: {
                     kind: "string"
                     name: "tags.validation"
-                    flags: [
-                        {name: "--type", valueKind: "string", values: ["list"]},
-                        {name: "--required", valueKind: "boolean", required: true},
-                        {name: "--item-type", valueKind: "string", values: ["string"]},
-                        {name: "--min-length", valueKind: "number", values: ["2"]},
-                        {name: "--max-length", valueKind: "number", values: ["20"]},
+                    schema: ["schema", "string", "--alphabetic"]
+                    schemas: [
+                        ["schema", "repeatable", "--min-length", "1", "--max-length", "20"],
                     ]
                 }
             }
