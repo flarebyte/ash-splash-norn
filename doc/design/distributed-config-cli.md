@@ -166,11 +166,15 @@ export type SchemaNode = {
 };
 
 export type KeySchema = {
+  supportedLanguages: string[];
+  supportedCommandSections: string[];
   rootKeys: string[];
   nodesByKey: Record<string, SchemaNode>;
 };
 
 export const inputFieldSchema: KeySchema = {
+  supportedLanguages: ["en", "fr"],
+  supportedCommandSections: ["validation", "monitoring", "transform"],
   rootKeys: ["fields.textInput"],
   nodesByKey: {
     "fields.textInput": {
