@@ -1,28 +1,58 @@
-configurations = [
+i18nEntries = [
     {
-        key: "checkoutPaymentErrorCardDeclined"
+        key: "fields.textInput.label"
         description: "After checkout form"
         kind: "i18n"
         translations: {
             en: {
                 text: "Checkout Payment"
-                 context: {
-                    feature: "checkout",
-                    component: "payment",
-                    type: "error",
+                context: {
+                    feature: "checkout"
+                    component: "payment"
+                    type: "error"
                     surface: "snackbar"
                 }
             }
             fr: {
                 text: "Payment"
             }
-     }
+        }
     },
     {
-        key: 'checkoutPaymentErrorCardDeclinedColor'
-        value: "#e4e4e4"
-    }
+        key: "fields.textInput.tooltip"
+        description: "Tooltip for text input"
+        kind: "i18n"
+        translations: {
+            en: {
+                text: "Enter the value used for checkout."
+            }
+            fr: {
+                text: "Saisissez la valeur utilisee pour le paiement."
+            }
+        }
+    },
+    {
+        key: "fields.textInput.placeholder"
+        description: "Placeholder for text input"
+        kind: "i18n"
+        translations: {
+            en: {
+                text: "Type here"
+            }
+            fr: {
+                text: "Saisissez ici"
+            }
+        }
+    },
+]
 
+textEntries = [
+    {
+        key: "fields.textInput.value"
+        description: "Default value for text input"
+        kind: "text"
+        value: "example value"
+    },
 ]
 
 validations = [
