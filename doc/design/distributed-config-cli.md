@@ -182,15 +182,14 @@ export const inputFieldSchema: KeySchema = {
     {
       args: {
         validation: {
-          kind: "tuple",
+          kind: "list",
           name: "metaArgs.validation",
-          schema: ["--type", "list", "--required", "--min-items", "5"],
-          schemas: [
-            // Expected tokenized shape: ["meta", "--status", "<value>", "--app", "<value>"].
-            ["--item-type", "string", "--min-length", "1"],
-            ["--item0-eq", "meta"],
-            ["--item1-eq", "--status"],
-            ["--item3-eq", "--app"],
+          flags: [
+            { name: "--required", valueKind: "boolean", required: true },
+            { name: "--min-items", valueKind: "number", values: ["5"] },
+            { name: "meta", valueKind: "string", required: true, description: "First token literal." },
+            { name: "--status", valueKind: "string", required: true, description: "Status filter." },
+            { name: "--app", valueKind: "string", required: true, description: "Application identifier." },
           ],
         },
       },
@@ -334,8 +333,11 @@ validations = [
                     validation: {
                         kind: "string"
                         name: "textInput.value.validation"
-                        schema: ["--required", "--min-length", "1", "--max-length", "120"]
-                        schemas: []
+                        flags: [
+                            {name: "--required", valueKind: "boolean", required: true},
+                            {name: "--min-length", valueKind: "number", values: ["1"]},
+                            {name: "--max-length", valueKind: "number", values: ["120"]},
+                        ]
                     }
                 }
             },
@@ -344,8 +346,9 @@ validations = [
                     monitoring: {
                         kind: "string"
                         name: "textInput.value.monitoring"
-                        schema: ["--warn-on-missing-translation"]
-                        schemas: []
+                        flags: [
+                            {name: "--warn-on-missing-translation", valueKind: "boolean", required: true},
+                        ]
                     }
                 }
             },
@@ -359,9 +362,12 @@ validations = [
                 validation: {
                     kind: "string"
                     name: "tags.validation"
-                    schema: ["--type", "list", "--required"]
-                    schemas: [
-                        ["--item-type", "string", "--min-length", "2", "--max-length", "20"],
+                    flags: [
+                        {name: "--type", valueKind: "string", values: ["list"]},
+                        {name: "--required", valueKind: "boolean", required: true},
+                        {name: "--item-type", valueKind: "string", values: ["string"]},
+                        {name: "--min-length", valueKind: "number", values: ["2"]},
+                        {name: "--max-length", valueKind: "number", values: ["20"]},
                     ]
                 }
             }

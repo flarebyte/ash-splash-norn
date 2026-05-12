@@ -69,8 +69,11 @@ validations = [
                     validation: {
                         kind: "string"
                         name: "textInput.value.validation"
-                        schema: ["--required", "--min-length", "1", "--max-length", "120"]
-                        schemas: []
+                        flags: [
+                            {name: "--required", valueKind: "boolean", required: true},
+                            {name: "--min-length", valueKind: "number", values: ["1"]},
+                            {name: "--max-length", valueKind: "number", values: ["120"]},
+                        ]
                     }
                 }
             },
@@ -79,8 +82,9 @@ validations = [
                     monitoring: {
                         kind: "string"
                         name: "textInput.value.monitoring"
-                        schema: ["--warn-on-missing-translation"]
-                        schemas: []
+                        flags: [
+                            {name: "--warn-on-missing-translation", valueKind: "boolean", required: true},
+                        ]
                     }
                 }
             },
@@ -94,9 +98,12 @@ validations = [
                 validation: {
                     kind: "string"
                     name: "tags.validation"
-                    schema: ["--type", "list", "--required"]
-                    schemas: [
-                        ["--item-type", "string", "--min-length", "2", "--max-length", "20"],
+                    flags: [
+                        {name: "--type", valueKind: "string", values: ["list"]},
+                        {name: "--required", valueKind: "boolean", required: true},
+                        {name: "--item-type", valueKind: "string", values: ["string"]},
+                        {name: "--min-length", valueKind: "number", values: ["2"]},
+                        {name: "--max-length", valueKind: "number", values: ["20"]},
                     ]
                 }
             }

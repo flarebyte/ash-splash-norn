@@ -31,15 +31,14 @@ export const inputFieldSchema: KeySchema = {
     {
       args: {
         validation: {
-          kind: "tuple",
+          kind: "list",
           name: "metaArgs.validation",
-          schema: ["--type", "list", "--required", "--min-items", "5"],
-          schemas: [
-            // Expected tokenized shape: ["meta", "--status", "<value>", "--app", "<value>"].
-            ["--item-type", "string", "--min-length", "1"],
-            ["--item0-eq", "meta"],
-            ["--item1-eq", "--status"],
-            ["--item3-eq", "--app"],
+          flags: [
+            { name: "--required", valueKind: "boolean", required: true },
+            { name: "--min-items", valueKind: "number", values: ["5"] },
+            { name: "meta", valueKind: "string", required: true, description: "First token literal." },
+            { name: "--status", valueKind: "string", required: true, description: "Status filter." },
+            { name: "--app", valueKind: "string", required: true, description: "Application identifier." },
           ],
         },
       },
