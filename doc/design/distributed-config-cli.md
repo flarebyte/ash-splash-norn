@@ -338,20 +338,32 @@ validations = [
             {
                 args: {
                     validation: {
-                        kind: "string"
-                        name: "textInput.value.validation"
-                        schema: ["schema", "string", "--required", "--min-length", "1", "--max-length", "120"]
-                        schemas: []
+                        commandPath: ["validate", "text-input", "value"]
+                        adminOnly: false
+                        flags: [
+                            {
+                                kind: "string"
+                                name: "value"
+                                schema: ["schema", "string", "--required", "--min-length", "1", "--max-length", "120"]
+                                schemas: []
+                            },
+                        ]
                     }
                 }
             },
             {
                 args: {
                     monitoring: {
-                        kind: "string"
-                        name: "textInput.value.monitoring"
-                        schema: ["schema", "string", "--required"]
-                        schemas: []
+                        commandPath: ["monitor", "text-input", "value"]
+                        adminOnly: false
+                        flags: [
+                            {
+                                kind: "string"
+                                name: "warn-missing-translation"
+                                schema: ["schema", "string", "--required"]
+                                schemas: []
+                            },
+                        ]
                     }
                 }
             },
@@ -363,11 +375,17 @@ validations = [
         commands: [{
             args: {
                 validation: {
-                    kind: "string"
-                    name: "tags.validation"
-                    schema: ["schema", "string", "--alphabetic"]
-                    schemas: [
-                        ["schema", "repeatable", "--min-length", "1", "--max-length", "20"],
+                    commandPath: ["validate", "tags"]
+                    adminOnly: false
+                    flags: [
+                        {
+                            kind: "string"
+                            name: "tags"
+                            schema: ["schema", "string", "--alphabetic"]
+                            schemas: [
+                                ["schema", "repeatable", "--min-length", "1", "--max-length", "20"],
+                            ]
+                        },
                     ]
                 }
             }
