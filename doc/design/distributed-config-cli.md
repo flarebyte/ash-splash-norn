@@ -95,13 +95,12 @@ export type DistributedConfigCliApp = {
 #### I18n Key Schema Hierarchy Model
 
 ```ts
+import { Command } from "./common";
+
 export type NodeKind =
   | "branch"
   | "i18n"
-  | "string"
-  | "number"
-  | "boolean"
-  | "color";
+  | "text";
 
 export type TargetFormat = "arb.json" | "json" | "yaml" | "go" | "dart";
 
@@ -113,6 +112,7 @@ export type SchemaNode = {
   mandatory?: boolean;
   helpKey?: string;
   childKeys: string[];
+  validation?: Command[];
 };
 
 export type KeySchema = {
@@ -131,9 +131,8 @@ export const inputFieldSchema: KeySchema = {
       childKeys: [
         "fields.textInput.label",
         "fields.textInput.tooltip",
-        "fields.textInput.required",
-        "fields.textInput.minChars",
-        "fields.textInput.maxChars",
+        "fields.textInput.placeholder",
+        "fields.textInput.value",
       ],
     },
     "fields.textInput.label": {
@@ -151,22 +150,28 @@ export const inputFieldSchema: KeySchema = {
       helpKey: "fields.textInput.help.common",
       childKeys: [],
     },
-    "fields.textInput.required": {
-      key: "fields.textInput.required",
-      label: "Required",
-      kind: "boolean",
+    "fields.textInput.placeholder": {
+      key: "fields.textInput.placeholder",
+      label: "Placeholder",
+      kind: "i18n",
       childKeys: [],
     },
-    "fields.textInput.minChars": {
-      key: "fields.textInput.minChars",
-      label: "Min Chars",
-      kind: "number",
-      childKeys: [],
-    },
-    "fields.textInput.maxChars": {
-      key: "fields.textInput.maxChars",
-      label: "Max Chars",
-      kind: "number",
+    "fields.textInput.value": {
+      key: "fields.textInput.value",
+      label: "Value",
+      kind: "text",
+      validation: [
+        {
+          args: {
+            validation: {
+              kind: "string",
+              name: "textInput.value.validation",
+              schema: ["--required", "--min-length", "1", "--max-length", "120"],
+              schemas: [],
+            },
+          },
+        },
+      ],
       childKeys: [],
     },
     "fields.textInput.help.common": {
@@ -178,10 +183,7 @@ export const inputFieldSchema: KeySchema = {
   },
   outputTargetsByKind: {
     i18n: ["arb.json", "json"],
-    string: ["json", "yaml", "go", "dart"],
-    number: ["json", "yaml", "go", "dart"],
-    boolean: ["json", "yaml", "go", "dart"],
-    color: ["json", "yaml", "dart"],
+    text: ["json", "yaml", "go", "dart"],
   },
 };
 ```
