@@ -3,6 +3,7 @@ i18nEntries = [
         key: "fields.textInput.label"
         description: "After checkout form"
         kind: "i18n"
+        metaArgs: ["meta", "--status", "draft", "--app", "v1"]
         translations: {
             en: {
                 text: "Checkout Payment"
@@ -22,6 +23,7 @@ i18nEntries = [
         key: "fields.textInput.tooltip"
         description: "Tooltip for text input"
         kind: "i18n"
+        metaArgs: ["meta", "--status", "draft", "--app", "v1"]
         translations: {
             en: {
                 text: "Enter the value used for checkout."
@@ -35,6 +37,7 @@ i18nEntries = [
         key: "fields.textInput.placeholder"
         description: "Placeholder for text input"
         kind: "i18n"
+        metaArgs: ["meta", "--status", "stable", "--app", "v1"]
         translations: {
             en: {
                 text: "Type here"
@@ -51,6 +54,7 @@ textEntries = [
         key: "fields.textInput.value"
         description: "Default value for text input"
         kind: "text"
+        metaArgs: ["meta", "--status", "draft", "--app", "v1"]
         value: "example value"
     },
 ]
@@ -58,6 +62,7 @@ textEntries = [
 validations = [
     {
         key: "fields.textInput.value.validation"
+        metaArgs: ["meta", "--status", "draft", "--app", "v1"]
         commands: [
             {
                 args: {
@@ -83,6 +88,7 @@ validations = [
     },
     {
         key: "fields.tags.validation"
+        metaArgs: ["meta", "--status", "experimental", "--app", "v2"]
         commands: [{
             args: {
                 validation: {
