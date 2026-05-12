@@ -149,12 +149,11 @@ export const generatorCapabilities: GeneratorCapability[] = [
 #### I18n Key Schema Hierarchy Model
 
 ```ts
-import { Command } from "./common";
-
 export type NodeKind =
   | "branch"
   | "i18n"
-  | "text";
+  | "text"
+  | "validator";
 
 // A node can be reused by multiple parents, so the structure supports DAGs.
 export type SchemaNode = {
@@ -164,7 +163,6 @@ export type SchemaNode = {
   mandatory?: boolean;
   helpKey?: string;
   childKeys: string[];
-  validation?: Command[];
 };
 
 export type KeySchema = {
@@ -184,6 +182,7 @@ export const inputFieldSchema: KeySchema = {
         "fields.textInput.tooltip",
         "fields.textInput.placeholder",
         "fields.textInput.value",
+        "fields.textInput.value.validation",
       ],
     },
     "fields.textInput.label": {
@@ -211,18 +210,12 @@ export const inputFieldSchema: KeySchema = {
       key: "fields.textInput.value",
       label: "Value",
       kind: "text",
-      validation: [
-        {
-          args: {
-            validation: {
-              kind: "string",
-              name: "textInput.value.validation",
-              schema: ["--required", "--min-length", "1", "--max-length", "120"],
-              schemas: [],
-            },
-          },
-        },
-      ],
+      childKeys: [],
+    },
+    "fields.textInput.value.validation": {
+      key: "fields.textInput.value.validation",
+      label: "Value Validation",
+      kind: "validator",
       childKeys: [],
     },
     "fields.textInput.help.common": {
@@ -367,6 +360,49 @@ configurations = [
         value: "#e4e4e4"
     }
 
+]
+
+validations = [
+    {
+        key: "fields.textInput.value.validation"
+        commands: [
+            {
+                args: {
+                    validation: {
+                        kind: "string"
+                        name: "textInput.value.validation"
+                        schema: ["--required", "--min-length", "1", "--max-length", "120"]
+                        schemas: []
+                    }
+                }
+            },
+            {
+                args: {
+                    monitoring: {
+                        kind: "string"
+                        name: "textInput.value.monitoring"
+                        schema: ["--warn-on-missing-translation"]
+                        schemas: []
+                    }
+                }
+            },
+        ]
+    },
+    {
+        key: "fields.tags.validation"
+        commands: [{
+            args: {
+                validation: {
+                    kind: "string"
+                    name: "tags.validation"
+                    schema: ["--type", "list", "--required"]
+                    schemas: [
+                        ["--item-type", "string", "--min-length", "2", "--max-length", "20"],
+                    ]
+                }
+            }
+        }]
+    },
 ]
 ```
 

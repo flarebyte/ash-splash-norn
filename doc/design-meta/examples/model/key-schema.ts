@@ -1,9 +1,8 @@
-import { Command } from "./common";
-
 export type NodeKind =
   | "branch"
   | "i18n"
-  | "text";
+  | "text"
+  | "validator";
 
 // A node can be reused by multiple parents, so the structure supports DAGs.
 export type SchemaNode = {
@@ -13,7 +12,6 @@ export type SchemaNode = {
   mandatory?: boolean;
   helpKey?: string;
   childKeys: string[];
-  validation?: Command[];
 };
 
 export type KeySchema = {
@@ -33,6 +31,7 @@ export const inputFieldSchema: KeySchema = {
         "fields.textInput.tooltip",
         "fields.textInput.placeholder",
         "fields.textInput.value",
+        "fields.textInput.value.validation",
       ],
     },
     "fields.textInput.label": {
@@ -60,18 +59,12 @@ export const inputFieldSchema: KeySchema = {
       key: "fields.textInput.value",
       label: "Value",
       kind: "text",
-      validation: [
-        {
-          args: {
-            validation: {
-              kind: "string",
-              name: "textInput.value.validation",
-              schema: ["--required", "--min-length", "1", "--max-length", "120"],
-              schemas: [],
-            },
-          },
-        },
-      ],
+      childKeys: [],
+    },
+    "fields.textInput.value.validation": {
+      key: "fields.textInput.value.validation",
+      label: "Value Validation",
+      kind: "validator",
       childKeys: [],
     },
     "fields.textInput.help.common": {
