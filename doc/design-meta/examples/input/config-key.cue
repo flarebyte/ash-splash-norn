@@ -1,4 +1,4 @@
-i18nEntries = [
+i18nEntries: [
     {
         key: "fields.textInput.label"
         description: "After checkout form"
@@ -49,7 +49,7 @@ i18nEntries = [
     },
 ]
 
-textEntries = [
+textEntries: [
     {
         key: "fields.textInput.value"
         description: "Default value for text input"
@@ -59,7 +59,7 @@ textEntries = [
     },
 ]
 
-validations = [
+validations: [
     {
         key: "fields.textInput.value.validation"
         metaArgs: ["meta", "--status", "draft", "--app", "v1"]

@@ -3,7 +3,7 @@
 .PHONY: build test test-go test-unit test-race test-fixtures \
 	lint lint-go lint-ts format format-go format-ts \
 	typecheck-ts review coverage coverage-go coverage-critical coverage-threshold \
-	doc-design doc-decision dup complexity release sec \
+	doc-design doc-decision cue-input dup complexity release sec \
 	thoth-meta thoth-meta-go thoth-meta-go-test \
 	check-tools install-tools-help help
 
@@ -114,6 +114,7 @@ typecheck-ts:
 
 doc-design:
 	mkdir -p doc/design
+	$(MAKE) cue-input
 	@if [ -z "$(DESIGN_META_CONFIGS)" ]; then \
 		printf "No flyb config files found in doc/design-meta/*.cue\n"; \
 		printf "Add a config (for example doc/design-meta/app.cue) then rerun make doc-design.\n"; \
@@ -124,6 +125,9 @@ doc-design:
 		$(FLYB) validate --config "$$cfg"; \
 		$(FLYB) generate markdown --config "$$cfg"; \
 	done
+
+cue-input:
+	cue vet doc/design-meta/examples/input/config-key.cue doc/design-meta/examples/input/config-key.schema.cue
 
 doc-decision:
 	mkdir -p doc/decision-meta
@@ -194,6 +198,7 @@ help:
 	@printf "  typecheck-ts Type-check doc/design-meta TypeScript examples with tsc.\n"
 	@printf "  review       Run format, test, and lint using existing targets.\n"
 	@printf "  doc-design   Regenerate design docs from flyb configs.\n"
+	@printf "  cue-input    Validate input CUE examples against schema contracts.\n"
 	@printf "  doc-decision Validate decision configs and regenerate markdown decision reports.\n"
 	@printf "  dup          Run duplicate code detection.\n"
 	@printf "  complexity   Show top Go and TypeScript files by complexity.\n"
