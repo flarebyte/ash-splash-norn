@@ -1,3 +1,5 @@
+import { Command } from "./common";
+
 export type NodeKind =
   | "branch"
   | "i18n"
@@ -17,6 +19,7 @@ export type SchemaNode = {
 export type KeySchema = {
   supportedLanguages: string[];
   supportedCommandSections: string[];
+  metaArgsValidation: Command[];
   rootKeys: string[];
   nodesByKey: Record<string, SchemaNode>;
 };
@@ -24,6 +27,24 @@ export type KeySchema = {
 export const inputFieldSchema: KeySchema = {
   supportedLanguages: ["en", "fr"],
   supportedCommandSections: ["validation", "monitoring", "transform"],
+  metaArgsValidation: [
+    {
+      args: {
+        validation: {
+          kind: "tuple",
+          name: "metaArgs.validation",
+          schema: ["--type", "list", "--required", "--min-items", "5"],
+          schemas: [
+            // Expected tokenized shape: ["meta", "--status", "<value>", "--app", "<value>"].
+            ["--item-type", "string", "--min-length", "1"],
+            ["--item0-eq", "meta"],
+            ["--item1-eq", "--status"],
+            ["--item3-eq", "--app"],
+          ],
+        },
+      },
+    },
+  ],
   rootKeys: ["fields.textInput"],
   nodesByKey: {
     "fields.textInput": {

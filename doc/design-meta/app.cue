@@ -26,7 +26,7 @@ reports: [{
       notes: ["norn.ts.generator-capabilities"]
     }, {
       title: "03 Schema And Validation Model"
-      notes: ["norn.ts.i18n-key-schema", "norn.ts.validation"]
+      notes: ["norn.ts.i18n-key-schema", "norn.validation-source"]
     }, {
       title: "04 CUE Config Samples"
       notes: ["norn.cue.distributed", "norn.cue.config-key"]
@@ -78,10 +78,13 @@ Target compatibility is determined by the CLI capabilities, not by extra user-pr
     labels: ["typescript", "example", "i18n", "schema"]
   },
   {
-    name: "norn.ts.validation"
-    title: "Validation Commands By Key Path"
-    filepath: "examples/model/validation.ts"
-    labels: ["typescript", "example", "validation", "cli"]
+    name: "norn.validation-source"
+    title: "Validation Source Of Truth"
+    markdown: """
+Validation commands are authored in `examples/input/config-key.cue` under the `validations` section.
+This CUE input is the canonical source used to compile snake-knot-picker command documents.
+"""
+    labels: ["validation", "cue", "source-of-truth"]
   },
   {
     name: "norn.cue.distributed"
