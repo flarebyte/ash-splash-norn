@@ -41,8 +41,7 @@ package designregistry
 }
 
 #KeyGenerationPolicy: {
-  delimiter: "."
-  from:      "label-path"
+  from: "label-path-camelCase"
 }
 
 #KeySchemaMetadata: {

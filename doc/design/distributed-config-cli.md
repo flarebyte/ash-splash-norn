@@ -108,17 +108,16 @@ designRegistry: #DesignRegistrySpec & {
         }
       }
       keyGeneration: {
-        delimiter: "."
-        from: "label-path"
+        from: "label-path-camelCase"
       }
       generatedKeyExamples: {
         i18n: [
-          "fields.textInput.label",
-          "fields.textInput.tooltip",
-          "fields.textInput.placeholder",
+          "fieldsTextInputLabel",
+          "fieldsTextInputTooltip",
+          "fieldsTextInputPlaceholder",
         ]
-        text: ["fields.textInput.value"]
-        validator: ["fields.textInput.value.validation"]
+        text: ["fieldsTextInputValue"]
+        validator: ["fieldsTextInputValueValidation"]
       }
     }
   }
@@ -187,8 +186,7 @@ package designregistry
 }
 
 #KeyGenerationPolicy: {
-  delimiter: "."
-  from:      "label-path"
+  from: "label-path-camelCase"
 }
 
 #KeySchemaMetadata: {
@@ -259,6 +257,8 @@ package designregistry
 ```cue
 package configkey
 
+#ConfigKey: string & =~"^[a-z][A-Za-z0-9]*$"
+
 #CommandFlagDef: {
   kind: "string" | "number" | "boolean" | "tuple"
   name: string & !=""
@@ -283,7 +283,7 @@ package configkey
 }
 
 #ValidationEntry: {
-  key: string & !=""
+  key: #ConfigKey
   metaArgs: ["meta", "--status", "draft" | "stable" | "experimental", "--app", "v1" | "v2"]
   commands: [...#ValidationCommand] & [#ValidationCommand, ...#ValidationCommand]
 }
@@ -299,7 +299,7 @@ package configkey
 }
 
 #I18nEntry: {
-  key: string & !=""
+  key: #ConfigKey
   description: string
   kind: "i18n"
   metaArgs: ["meta", "--status", "draft" | "stable" | "experimental", "--app", "v1" | "v2"]
@@ -311,7 +311,7 @@ package configkey
 }
 
 #TextEntry: {
-  key: string & !=""
+  key: #ConfigKey
   description: string
   kind: "text"
   metaArgs: ["meta", "--status", "draft" | "stable" | "experimental", "--app", "v1" | "v2"]
@@ -360,7 +360,7 @@ This CUE input is the canonical source used to compile snake-knot-picker command
 ```cue
 i18nEntries: [
     {
-        key: "fields.textInput.label"
+        key: "fieldsTextInputLabel"
         description: "After checkout form"
         kind: "i18n"
         metaArgs: ["meta", "--status", "draft", "--app", "v1"]
@@ -380,7 +380,7 @@ i18nEntries: [
         }
     },
     {
-        key: "fields.textInput.tooltip"
+        key: "fieldsTextInputTooltip"
         description: "Tooltip for text input"
         kind: "i18n"
         metaArgs: ["meta", "--status", "draft", "--app", "v1"]
@@ -394,7 +394,7 @@ i18nEntries: [
         }
     },
     {
-        key: "fields.textInput.placeholder"
+        key: "fieldsTextInputPlaceholder"
         description: "Placeholder for text input"
         kind: "i18n"
         metaArgs: ["meta", "--status", "stable", "--app", "v1"]
@@ -411,7 +411,7 @@ i18nEntries: [
 
 textEntries: [
     {
-        key: "fields.textInput.value"
+        key: "fieldsTextInputValue"
         description: "Default value for text input"
         kind: "text"
         metaArgs: ["meta", "--status", "draft", "--app", "v1"]
@@ -421,7 +421,7 @@ textEntries: [
 
 validations: [
     {
-        key: "fields.textInput.value.validation"
+        key: "fieldsTextInputValueValidation"
         metaArgs: ["meta", "--status", "draft", "--app", "v1"]
         commands: [
             {
@@ -459,7 +459,7 @@ validations: [
         ]
     },
     {
-        key: "fields.tags.validation"
+        key: "fieldsTagsValidation"
         metaArgs: ["meta", "--status", "experimental", "--app", "v2"]
         commands: [{
             args: {

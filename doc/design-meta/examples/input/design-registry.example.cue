@@ -79,17 +79,16 @@ designRegistry: #DesignRegistrySpec & {
         }
       }
       keyGeneration: {
-        delimiter: "."
-        from: "label-path"
+        from: "label-path-camelCase"
       }
       generatedKeyExamples: {
         i18n: [
-          "fields.textInput.label",
-          "fields.textInput.tooltip",
-          "fields.textInput.placeholder",
+          "fieldsTextInputLabel",
+          "fieldsTextInputTooltip",
+          "fieldsTextInputPlaceholder",
         ]
-        text: ["fields.textInput.value"]
-        validator: ["fields.textInput.value.validation"]
+        text: ["fieldsTextInputValue"]
+        validator: ["fieldsTextInputValueValidation"]
       }
     }
   }

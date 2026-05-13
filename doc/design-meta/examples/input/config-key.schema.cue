@@ -1,5 +1,7 @@
 package configkey
 
+#ConfigKey: string & =~"^[a-z][A-Za-z0-9]*$"
+
 #CommandFlagDef: {
   kind: "string" | "number" | "boolean" | "tuple"
   name: string & !=""
@@ -24,7 +26,7 @@ package configkey
 }
 
 #ValidationEntry: {
-  key: string & !=""
+  key: #ConfigKey
   metaArgs: ["meta", "--status", "draft" | "stable" | "experimental", "--app", "v1" | "v2"]
   commands: [...#ValidationCommand] & [#ValidationCommand, ...#ValidationCommand]
 }
@@ -40,7 +42,7 @@ package configkey
 }
 
 #I18nEntry: {
-  key: string & !=""
+  key: #ConfigKey
   description: string
   kind: "i18n"
   metaArgs: ["meta", "--status", "draft" | "stable" | "experimental", "--app", "v1" | "v2"]
@@ -52,7 +54,7 @@ package configkey
 }
 
 #TextEntry: {
-  key: string & !=""
+  key: #ConfigKey
   description: string
   kind: "text"
   metaArgs: ["meta", "--status", "draft" | "stable" | "experimental", "--app", "v1" | "v2"]
