@@ -19,8 +19,8 @@ reports: [{
     title:       "02 Examples"
     description: "Concrete examples collected under doc/design-meta/examples."
     sections: [{
-      title: "01 CLI Model"
-      notes: ["norn.ts.cli", "norn.ts.app"]
+      title: "01 App Model"
+      notes: ["norn.ts.app"]
     }, {
       title: "02 Generator Capabilities"
       notes: ["norn.ts.generator-capabilities"]
@@ -52,12 +52,6 @@ For i18n keys in Flutter/Dart contexts, the preferred target is `*.arb.json`.
 Target compatibility is determined by the CLI capabilities, not by extra user-provided per-kind maps.
 """
     labels: ["overview", "outputs"]
-  },
-  {
-    name: "norn.ts.cli"
-    title: "TypeScript CLI Domain Model"
-    filepath: "examples/model/distributed-config-cli.ts"
-    labels: ["typescript", "example", "cli"]
   },
   {
     name: "norn.ts.app"

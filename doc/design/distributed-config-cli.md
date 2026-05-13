@@ -22,13 +22,12 @@ Target compatibility is determined by the CLI capabilities, not by extra user-pr
 
 Concrete examples collected under doc/design-meta/examples.
 
-### 01 CLI Model
+### 01 App Model
 
 #### Application Composition Model
 
 ```ts
 import { UUID, Version, Command } from "./common";
-import { RepositoryRef, ConfigSource, DistributionRule } from "./distributed-config-cli";
 
 export type Application = {
   id: UUID;
@@ -39,54 +38,9 @@ export type Application = {
 
 export type CliApplication = Application & {
   command: Command;
-  repositories: RepositoryRef[];
-  sources: ConfigSource[];
-  rules: DistributionRule[];
-};
-```
-
-#### TypeScript CLI Domain Model
-
-```ts
-import { UUID, Version } from "./common";
-
-export type ConfigFormat = "cue";
-export type OutputFormat = "json" | "yaml" | "go" | "dart";
-
-export type RepositoryRef = {
-  id: UUID;
-  name: string;
-  rootPath: string;
-  branch?: string;
-};
-
-export type ConfigSource = {
-  id: UUID;
-  repositoryId: UUID;
-  format: ConfigFormat;
-  path: string;
-};
-
-export type OutputTarget = {
-  format: OutputFormat;
-  path: string;
-  packageName?: string;
-};
-
-export type DistributionRule = {
-  id: UUID;
-  sourceId: UUID;
-  targetRepositories: UUID[];
-  outputs: OutputTarget[];
-};
-
-export type DistributedConfigCliApp = {
-  id: UUID;
-  name: string;
-  version: Version;
-  repositories: RepositoryRef[];
-  sources: ConfigSource[];
-  rules: DistributionRule[];
+  repositoryIds: UUID[];
+  sourceIds: UUID[];
+  ruleIds: UUID[];
 };
 ```
 

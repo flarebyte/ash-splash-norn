@@ -1,5 +1,4 @@
 import { UUID, Version, Command } from "./common";
-import { RepositoryRef, ConfigSource, DistributionRule } from "./distributed-config-cli";
 
 export type Application = {
   id: UUID;
@@ -10,7 +9,7 @@ export type Application = {
 
 export type CliApplication = Application & {
   command: Command;
-  repositories: RepositoryRef[];
-  sources: ConfigSource[];
-  rules: DistributionRule[];
+  repositoryIds: UUID[];
+  sourceIds: UUID[];
+  ruleIds: UUID[];
 };
