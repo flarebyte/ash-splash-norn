@@ -1,10 +1,6 @@
 import { Command } from "./common";
 
-export type NodeKind =
-  | "branch"
-  | "i18n"
-  | "text"
-  | "validator";
+export type NodeKind = "branch" | "i18n" | "text" | "validator";
 
 // A node can be reused by multiple parents, so the structure supports DAGs.
 export type SchemaNode = {
@@ -19,7 +15,7 @@ export type SchemaNode = {
 export type KeySchema = {
   supportedLanguages: string[];
   supportedCommandSections: string[];
-  metaArgsValidation: Command[];
+  metaArgsValidation: Command;
   rootKeys: string[];
   nodesByKey: Record<string, SchemaNode>;
 };
@@ -27,30 +23,34 @@ export type KeySchema = {
 export const inputFieldSchema: KeySchema = {
   supportedLanguages: ["en", "fr"],
   supportedCommandSections: ["validation", "monitoring", "transform"],
-  metaArgsValidation: [
-    {
-      args: {
-        validation: {
-          commandPath: ["meta"],
-          adminOnly: false,
-          flags: [
-            {
-              kind: "string",
-              name: "status",
-              schema: ["schema", "string", "--enum", "draft,stable,experimental", "--required"],
-              schemas: [],
-            },
-            {
-              kind: "string",
-              name: "app",
-              schema: ["schema", "string", "--enum", "v1,v2", "--required"],
-              schemas: [],
-            },
-          ],
-        },
+  metaArgsValidation: {
+    args: {
+      validation: {
+        commandPath: ["meta"],
+        adminOnly: false,
+        flags: [
+          {
+            kind: "string",
+            name: "status",
+            schema: [
+              "schema",
+              "string",
+              "--enum",
+              "draft,stable,experimental",
+              "--required",
+            ],
+            schemas: [],
+          },
+          {
+            kind: "string",
+            name: "app",
+            schema: ["schema", "string", "--enum", "v1,v2", "--required"],
+            schemas: [],
+          },
+        ],
       },
     },
-  ],
+  },
   rootKeys: ["fields.textInput"],
   nodesByKey: {
     "fields.textInput": {
