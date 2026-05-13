@@ -4,20 +4,31 @@ export type NodeKind = "branch" | "i18n" | "text" | "validator";
 
 // A node can be reused by multiple parents, so the structure supports DAGs.
 export type SchemaNode = {
-  key: string;
   label: string;
   kind: NodeKind;
   mandatory?: boolean;
-  helpKey?: string;
-  childKeys: string[];
+  helpLabel?: string;
+  childLabels: string[];
+};
+
+export type KeyGenerationPolicy = {
+  delimiter: ".";
+  from: "label-path";
 };
 
 export type KeySchema = {
   supportedLanguages: string[];
   supportedCommandSections: string[];
   metaArgsValidation: Command;
-  rootKeys: string[];
-  nodesByKey: Record<string, SchemaNode>;
+  rootLabels: string[];
+  nodesByLabel: Record<string, SchemaNode>;
+  keyGeneration: KeyGenerationPolicy;
+  // Examples of generated canonical keys expected in config-key.cue.
+  generatedKeyExamples: {
+    i18n: string[];
+    text: string[];
+    validator: string[];
+  };
 };
 
 export const inputFieldSchema: KeySchema = {
@@ -51,58 +62,69 @@ export const inputFieldSchema: KeySchema = {
       },
     },
   },
-  rootKeys: ["fields.textInput"],
-  nodesByKey: {
-    "fields.textInput": {
-      key: "fields.textInput",
-      label: "Text Input",
+  rootLabels: ["fields"],
+  keyGeneration: {
+    delimiter: ".",
+    from: "label-path",
+  },
+  generatedKeyExamples: {
+    i18n: [
+      "fields.textInput.label",
+      "fields.textInput.tooltip",
+      "fields.textInput.placeholder",
+      "fields.textInput.helpCommon",
+    ],
+    text: ["fields.textInput.value"],
+    validator: ["fields.textInput.value.validation"],
+  },
+  nodesByLabel: {
+    fields: {
+      label: "fields",
       kind: "branch",
-      childKeys: [
-        "fields.textInput.label",
-        "fields.textInput.tooltip",
-        "fields.textInput.placeholder",
-        "fields.textInput.value",
-        "fields.textInput.value.validation",
+      childLabels: ["textInput"],
+    },
+    textInput: {
+      label: "textInput",
+      kind: "branch",
+      childLabels: [
+        "label",
+        "tooltip",
+        "placeholder",
+        "value",
       ],
     },
-    "fields.textInput.label": {
-      key: "fields.textInput.label",
-      label: "Label",
+    label: {
+      label: "label",
       kind: "i18n",
       mandatory: true,
-      helpKey: "fields.textInput.help.common",
-      childKeys: [],
+      helpLabel: "helpCommon",
+      childLabels: [],
     },
-    "fields.textInput.tooltip": {
-      key: "fields.textInput.tooltip",
-      label: "Tooltip",
+    tooltip: {
+      label: "tooltip",
       kind: "i18n",
-      helpKey: "fields.textInput.help.common",
-      childKeys: [],
+      helpLabel: "helpCommon",
+      childLabels: [],
     },
-    "fields.textInput.placeholder": {
-      key: "fields.textInput.placeholder",
-      label: "Placeholder",
+    placeholder: {
+      label: "placeholder",
       kind: "i18n",
-      childKeys: [],
+      childLabels: [],
     },
-    "fields.textInput.value": {
-      key: "fields.textInput.value",
-      label: "Value",
+    value: {
+      label: "value",
       kind: "text",
-      childKeys: [],
+      childLabels: ["validation"],
     },
-    "fields.textInput.value.validation": {
-      key: "fields.textInput.value.validation",
-      label: "Value Validation",
+    validation: {
+      label: "validation",
       kind: "validator",
-      childKeys: [],
+      childLabels: [],
     },
-    "fields.textInput.help.common": {
-      key: "fields.textInput.help.common",
-      label: "Common Help",
+    helpCommon: {
+      label: "helpCommon",
       kind: "i18n",
-      childKeys: [],
+      childLabels: [],
     },
   },
 };
