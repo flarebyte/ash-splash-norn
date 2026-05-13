@@ -139,34 +139,12 @@ designRegistry: #DesignRegistrySpec & {
     },
   ]
 }
-
-designRegistryWithConfig: #DesignRegistryWithConfigSpec & {
-  keySchemaRegistry: designRegistry.keySchemaRegistry
-  generatorCapabilities: designRegistry.generatorCapabilities
-  selectedKeySchemaRef: "input-field@1"
-  strictKeySet: false
-  configKeyIndex: {
-    i18nKeys: [
-      "fields.textInput.label",
-      "fields.textInput.tooltip",
-      "fields.textInput.placeholder",
-    ]
-    textKeys: ["fields.textInput.value"]
-    validatorKeys: [
-      "fields.textInput.value.validation",
-      "fields.tags.validation",
-    ]
-    commandSections: ["validation", "monitoring"]
-  }
-}
 ```
 
 #### CUE Design Registry Schema
 
 ```cue
 package designregistry
-
-import "list"
 
 #FlagKind: "string" | "number" | "boolean" | "tuple"
 
@@ -272,53 +250,6 @@ import "list"
     keySchemaRegistry[c.keySchema]
   }]
 }
-
-#ConfigKeyIndex: {
-  i18nKeys:      [...string]
-  textKeys:      [...string]
-  validatorKeys: [...string]
-  commandSections: [...string]
-}
-
-#DesignRegistryWithConfigSpec: {
-  keySchemaRegistry:     #KeySchemaRegistry
-  generatorCapabilities: [...#GeneratorCapability]
-  _keySchemaRefChecks: [for c in generatorCapabilities {
-    keySchemaRegistry[c.keySchema]
-  }]
-
-  selectedKeySchemaRef: string & != ""
-  selectedKeySchema:    keySchemaRegistry[selectedKeySchemaRef]
-  configKeyIndex:       #ConfigKeyIndex
-  strictKeySet?: bool | *false
-
-  // config keys must be allowed by the selected key schema examples
-  _i18nSubsetChecks: [for k in configKeyIndex.i18nKeys if strictKeySet {
-    list.Contains(selectedKeySchema.generatedKeyExamples.i18n, k) & true
-  }]
-  _textSubsetChecks: [for k in configKeyIndex.textKeys if strictKeySet {
-    list.Contains(selectedKeySchema.generatedKeyExamples.text, k) & true
-  }]
-  _validatorSubsetChecks: [for k in configKeyIndex.validatorKeys if strictKeySet {
-    list.Contains(selectedKeySchema.generatedKeyExamples.validator, k) & true
-  }]
-
-  // and every expected key should be present in config-key
-  _i18nCoverageChecks: [for k in selectedKeySchema.generatedKeyExamples.i18n {
-    list.Contains(configKeyIndex.i18nKeys, k) & true
-  }]
-  _textCoverageChecks: [for k in selectedKeySchema.generatedKeyExamples.text {
-    list.Contains(configKeyIndex.textKeys, k) & true
-  }]
-  _validatorCoverageChecks: [for k in selectedKeySchema.generatedKeyExamples.validator {
-    list.Contains(configKeyIndex.validatorKeys, k) & true
-  }]
-
-  // command sections used in config-key must be declared by selected key schema
-  _commandSectionChecks: [for s in configKeyIndex.commandSections {
-    list.Contains(selectedKeySchema.supportedCommandSections, s) & true
-  }]
-}
 ```
 
 ### 02 Key Schema And Validation
@@ -397,7 +328,24 @@ validations: [...#ValidationEntry]
 Validation commands are authored in `examples/input/config-key.cue` under the `validations` section.
 This CUE input is the canonical source used to compile snake-knot-picker command documents.
 
-### 03 CUE Config Samples
+### 03 Implementation Suggestions
+
+#### Implementation Suggestions
+
+| area | id | priority | rationale | suggestion |
+| --- | --- | --- | --- | --- |
+| key-generation | impl-001 | high | Required to derive canonical keys from nodesByLabel DAG reliably | Implement deterministic traversal from rootLabels and childLabels with visited-set semantics |
+| key-generation | impl-002 | high | Prevents drift between schema intent and generated keys | Use keyGeneration delimiter and from policy as the only key build mechanism |
+| registry-resolution | impl-003 | high | Ensures capability runs with an explicit versioned schema | Resolve generatorCapabilities[*].keySchema against keySchemaRegistry before generation |
+| meta-filtering | impl-004 | medium | Enables restrictive generation scope without hardcoding logic | Compile metaArgsValidation command and apply it to entry metaArgs when scopeFilter is present |
+| config-validation | impl-005 | high | Fails early on malformed input shape | Validate config-key.cue sections against config-key.schema.cue before generation |
+| key-coverage | impl-006 | high | Captures schema/data divergence early | Compare derived expected keys by kind with config-key.cue keys and report missing and unexpected keys |
+| section-validation | impl-007 | medium | Keeps command namespaces controlled across versions | Validate command sections in validations against supportedCommandSections |
+| target-routing | impl-008 | high | Prevents silent no-op or wrong output mapping | Select generators by target and supportsNodeKinds and keep unknown target as hard error |
+| versioning | impl-009 | high | Supports safe evolution and backward compatibility | Introduce new keySchemaRegistry id when semantics change and keep older ids immutable |
+| diagnostics | impl-010 | medium | Improves automation and troubleshooting reliability | Emit diagnostics with stable IDs for schema, config, and generation stages |
+
+### 04 CUE Config Samples
 
 #### Key-oriented Config CUE Example
 

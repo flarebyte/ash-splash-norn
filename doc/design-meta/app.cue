@@ -25,7 +25,10 @@ reports: [{
       title: "02 Key Schema And Validation"
       notes: ["norn.cue.config-key-schema", "norn.validation-source"]
     }, {
-      title: "03 CUE Config Samples"
+      title: "03 Implementation Suggestions"
+      notes: ["norn.impl.suggestions"]
+    }, {
+      title: "04 CUE Config Samples"
       notes: ["norn.cue.config-key"]
     }]
   }]
@@ -78,9 +81,29 @@ This CUE input is the canonical source used to compile snake-knot-picker command
     labels: ["validation", "cue", "source-of-truth"]
   },
   {
+    name: "norn.impl.suggestions"
+    title: "Implementation Suggestions"
+    filepath: "examples/input/implementation.csv"
+    arguments: ["format-csv=table"]
+    labels: ["implementation", "csv", "suggestions"]
+  },
+  {
     name: "norn.cue.config-key"
     title: "Key-oriented Config CUE Example"
     filepath: "examples/input/config-key.cue"
     labels: ["cue", "example", "config"]
   },
 ]
+
+argumentRegistry: {
+  version: "1"
+  arguments: [
+    {
+      name: "format-csv"
+      valueType: "enum"
+      scopes: ["note"]
+      allowedValues: ["table"]
+      defaultValue: "table"
+    },
+  ]
+}

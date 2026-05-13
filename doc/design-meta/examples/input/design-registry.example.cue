@@ -110,23 +110,3 @@ designRegistry: #DesignRegistrySpec & {
     },
   ]
 }
-
-designRegistryWithConfig: #DesignRegistryWithConfigSpec & {
-  keySchemaRegistry: designRegistry.keySchemaRegistry
-  generatorCapabilities: designRegistry.generatorCapabilities
-  selectedKeySchemaRef: "input-field@1"
-  strictKeySet: false
-  configKeyIndex: {
-    i18nKeys: [
-      "fields.textInput.label",
-      "fields.textInput.tooltip",
-      "fields.textInput.placeholder",
-    ]
-    textKeys: ["fields.textInput.value"]
-    validatorKeys: [
-      "fields.textInput.value.validation",
-      "fields.tags.validation",
-    ]
-    commandSections: ["validation", "monitoring"]
-  }
-}
