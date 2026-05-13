@@ -83,7 +83,7 @@ This CUE input is the canonical source used to compile snake-knot-picker command
   {
     name: "norn.impl.suggestions"
     title: "Implementation Suggestions"
-    filepath: "examples/input/implementation.csv"
+    filepath: "examples/other/implementation.csv"
     arguments: ["format-csv=table"]
     labels: ["implementation", "csv", "suggestions"]
   },

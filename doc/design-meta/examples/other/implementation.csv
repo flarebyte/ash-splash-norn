@@ -9,3 +9,11 @@ impl-007,section-validation,"Validate command sections in validations against su
 impl-008,target-routing,"Select generators by target and supportsNodeKinds and keep unknown target as hard error","Prevents silent no-op or wrong output mapping",high
 impl-009,versioning,"Introduce new keySchemaRegistry id when semantics change and keep older ids immutable","Supports safe evolution and backward compatibility",high
 impl-010,diagnostics,"Emit diagnostics with stable IDs for schema, config, and generation stages","Improves automation and troubleshooting reliability",medium
+impl-011,i18n-key-naming,"Adopt camelCase for ARB keys and generated Dart API compatibility","Aligns with Flutter AppLocalizations naming conventions",high
+impl-012,i18n-key-naming,"Use a stable feature prefix for every key (for example auth, checkout, settings)","Improves searchability and avoids cross-feature key collisions",high
+impl-013,i18n-key-naming,"Prefer semantic intent suffixes such as Title Label Button Error DialogBody","Clarifies UI role without encoding fragile layout position",medium
+impl-014,i18n-key-naming,"Ban generic shared keys like saveButton in favor of feature-scoped keys","Reduces ambiguity and accidental reuse across unrelated contexts",high
+impl-015,i18n-key-naming,"Treat key renames as schema migrations and preserve stability across copy tweaks","Keys should survive wording and minor UI updates",high
+impl-016,i18n-key-naming,"Avoid strict positional naming templates; keep structure loose but consistent","Prevents artificial verbose keys and supports real-world complexity",medium
+impl-017,i18n-key-metadata,"Store strict structural metadata outside the key string (ARB metadata or external config)","Keeps keys readable while preserving machine-usable structure",medium
+impl-018,i18n-key-review,"Add a naming lint check that enforces prefix and generic-key denylist rules","Automates consistency and prevents regressions",medium

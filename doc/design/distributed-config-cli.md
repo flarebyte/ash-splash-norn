@@ -344,6 +344,14 @@ This CUE input is the canonical source used to compile snake-knot-picker command
 | target-routing | impl-008 | high | Prevents silent no-op or wrong output mapping | Select generators by target and supportsNodeKinds and keep unknown target as hard error |
 | versioning | impl-009 | high | Supports safe evolution and backward compatibility | Introduce new keySchemaRegistry id when semantics change and keep older ids immutable |
 | diagnostics | impl-010 | medium | Improves automation and troubleshooting reliability | Emit diagnostics with stable IDs for schema, config, and generation stages |
+| i18n-key-naming | impl-011 | high | Aligns with Flutter AppLocalizations naming conventions | Adopt camelCase for ARB keys and generated Dart API compatibility |
+| i18n-key-naming | impl-012 | high | Improves searchability and avoids cross-feature key collisions | Use a stable feature prefix for every key (for example auth, checkout, settings) |
+| i18n-key-naming | impl-013 | medium | Clarifies UI role without encoding fragile layout position | Prefer semantic intent suffixes such as Title Label Button Error DialogBody |
+| i18n-key-naming | impl-014 | high | Reduces ambiguity and accidental reuse across unrelated contexts | Ban generic shared keys like saveButton in favor of feature-scoped keys |
+| i18n-key-naming | impl-015 | high | Keys should survive wording and minor UI updates | Treat key renames as schema migrations and preserve stability across copy tweaks |
+| i18n-key-naming | impl-016 | medium | Prevents artificial verbose keys and supports real-world complexity | Avoid strict positional naming templates; keep structure loose but consistent |
+| i18n-key-metadata | impl-017 | medium | Keeps keys readable while preserving machine-usable structure | Store strict structural metadata outside the key string (ARB metadata or external config) |
+| i18n-key-review | impl-018 | medium | Automates consistency and prevents regressions | Add a naming lint check that enforces prefix and generic-key denylist rules |
 
 ### 04 CUE Config Samples
 
