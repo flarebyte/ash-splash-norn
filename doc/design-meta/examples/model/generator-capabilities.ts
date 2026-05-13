@@ -1,9 +1,11 @@
 import { Command } from "./common";
+import { KeySchemaRef } from "./key-schema";
 
 export type NodeKind = "i18n" | "text";
 export type TargetFormat = "arb.json" | "json" | "yaml" | "go" | "dart";
 
 export type GeneratorCapability = {
+  keySchema: KeySchemaRef;
   target: TargetFormat;
   supportsNodeKinds: NodeKind[];
   artifactPattern: string;
@@ -43,6 +45,7 @@ const exampleScopeFilter: Command = {
 
 export const generatorCapabilities: GeneratorCapability[] = [
   {
+    keySchema: "input-field",
     target: "arb.json",
     supportsNodeKinds: ["i18n"],
     artifactPattern: "lib/l10n/app_<locale>.arb.json",
@@ -50,17 +53,20 @@ export const generatorCapabilities: GeneratorCapability[] = [
     scopeFilter: exampleScopeFilter,
   },
   {
+    keySchema: "input-field",
     target: "json",
     supportsNodeKinds: ["i18n", "text"],
     artifactPattern: "generated/config/<domain>.json",
     scopeFilter: exampleScopeFilter,
   },
   {
+    keySchema: "input-field",
     target: "yaml",
     supportsNodeKinds: ["text"],
     artifactPattern: "generated/config/<domain>.yaml",
   },
   {
+    keySchema: "input-field",
     target: "go",
     supportsNodeKinds: ["text"],
     artifactPattern: "internal/generated/<domain>_config.go",
@@ -68,6 +74,7 @@ export const generatorCapabilities: GeneratorCapability[] = [
   },
 
   {
+    keySchema: "input-field",
     target: "dart",
     supportsNodeKinds: ["text"],
     artifactPattern: "lib/generated/<domain>_config.dart",

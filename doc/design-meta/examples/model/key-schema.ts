@@ -36,6 +36,9 @@ export type KeySchema = {
   };
 };
 
+export type KeySchemaRef = "input-field";
+export type KeySchemaRegistry = Record<KeySchemaRef, KeySchema>;
+
 export const inputFieldSchema: KeySchema = {
   supportedLanguages: ["en", "fr"],
   supportedCommandSections: ["validation", "monitoring", "transform"],
@@ -142,4 +145,8 @@ export const inputFieldSchema: KeySchema = {
       childLabels: [],
     },
   },
+};
+
+export const keySchemaRegistry: KeySchemaRegistry = {
+  "input-field": inputFieldSchema,
 };
