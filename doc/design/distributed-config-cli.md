@@ -22,120 +22,7 @@ Target compatibility is determined by the CLI capabilities, not by extra user-pr
 
 Concrete examples collected under doc/design-meta/examples.
 
-### 01 App Model
-
-#### Application Composition Model
-
-```ts
-import { UUID, Version, Command } from "./common";
-
-export type Application = {
-  id: UUID;
-  name: string;
-  title: string;
-  version: Version;
-};
-
-export type CliApplication = Application & {
-  command: Command;
-  repositoryIds: UUID[];
-  sourceIds: UUID[];
-  ruleIds: UUID[];
-};
-```
-
-### 02 Generator Capabilities
-
-#### Generator Capabilities Matrix
-
-```ts
-import { Command } from "./common";
-import { KeySchemaRef } from "./key-schema";
-
-export type NodeKind = "i18n" | "text";
-export type TargetFormat = "arb.json" | "json" | "yaml" | "go" | "dart";
-
-export type GeneratorCapability = {
-  keySchema: KeySchemaRef;
-  target: TargetFormat;
-  supportsNodeKinds: NodeKind[];
-  artifactPattern: string;
-  notes?: string;
-  scopeFilter?: Command;
-};
-
-//command with a reduced scope
-const exampleScopeFilter: Command = {
-  args: {
-    validation: {
-      commandPath: ["meta"],
-      adminOnly: false,
-      flags: [
-        {
-          kind: "string",
-          name: "status",
-          schema: [
-            "schema",
-            "string",
-            "--enum",
-            "stable,experimental",
-            "--required",
-          ],
-          schemas: [],
-        },
-        {
-          kind: "string",
-          name: "app",
-          schema: ["schema", "string", "--enum", "v2", "--required"],
-          schemas: [],
-        },
-      ],
-    },
-  },
-};
-
-export const generatorCapabilities: GeneratorCapability[] = [
-  {
-    keySchema: "input-field@1",
-    target: "arb.json",
-    supportsNodeKinds: ["i18n"],
-    artifactPattern: "lib/l10n/app_<locale>.arb.json",
-    notes: "Preferred Flutter/Dart localization target.",
-    scopeFilter: exampleScopeFilter,
-  },
-  {
-    keySchema: "input-field@1",
-    target: "json",
-    supportsNodeKinds: ["i18n", "text"],
-    artifactPattern: "generated/config/<domain>.json",
-    scopeFilter: exampleScopeFilter,
-  },
-  {
-    keySchema: "input-field@1",
-    target: "yaml",
-    supportsNodeKinds: ["text"],
-    artifactPattern: "generated/config/<domain>.yaml",
-  },
-  {
-    keySchema: "input-field@1",
-    target: "go",
-    supportsNodeKinds: ["text"],
-    artifactPattern: "internal/generated/<domain>_config.go",
-    notes: "Generated structs/constants may evolve with compiler releases.",
-  },
-
-  {
-    keySchema: "input-field@1",
-    target: "dart",
-    supportsNodeKinds: ["text"],
-    artifactPattern: "lib/generated/<domain>_config.dart",
-    notes: "Non-i18n data models for Flutter runtime configs.",
-    scopeFilter: exampleScopeFilter,
-  },
-];
-```
-
-### 03 Schema And Validation Model
+### 01 Registry Schema
 
 #### CUE Design Registry Example
 
@@ -252,12 +139,34 @@ designRegistry: #DesignRegistrySpec & {
     },
   ]
 }
+
+designRegistryWithConfig: #DesignRegistryWithConfigSpec & {
+  keySchemaRegistry: designRegistry.keySchemaRegistry
+  generatorCapabilities: designRegistry.generatorCapabilities
+  selectedKeySchemaRef: "input-field@1"
+  strictKeySet: false
+  configKeyIndex: {
+    i18nKeys: [
+      "fields.textInput.label",
+      "fields.textInput.tooltip",
+      "fields.textInput.placeholder",
+    ]
+    textKeys: ["fields.textInput.value"]
+    validatorKeys: [
+      "fields.textInput.value.validation",
+      "fields.tags.validation",
+    ]
+    commandSections: ["validation", "monitoring"]
+  }
+}
 ```
 
 #### CUE Design Registry Schema
 
 ```cue
 package designregistry
+
+import "list"
 
 #FlagKind: "string" | "number" | "boolean" | "tuple"
 
@@ -363,195 +272,124 @@ package designregistry
     keySchemaRegistry[c.keySchema]
   }]
 }
+
+#ConfigKeyIndex: {
+  i18nKeys:      [...string]
+  textKeys:      [...string]
+  validatorKeys: [...string]
+  commandSections: [...string]
+}
+
+#DesignRegistryWithConfigSpec: {
+  keySchemaRegistry:     #KeySchemaRegistry
+  generatorCapabilities: [...#GeneratorCapability]
+  _keySchemaRefChecks: [for c in generatorCapabilities {
+    keySchemaRegistry[c.keySchema]
+  }]
+
+  selectedKeySchemaRef: string & != ""
+  selectedKeySchema:    keySchemaRegistry[selectedKeySchemaRef]
+  configKeyIndex:       #ConfigKeyIndex
+  strictKeySet?: bool | *false
+
+  // config keys must be allowed by the selected key schema examples
+  _i18nSubsetChecks: [for k in configKeyIndex.i18nKeys if strictKeySet {
+    list.Contains(selectedKeySchema.generatedKeyExamples.i18n, k) & true
+  }]
+  _textSubsetChecks: [for k in configKeyIndex.textKeys if strictKeySet {
+    list.Contains(selectedKeySchema.generatedKeyExamples.text, k) & true
+  }]
+  _validatorSubsetChecks: [for k in configKeyIndex.validatorKeys if strictKeySet {
+    list.Contains(selectedKeySchema.generatedKeyExamples.validator, k) & true
+  }]
+
+  // and every expected key should be present in config-key
+  _i18nCoverageChecks: [for k in selectedKeySchema.generatedKeyExamples.i18n {
+    list.Contains(configKeyIndex.i18nKeys, k) & true
+  }]
+  _textCoverageChecks: [for k in selectedKeySchema.generatedKeyExamples.text {
+    list.Contains(configKeyIndex.textKeys, k) & true
+  }]
+  _validatorCoverageChecks: [for k in selectedKeySchema.generatedKeyExamples.validator {
+    list.Contains(configKeyIndex.validatorKeys, k) & true
+  }]
+
+  // command sections used in config-key must be declared by selected key schema
+  _commandSectionChecks: [for s in configKeyIndex.commandSections {
+    list.Contains(selectedKeySchema.supportedCommandSections, s) & true
+  }]
+}
 ```
 
-#### I18n Key Schema Hierarchy Model
+### 02 Key Schema And Validation
 
-```ts
-import { Command } from "./common";
+#### CUE Config Key Schema
 
-export type NodeKind = "branch" | "i18n" | "text" | "validator";
+```cue
+package configkey
 
-// A node can be reused by multiple parents, so the structure supports DAGs.
-export type SchemaNode = {
-  label: string;
-  kind: NodeKind;
-  mandatory?: boolean;
-  childLabels: string[];
-  maintenance?: {
-    intent?: string;
-    do?: string[];
-    avoid?: string[];
-    examples?: string[];
-  };
-};
+#CommandFlagDef: {
+  kind: "string" | "number" | "boolean" | "tuple"
+  name: string & !=""
+  schema: [...string] & ["schema", string, ...string]
+  schemas?: [...[...string]]
+}
 
-export type KeyGenerationPolicy = {
-  delimiter: ".";
-  from: "label-path";
-};
+#CommandSpec: {
+  commandPath: [...string] & [string, ...string]
+  adminOnly: bool
+  flags: [...#CommandFlagDef] & [#CommandFlagDef, ...#CommandFlagDef]
+}
 
-export type KeySchemaMetadata = {
-  id: string;
-  version: string;
-  status: "draft" | "stable" | "deprecated";
-  features: string[];
-  compatibleTargets?: string[];
-  supersedes?: string[];
-  maintenance?: {
-    intent?: string;
-    do?: string[];
-    avoid?: string[];
-  };
-};
+#ValidationArgs: {
+  validation?: #CommandSpec
+  monitoring?: #CommandSpec
+  transform?: #CommandSpec
+}
 
-export type KeySchema = {
-  metadata: KeySchemaMetadata;
-  supportedLanguages: string[];
-  supportedCommandSections: string[];
-  metaArgsValidation: Command;
-  rootLabels: string[];
-  nodesByLabel: Record<string, SchemaNode>;
-  keyGeneration: KeyGenerationPolicy;
-  // Examples of generated canonical keys expected in config-key.cue.
-  generatedKeyExamples: {
-    i18n: string[];
-    text: string[];
-    validator: string[];
-  };
-};
+#ValidationCommand: {
+  args: #ValidationArgs
+}
 
-export type KeySchemaRef = string;
-export type KeySchemaRegistry = Record<KeySchemaRef, KeySchema>;
+#ValidationEntry: {
+  key: string & !=""
+  metaArgs: ["meta", "--status", "draft" | "stable" | "experimental", "--app", "v1" | "v2"]
+  commands: [...#ValidationCommand] & [#ValidationCommand, ...#ValidationCommand]
+}
 
-export const inputFieldSchema: KeySchema = {
-  metadata: {
-    id: "input-field",
-    version: "1.0.0",
-    status: "stable",
-    features: [
-      "nodesByLabel-graph",
-      "label-path-key-generation",
-      "meta-args-command-spec",
-      "snake-knot-picker-flag-schema",
-    ],
-    compatibleTargets: ["arb.json", "json", "yaml", "go", "dart"],
-    maintenance: {
-      intent: "Canonical key schema for input field i18n/text/validator entries.",
-      do: ["Create a new version when changing key generation semantics."],
-      avoid: ["Do not mutate existing semantics under the same version."],
-    },
-  },
-  supportedLanguages: ["en", "fr"],
-  supportedCommandSections: ["validation", "monitoring", "transform"],
-  metaArgsValidation: {
-    args: {
-      validation: {
-        commandPath: ["meta"],
-        adminOnly: false,
-        flags: [
-          {
-            kind: "string",
-            name: "status",
-            schema: [
-              "schema",
-              "string",
-              "--enum",
-              "draft,stable,experimental",
-              "--required",
-            ],
-            schemas: [],
-          },
-          {
-            kind: "string",
-            name: "app",
-            schema: ["schema", "string", "--enum", "v1,v2", "--required"],
-            schemas: [],
-          },
-        ],
-      },
-    },
-  },
-  rootLabels: ["fields"],
-  keyGeneration: {
-    delimiter: ".",
-    from: "label-path",
-  },
-  generatedKeyExamples: {
-    i18n: [
-      "fields.textInput.label",
-      "fields.textInput.tooltip",
-      "fields.textInput.placeholder",
-    ],
-    text: ["fields.textInput.value"],
-    validator: ["fields.textInput.value.validation"],
-  },
-  nodesByLabel: {
-    fields: {
-      label: "fields",
-      kind: "branch",
-      childLabels: ["textInput"],
-    },
-    textInput: {
-      label: "textInput",
-      kind: "branch",
-      childLabels: [
-        "label",
-        "tooltip",
-        "placeholder",
-        "value",
-      ],
-    },
-    label: {
-      label: "label",
-      kind: "i18n",
-      mandatory: true,
-      childLabels: [],
-      maintenance: {
-        intent: "Primary user-facing label for the field.",
-        do: [
-          "Keep concise and action-oriented.",
-          "Ensure all supported languages are provided in input CUE.",
-        ],
-        avoid: [
-          "Do not embed validation rules in label text.",
-          "Do not duplicate tooltip content.",
-        ],
-        examples: ["Checkout Payment", "Card Number"],
-      },
-    },
-    tooltip: {
-      label: "tooltip",
-      kind: "i18n",
-      childLabels: [],
-      maintenance: {
-        intent: "Contextual helper text shown on demand.",
-        do: ["Prefer short explanatory guidance."],
-        avoid: ["Avoid repeating the exact label text."],
-        examples: ["Enter the value used for checkout."],
-      },
-    },
-    placeholder: {
-      label: "placeholder",
-      kind: "i18n",
-      childLabels: [],
-    },
-    value: {
-      label: "value",
-      kind: "text",
-      childLabels: ["validation"],
-    },
-    validation: {
-      label: "validation",
-      kind: "validator",
-      childLabels: [],
-    },
-  },
-};
+#I18nTranslation: {
+  text: string
+  context?: {
+    feature?: string
+    component?: string
+    type?: string
+    surface?: string
+  }
+}
 
-export const keySchemaRegistry: KeySchemaRegistry = {
-  "input-field@1": inputFieldSchema,
-};
+#I18nEntry: {
+  key: string & !=""
+  description: string
+  kind: "i18n"
+  metaArgs: ["meta", "--status", "draft" | "stable" | "experimental", "--app", "v1" | "v2"]
+  translations: {
+    en: #I18nTranslation
+    fr: #I18nTranslation
+    [string]: #I18nTranslation
+  }
+}
+
+#TextEntry: {
+  key: string & !=""
+  description: string
+  kind: "text"
+  metaArgs: ["meta", "--status", "draft" | "stable" | "experimental", "--app", "v1" | "v2"]
+  value: string
+}
+
+i18nEntries: [...#I18nEntry]
+textEntries: [...#TextEntry]
+validations: [...#ValidationEntry]
 ```
 
 #### Validation Source Of Truth
@@ -559,7 +397,7 @@ export const keySchemaRegistry: KeySchemaRegistry = {
 Validation commands are authored in `examples/input/config-key.cue` under the `validations` section.
 This CUE input is the canonical source used to compile snake-knot-picker command documents.
 
-### 04 CUE Config Samples
+### 03 CUE Config Samples
 
 #### Key-oriented Config CUE Example
 

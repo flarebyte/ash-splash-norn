@@ -19,16 +19,13 @@ reports: [{
     title:       "02 Examples"
     description: "Concrete examples collected under doc/design-meta/examples."
     sections: [{
-      title: "01 App Model"
-      notes: ["norn.ts.app"]
+      title: "01 Registry Schema"
+      notes: ["norn.cue.design-registry-schema", "norn.cue.design-registry-example"]
     }, {
-      title: "02 Generator Capabilities"
-      notes: ["norn.ts.generator-capabilities"]
+      title: "02 Key Schema And Validation"
+      notes: ["norn.cue.config-key-schema", "norn.validation-source"]
     }, {
-      title: "03 Schema And Validation Model"
-      notes: ["norn.ts.i18n-key-schema", "norn.cue.design-registry-schema", "norn.cue.design-registry-example", "norn.validation-source"]
-    }, {
-      title: "04 CUE Config Samples"
+      title: "03 CUE Config Samples"
       notes: ["norn.cue.config-key"]
     }]
   }]
@@ -54,24 +51,6 @@ Target compatibility is determined by the CLI capabilities, not by extra user-pr
     labels: ["overview", "outputs"]
   },
   {
-    name: "norn.ts.app"
-    title: "Application Composition Model"
-    filepath: "examples/model/app.ts"
-    labels: ["typescript", "example", "application"]
-  },
-  {
-    name: "norn.ts.generator-capabilities"
-    title: "Generator Capabilities Matrix"
-    filepath: "examples/model/generator-capabilities.ts"
-    labels: ["typescript", "example", "capabilities", "targets"]
-  },
-  {
-    name: "norn.ts.i18n-key-schema"
-    title: "I18n Key Schema Hierarchy Model"
-    filepath: "examples/model/key-schema.ts"
-    labels: ["typescript", "example", "i18n", "schema"]
-  },
-  {
     name: "norn.cue.design-registry-schema"
     title: "CUE Design Registry Schema"
     filepath: "examples/input/design-registry.schema.cue"
@@ -82,6 +61,12 @@ Target compatibility is determined by the CLI capabilities, not by extra user-pr
     title: "CUE Design Registry Example"
     filepath: "examples/input/design-registry.example.cue"
     labels: ["cue", "example", "registry", "capabilities"]
+  },
+  {
+    name: "norn.cue.config-key-schema"
+    title: "CUE Config Key Schema"
+    filepath: "examples/input/config-key.schema.cue"
+    labels: ["cue", "schema", "config", "keys"]
   },
   {
     name: "norn.validation-source"
