@@ -142,8 +142,13 @@ export type SchemaNode = {
   label: string;
   kind: NodeKind;
   mandatory?: boolean;
-  helpLabel?: string;
   childLabels: string[];
+  maintenance?: {
+    intent?: string;
+    do?: string[];
+    avoid?: string[];
+    examples?: string[];
+  };
 };
 
 export type KeyGenerationPolicy = {
@@ -207,7 +212,6 @@ export const inputFieldSchema: KeySchema = {
       "fields.textInput.label",
       "fields.textInput.tooltip",
       "fields.textInput.placeholder",
-      "fields.textInput.helpCommon",
     ],
     text: ["fields.textInput.value"],
     validator: ["fields.textInput.value.validation"],
@@ -232,14 +236,30 @@ export const inputFieldSchema: KeySchema = {
       label: "label",
       kind: "i18n",
       mandatory: true,
-      helpLabel: "helpCommon",
       childLabels: [],
+      maintenance: {
+        intent: "Primary user-facing label for the field.",
+        do: [
+          "Keep concise and action-oriented.",
+          "Ensure all supported languages are provided in input CUE.",
+        ],
+        avoid: [
+          "Do not embed validation rules in label text.",
+          "Do not duplicate tooltip content.",
+        ],
+        examples: ["Checkout Payment", "Card Number"],
+      },
     },
     tooltip: {
       label: "tooltip",
       kind: "i18n",
-      helpLabel: "helpCommon",
       childLabels: [],
+      maintenance: {
+        intent: "Contextual helper text shown on demand.",
+        do: ["Prefer short explanatory guidance."],
+        avoid: ["Avoid repeating the exact label text."],
+        examples: ["Enter the value used for checkout."],
+      },
     },
     placeholder: {
       label: "placeholder",
@@ -254,11 +274,6 @@ export const inputFieldSchema: KeySchema = {
     validation: {
       label: "validation",
       kind: "validator",
-      childLabels: [],
-    },
-    helpCommon: {
-      label: "helpCommon",
-      kind: "i18n",
       childLabels: [],
     },
   },
