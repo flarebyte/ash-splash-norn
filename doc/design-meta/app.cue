@@ -26,7 +26,7 @@ reports: [{
       notes: ["norn.ts.generator-capabilities"]
     }, {
       title: "03 Schema And Validation Model"
-      notes: ["norn.ts.i18n-key-schema", "norn.validation-source"]
+      notes: ["norn.ts.i18n-key-schema", "norn.cue.design-registry-schema", "norn.cue.design-registry-example", "norn.validation-source"]
     }, {
       title: "04 CUE Config Samples"
       notes: ["norn.cue.config-key"]
@@ -70,6 +70,18 @@ Target compatibility is determined by the CLI capabilities, not by extra user-pr
     title: "I18n Key Schema Hierarchy Model"
     filepath: "examples/model/key-schema.ts"
     labels: ["typescript", "example", "i18n", "schema"]
+  },
+  {
+    name: "norn.cue.design-registry-schema"
+    title: "CUE Design Registry Schema"
+    filepath: "examples/input/design-registry.schema.cue"
+    labels: ["cue", "schema", "registry", "capabilities"]
+  },
+  {
+    name: "norn.cue.design-registry-example"
+    title: "CUE Design Registry Example"
+    filepath: "examples/input/design-registry.example.cue"
+    labels: ["cue", "example", "registry", "capabilities"]
   },
   {
     name: "norn.validation-source"

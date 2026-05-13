@@ -137,6 +137,234 @@ export const generatorCapabilities: GeneratorCapability[] = [
 
 ### 03 Schema And Validation Model
 
+#### CUE Design Registry Example
+
+```cue
+package designregistry
+
+designRegistry: #DesignRegistrySpec & {
+  keySchemaRegistry: {
+    "input-field@1": {
+      metadata: {
+        id: "input-field"
+        version: "1.0.0"
+        status: "stable"
+        features: [
+          "nodesByLabel-graph",
+          "label-path-key-generation",
+          "meta-args-command-spec",
+          "snake-knot-picker-flag-schema",
+        ]
+        compatibleTargets: ["arb.json", "json", "yaml", "go", "dart"]
+      }
+      supportedLanguages: ["en", "fr"]
+      supportedCommandSections: ["validation", "monitoring", "transform"]
+      metaArgsValidation: {
+        args: {
+          validation: {
+            commandPath: ["meta"]
+            adminOnly: false
+            flags: [
+              {
+                kind: "string"
+                name: "status"
+                schema: ["schema", "string", "--enum", "draft,stable,experimental", "--required"]
+                schemas: []
+              },
+              {
+                kind: "string"
+                name: "app"
+                schema: ["schema", "string", "--enum", "v1,v2", "--required"]
+                schemas: []
+              },
+            ]
+          }
+        }
+      }
+      rootLabels: ["fields"]
+      nodesByLabel: {
+        fields: {
+          label: "fields"
+          kind: "branch"
+          childLabels: ["textInput"]
+        }
+        textInput: {
+          label: "textInput"
+          kind: "branch"
+          childLabels: ["label", "tooltip", "placeholder", "value"]
+        }
+        label: {
+          label: "label"
+          kind: "i18n"
+          mandatory: true
+          childLabels: []
+        }
+        tooltip: {
+          label: "tooltip"
+          kind: "i18n"
+          childLabels: []
+        }
+        placeholder: {
+          label: "placeholder"
+          kind: "i18n"
+          childLabels: []
+        }
+        value: {
+          label: "value"
+          kind: "text"
+          childLabels: ["validation"]
+        }
+        validation: {
+          label: "validation"
+          kind: "validator"
+          childLabels: []
+        }
+      }
+      keyGeneration: {
+        delimiter: "."
+        from: "label-path"
+      }
+      generatedKeyExamples: {
+        i18n: [
+          "fields.textInput.label",
+          "fields.textInput.tooltip",
+          "fields.textInput.placeholder",
+        ]
+        text: ["fields.textInput.value"]
+        validator: ["fields.textInput.value.validation"]
+      }
+    }
+  }
+
+  generatorCapabilities: [
+    {
+      keySchema: "input-field@1"
+      target: "arb.json"
+      supportsNodeKinds: ["i18n"]
+      artifactPattern: "lib/l10n/app_<locale>.arb.json"
+      notes: "Preferred Flutter/Dart localization target."
+    },
+    {
+      keySchema: "input-field@1"
+      target: "json"
+      supportsNodeKinds: ["i18n", "text"]
+      artifactPattern: "generated/config/<domain>.json"
+    },
+  ]
+}
+```
+
+#### CUE Design Registry Schema
+
+```cue
+package designregistry
+
+#FlagKind: "string" | "number" | "boolean" | "tuple"
+
+#CommandFlagDef: {
+  kind:   #FlagKind
+  name:   string & !=""
+  schema: [...string]
+  schema: ["schema", ...string]
+  schemas?: [...[...string]]
+}
+
+#CommandSpec: {
+  commandPath: [...string]
+  commandPath: [string, ...string]
+  adminOnly:   bool
+  flags:       [...#CommandFlagDef]
+}
+
+#CommandKind: "validation" | "monitoring" | "transform" | string
+
+#Command: {
+  args: [#CommandKind]: #CommandSpec
+}
+
+#NodeKind: "branch" | "i18n" | "text" | "validator"
+
+#NodeMaintenance: {
+  intent?:   string
+  do?:       [...string]
+  avoid?:    [...string]
+  examples?: [...string]
+}
+
+#SchemaNode: {
+  label:       string & !=""
+  kind:        #NodeKind
+  mandatory?:  bool
+  childLabels: [...string]
+  maintenance?: #NodeMaintenance
+}
+
+#KeyGenerationPolicy: {
+  delimiter: "."
+  from:      "label-path"
+}
+
+#KeySchemaMetadata: {
+  id:      string & !=""
+  version: string & !=""
+  status:  "draft" | "stable" | "deprecated"
+
+  features?:          [...string]
+  compatibleTargets?: [...#TargetFormat]
+  supersedes?:        [...string]
+
+  maintenance?: {
+    intent?: string
+    do?:     [...string]
+    avoid?:  [...string]
+  }
+}
+
+#KeySchema: {
+  metadata: #KeySchemaMetadata
+
+  supportedLanguages:       [...string]
+  supportedCommandSections: [...string]
+
+  metaArgsValidation: #Command
+
+  rootLabels:   [...string]
+  nodesByLabel: [string]: #SchemaNode
+
+  keyGeneration: #KeyGenerationPolicy
+
+  generatedKeyExamples: {
+    i18n:      [...string]
+    text:      [...string]
+    validator: [...string]
+  }
+}
+
+#KeySchemaRegistry: [string]: #KeySchema
+
+#TargetFormat: "arb.json" | "json" | "yaml" | "go" | "dart"
+#CapabilityNodeKind: "i18n" | "text"
+
+#GeneratorCapability: {
+  keySchema:         string & !=""
+  target:            #TargetFormat
+  supportsNodeKinds: [...#CapabilityNodeKind]
+  artifactPattern:   string & !=""
+  notes?:            string
+  scopeFilter?:      #Command
+}
+
+#DesignRegistrySpec: {
+  keySchemaRegistry:     #KeySchemaRegistry
+  generatorCapabilities: [...#GeneratorCapability]
+
+  // Every generator capability must reference a known key schema id.
+  _keySchemaRefChecks: [for c in generatorCapabilities {
+    keySchemaRegistry[c.keySchema]
+  }]
+}
+```
+
 #### I18n Key Schema Hierarchy Model
 
 ```ts

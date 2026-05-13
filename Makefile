@@ -128,6 +128,7 @@ doc-design:
 
 cue-input:
 	cue vet doc/design-meta/examples/input/config-key.cue doc/design-meta/examples/input/config-key.schema.cue
+	cue vet doc/design-meta/examples/input/design-registry.example.cue doc/design-meta/examples/input/design-registry.schema.cue
 
 doc-decision:
 	mkdir -p doc/decision-meta
