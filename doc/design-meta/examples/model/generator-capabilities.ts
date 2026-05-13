@@ -45,7 +45,7 @@ const exampleScopeFilter: Command = {
 
 export const generatorCapabilities: GeneratorCapability[] = [
   {
-    keySchema: "input-field",
+    keySchema: "input-field@1",
     target: "arb.json",
     supportsNodeKinds: ["i18n"],
     artifactPattern: "lib/l10n/app_<locale>.arb.json",
@@ -53,20 +53,20 @@ export const generatorCapabilities: GeneratorCapability[] = [
     scopeFilter: exampleScopeFilter,
   },
   {
-    keySchema: "input-field",
+    keySchema: "input-field@1",
     target: "json",
     supportsNodeKinds: ["i18n", "text"],
     artifactPattern: "generated/config/<domain>.json",
     scopeFilter: exampleScopeFilter,
   },
   {
-    keySchema: "input-field",
+    keySchema: "input-field@1",
     target: "yaml",
     supportsNodeKinds: ["text"],
     artifactPattern: "generated/config/<domain>.yaml",
   },
   {
-    keySchema: "input-field",
+    keySchema: "input-field@1",
     target: "go",
     supportsNodeKinds: ["text"],
     artifactPattern: "internal/generated/<domain>_config.go",
@@ -74,7 +74,7 @@ export const generatorCapabilities: GeneratorCapability[] = [
   },
 
   {
-    keySchema: "input-field",
+    keySchema: "input-field@1",
     target: "dart",
     supportsNodeKinds: ["text"],
     artifactPattern: "lib/generated/<domain>_config.dart",

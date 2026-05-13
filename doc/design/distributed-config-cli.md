@@ -96,7 +96,7 @@ const exampleScopeFilter: Command = {
 
 export const generatorCapabilities: GeneratorCapability[] = [
   {
-    keySchema: "input-field",
+    keySchema: "input-field@1",
     target: "arb.json",
     supportsNodeKinds: ["i18n"],
     artifactPattern: "lib/l10n/app_<locale>.arb.json",
@@ -104,20 +104,20 @@ export const generatorCapabilities: GeneratorCapability[] = [
     scopeFilter: exampleScopeFilter,
   },
   {
-    keySchema: "input-field",
+    keySchema: "input-field@1",
     target: "json",
     supportsNodeKinds: ["i18n", "text"],
     artifactPattern: "generated/config/<domain>.json",
     scopeFilter: exampleScopeFilter,
   },
   {
-    keySchema: "input-field",
+    keySchema: "input-field@1",
     target: "yaml",
     supportsNodeKinds: ["text"],
     artifactPattern: "generated/config/<domain>.yaml",
   },
   {
-    keySchema: "input-field",
+    keySchema: "input-field@1",
     target: "go",
     supportsNodeKinds: ["text"],
     artifactPattern: "internal/generated/<domain>_config.go",
@@ -125,7 +125,7 @@ export const generatorCapabilities: GeneratorCapability[] = [
   },
 
   {
-    keySchema: "input-field",
+    keySchema: "input-field@1",
     target: "dart",
     supportsNodeKinds: ["text"],
     artifactPattern: "lib/generated/<domain>_config.dart",
@@ -163,7 +163,22 @@ export type KeyGenerationPolicy = {
   from: "label-path";
 };
 
+export type KeySchemaMetadata = {
+  id: string;
+  version: string;
+  status: "draft" | "stable" | "deprecated";
+  features: string[];
+  compatibleTargets?: string[];
+  supersedes?: string[];
+  maintenance?: {
+    intent?: string;
+    do?: string[];
+    avoid?: string[];
+  };
+};
+
 export type KeySchema = {
+  metadata: KeySchemaMetadata;
   supportedLanguages: string[];
   supportedCommandSections: string[];
   metaArgsValidation: Command;
@@ -178,10 +193,27 @@ export type KeySchema = {
   };
 };
 
-export type KeySchemaRef = "input-field";
+export type KeySchemaRef = string;
 export type KeySchemaRegistry = Record<KeySchemaRef, KeySchema>;
 
 export const inputFieldSchema: KeySchema = {
+  metadata: {
+    id: "input-field",
+    version: "1.0.0",
+    status: "stable",
+    features: [
+      "nodesByLabel-graph",
+      "label-path-key-generation",
+      "meta-args-command-spec",
+      "snake-knot-picker-flag-schema",
+    ],
+    compatibleTargets: ["arb.json", "json", "yaml", "go", "dart"],
+    maintenance: {
+      intent: "Canonical key schema for input field i18n/text/validator entries.",
+      do: ["Create a new version when changing key generation semantics."],
+      avoid: ["Do not mutate existing semantics under the same version."],
+    },
+  },
   supportedLanguages: ["en", "fr"],
   supportedCommandSections: ["validation", "monitoring", "transform"],
   metaArgsValidation: {
@@ -290,7 +322,7 @@ export const inputFieldSchema: KeySchema = {
 };
 
 export const keySchemaRegistry: KeySchemaRegistry = {
-  "input-field": inputFieldSchema,
+  "input-field@1": inputFieldSchema,
 };
 ```
 
