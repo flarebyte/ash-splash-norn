@@ -25,10 +25,13 @@ reports: [{
       title: "02 Key Schema And Validation"
       notes: ["norn.cue.config-key-schema", "norn.validation-source"]
     }, {
-      title: "03 Implementation Suggestions"
+      title: "03 CLI Commands"
+      notes: ["norn.cli.commands"]
+    }, {
+      title: "04 Implementation Suggestions"
       notes: ["norn.impl.suggestions"]
     }, {
-      title: "04 CUE Config Samples"
+      title: "05 CUE Config Samples"
       notes: ["norn.cue.config-key"]
     }]
   }]
@@ -79,6 +82,13 @@ Validation commands are authored in `examples/input/config-key.cue` under the `v
 This CUE input is the canonical source used to compile snake-knot-picker command documents.
 """
     labels: ["validation", "cue", "source-of-truth"]
+  },
+  {
+    name: "norn.cli.commands"
+    title: "CLI Command Catalog"
+    filepath: "examples/other/cli-commands.csv"
+    arguments: ["format-csv=table"]
+    labels: ["cli", "commands", "csv"]
   },
   {
     name: "norn.impl.suggestions"
