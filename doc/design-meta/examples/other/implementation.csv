@@ -17,3 +17,8 @@ impl-015,i18n-key-naming,"Treat key renames as schema migrations and preserve st
 impl-016,i18n-key-naming,"Avoid strict positional naming templates; keep structure loose but consistent","Prevents artificial verbose keys and supports real-world complexity",medium
 impl-017,i18n-key-metadata,"Store strict structural metadata outside the key string (ARB metadata or external config)","Keeps keys readable while preserving machine-usable structure",medium
 impl-018,i18n-key-review,"Add a naming lint check that enforces prefix and generic-key denylist rules","Automates consistency and prevents regressions",medium
+impl-019,cli-contract,"Publish supported CLI commands in registry metadata and fail unknown command invocation","Makes CLI capabilities explicit and versioned with the spec",high
+impl-020,linting,"Fail lint when validation command sections are outside supportedCommandSections","Converts section governance from convention into an enforceable rule",high
+impl-021,artifact-pattern,"Validate artifactPattern placeholders against an allowed token set and required-by-target policy","Prevents invalid output path templates and target-specific omissions",high
+impl-022,graph-integrity,"Raise errors for graph cycles and generated key collisions during key derivation","Ensures deterministic key generation from nodesByLabel",high
+impl-023,translation-coverage,"Require each i18n entry to provide all supportedLanguages when translationPolicy demands it","Keeps localized output complete and consistent",high

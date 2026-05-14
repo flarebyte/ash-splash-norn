@@ -1,6 +1,23 @@
 package designregistry
 
 designRegistry: #DesignRegistrySpec & {
+  supportedCliCommands: ["validate", "generate", "lint", "list"]
+  lintPolicy: {
+    unknownCommandSection: "error"
+  }
+  artifactPatternPolicy: {
+    allowedTokens: ["{schemaRef}", "{target}", "{locale}", "{domain}", "{version}"]
+    requiredByTarget: {
+      "arb.json": ["{locale}"]
+    }
+  }
+  versioningPolicy: {
+    immutableSchemaRefs: true
+    incompatibleChangesRequireNewRef: true
+    deprecatedMeansLintWarn: true
+    supersedesIsAdvisory: true
+  }
+
   keySchemaRegistry: {
     "input-field@1": {
       metadata: {
@@ -17,6 +34,9 @@ designRegistry: #DesignRegistrySpec & {
       }
       supportedLanguages: ["en", "fr"]
       supportedCommandSections: ["validation", "monitoring", "transform"]
+      translationPolicy: {
+        requireAllSupportedLanguages: true
+      }
       metaArgsValidation: {
         args: {
           validation: {
@@ -86,7 +106,10 @@ designRegistry: #DesignRegistrySpec & {
       keyGeneration: {
         delimiter: "."
         from: "label-path-camelCase"
+        allowCycles: false
+        onGeneratedKeyCollision: "error"
       }
+      generatedKeyExamplesMode: "illustrative"
       generatedKeyExamples: {
         i18n: [
           "fieldsTextInputLabel",

@@ -30,6 +30,23 @@ Concrete examples collected under doc/design-meta/examples.
 package designregistry
 
 designRegistry: #DesignRegistrySpec & {
+  supportedCliCommands: ["validate", "generate", "lint", "list"]
+  lintPolicy: {
+    unknownCommandSection: "error"
+  }
+  artifactPatternPolicy: {
+    allowedTokens: ["{schemaRef}", "{target}", "{locale}", "{domain}", "{version}"]
+    requiredByTarget: {
+      "arb.json": ["{locale}"]
+    }
+  }
+  versioningPolicy: {
+    immutableSchemaRefs: true
+    incompatibleChangesRequireNewRef: true
+    deprecatedMeansLintWarn: true
+    supersedesIsAdvisory: true
+  }
+
   keySchemaRegistry: {
     "input-field@1": {
       metadata: {
@@ -46,6 +63,9 @@ designRegistry: #DesignRegistrySpec & {
       }
       supportedLanguages: ["en", "fr"]
       supportedCommandSections: ["validation", "monitoring", "transform"]
+      translationPolicy: {
+        requireAllSupportedLanguages: true
+      }
       metaArgsValidation: {
         args: {
           validation: {
@@ -115,7 +135,10 @@ designRegistry: #DesignRegistrySpec & {
       keyGeneration: {
         delimiter: "."
         from: "label-path-camelCase"
+        allowCycles: false
+        onGeneratedKeyCollision: "error"
       }
+      generatedKeyExamplesMode: "illustrative"
       generatedKeyExamples: {
         i18n: [
           "fieldsTextInputLabel",
@@ -200,6 +223,8 @@ package designregistry
   // Optional for future variants that may need explicit separators.
   delimiter?: "." | "_" | "-"
   from: "label-path-camelCase"
+  allowCycles?: false | *false
+  onGeneratedKeyCollision?: "error" | *"error"
 }
 
 #KeySchemaMetadata: {
@@ -223,6 +248,9 @@ package designregistry
 
   supportedLanguages:       [...string]
   supportedCommandSections: [...string]
+  translationPolicy?: {
+    requireAllSupportedLanguages: bool | *true
+  }
 
   metaArgsValidation: #Command
 
@@ -230,6 +258,7 @@ package designregistry
   nodesByLabel: [string]: #SchemaNode
 
   keyGeneration: #KeyGenerationPolicy
+  generatedKeyExamplesMode: "illustrative" | "normative" | *"illustrative"
 
   generatedKeyExamples: {
     i18n:      [...string]
@@ -242,6 +271,8 @@ package designregistry
 
 #TargetFormat: "arb.json" | "json" | "yaml" | "go" | "dart"
 #CapabilityNodeKind: "i18n" | "text"
+#CliCommand: "validate" | "generate" | "lint" | "list"
+#ArtifactPatternToken: "{schemaRef}" | "{target}" | "{locale}" | "{domain}" | "{version}"
 
 #GeneratorCapability: {
   keySchema:         string & !=""
@@ -252,9 +283,29 @@ package designregistry
   scopeFilter?:      #Command
 }
 
+#LintPolicy: {
+  unknownCommandSection: "error" | "warn" | "ignore"
+}
+
+#ArtifactPatternPolicy: {
+  allowedTokens: [...#ArtifactPatternToken]
+  requiredByTarget?: [#TargetFormat]: [...#ArtifactPatternToken]
+}
+
+#VersioningPolicy: {
+  immutableSchemaRefs: bool | *true
+  incompatibleChangesRequireNewRef: bool | *true
+  deprecatedMeansLintWarn: bool | *true
+  supersedesIsAdvisory: bool | *true
+}
+
 #DesignRegistrySpec: {
+  supportedCliCommands: [...#CliCommand]
   keySchemaRegistry:     #KeySchemaRegistry
   generatorCapabilities: [...#GeneratorCapability]
+  lintPolicy?: #LintPolicy
+  artifactPatternPolicy?: #ArtifactPatternPolicy
+  versioningPolicy?: #VersioningPolicy
 
   // Every generator capability must reference a known key schema id.
   _keySchemaRefChecks: [for c in generatorCapabilities {
@@ -361,6 +412,11 @@ This CUE input is the canonical source used to compile snake-knot-picker command
 | i18n-key-naming | impl-016 | medium | Prevents artificial verbose keys and supports real-world complexity | Avoid strict positional naming templates; keep structure loose but consistent |
 | i18n-key-metadata | impl-017 | medium | Keeps keys readable while preserving machine-usable structure | Store strict structural metadata outside the key string (ARB metadata or external config) |
 | i18n-key-review | impl-018 | medium | Automates consistency and prevents regressions | Add a naming lint check that enforces prefix and generic-key denylist rules |
+| cli-contract | impl-019 | high | Makes CLI capabilities explicit and versioned with the spec | Publish supported CLI commands in registry metadata and fail unknown command invocation |
+| linting | impl-020 | high | Converts section governance from convention into an enforceable rule | Fail lint when validation command sections are outside supportedCommandSections |
+| artifact-pattern | impl-021 | high | Prevents invalid output path templates and target-specific omissions | Validate artifactPattern placeholders against an allowed token set and required-by-target policy |
+| graph-integrity | impl-022 | high | Ensures deterministic key generation from nodesByLabel | Raise errors for graph cycles and generated key collisions during key derivation |
+| translation-coverage | impl-023 | high | Keeps localized output complete and consistent | Require each i18n entry to provide all supportedLanguages when translationPolicy demands it |
 
 ### 04 CUE Config Samples
 

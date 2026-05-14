@@ -46,6 +46,8 @@ package designregistry
   // Optional for future variants that may need explicit separators.
   delimiter?: "." | "_" | "-"
   from: "label-path-camelCase"
+  allowCycles?: false | *false
+  onGeneratedKeyCollision?: "error" | *"error"
 }
 
 #KeySchemaMetadata: {
@@ -69,6 +71,9 @@ package designregistry
 
   supportedLanguages:       [...string]
   supportedCommandSections: [...string]
+  translationPolicy?: {
+    requireAllSupportedLanguages: bool | *true
+  }
 
   metaArgsValidation: #Command
 
@@ -76,6 +81,7 @@ package designregistry
   nodesByLabel: [string]: #SchemaNode
 
   keyGeneration: #KeyGenerationPolicy
+  generatedKeyExamplesMode: "illustrative" | "normative" | *"illustrative"
 
   generatedKeyExamples: {
     i18n:      [...string]
@@ -88,6 +94,8 @@ package designregistry
 
 #TargetFormat: "arb.json" | "json" | "yaml" | "go" | "dart"
 #CapabilityNodeKind: "i18n" | "text"
+#CliCommand: "validate" | "generate" | "lint" | "list"
+#ArtifactPatternToken: "{schemaRef}" | "{target}" | "{locale}" | "{domain}" | "{version}"
 
 #GeneratorCapability: {
   keySchema:         string & !=""
@@ -98,9 +106,29 @@ package designregistry
   scopeFilter?:      #Command
 }
 
+#LintPolicy: {
+  unknownCommandSection: "error" | "warn" | "ignore"
+}
+
+#ArtifactPatternPolicy: {
+  allowedTokens: [...#ArtifactPatternToken]
+  requiredByTarget?: [#TargetFormat]: [...#ArtifactPatternToken]
+}
+
+#VersioningPolicy: {
+  immutableSchemaRefs: bool | *true
+  incompatibleChangesRequireNewRef: bool | *true
+  deprecatedMeansLintWarn: bool | *true
+  supersedesIsAdvisory: bool | *true
+}
+
 #DesignRegistrySpec: {
+  supportedCliCommands: [...#CliCommand]
   keySchemaRegistry:     #KeySchemaRegistry
   generatorCapabilities: [...#GeneratorCapability]
+  lintPolicy?: #LintPolicy
+  artifactPatternPolicy?: #ArtifactPatternPolicy
+  versioningPolicy?: #VersioningPolicy
 
   // Every generator capability must reference a known key schema id.
   _keySchemaRefChecks: [for c in generatorCapabilities {
