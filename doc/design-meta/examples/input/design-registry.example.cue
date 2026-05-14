@@ -44,12 +44,17 @@ designRegistry: #DesignRegistrySpec & {
         fields: {
           label: "fields"
           kind: "branch"
-          childLabels: ["textInput"]
+          childLabels: ["textInput", "tags"]
         }
         textInput: {
           label: "textInput"
           kind: "branch"
           childLabels: ["label", "tooltip", "placeholder", "value"]
+        }
+        tags: {
+          label: "tags"
+          kind: "branch"
+          childLabels: ["validation"]
         }
         label: {
           label: "label"
@@ -79,6 +84,7 @@ designRegistry: #DesignRegistrySpec & {
         }
       }
       keyGeneration: {
+        delimiter: "."
         from: "label-path-camelCase"
       }
       generatedKeyExamples: {
@@ -88,7 +94,10 @@ designRegistry: #DesignRegistrySpec & {
           "fieldsTextInputPlaceholder",
         ]
         text: ["fieldsTextInputValue"]
-        validator: ["fieldsTextInputValueValidation"]
+        validator: [
+          "fieldsTextInputValueValidation",
+          "fieldsTagsValidation",
+        ]
       }
     }
   }

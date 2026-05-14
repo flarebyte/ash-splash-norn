@@ -15,11 +15,7 @@ package configkey
   flags: [...#CommandFlagDef] & [#CommandFlagDef, ...#CommandFlagDef]
 }
 
-#ValidationArgs: {
-  validation?: #CommandSpec
-  monitoring?: #CommandSpec
-  transform?: #CommandSpec
-}
+#ValidationArgs: [string]: #CommandSpec
 
 #ValidationCommand: {
   args: #ValidationArgs

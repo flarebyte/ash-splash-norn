@@ -17,9 +17,11 @@ package designregistry
   flags:       [...#CommandFlagDef]
 }
 
-#CommandKind: "validation" | "monitoring" | "transform" | string
+#CommandKind: string
 
 #Command: {
+  // Section names are intentionally open at schema level.
+  // Implementations should check membership against supportedCommandSections.
   args: [#CommandKind]: #CommandSpec
 }
 
@@ -41,6 +43,8 @@ package designregistry
 }
 
 #KeyGenerationPolicy: {
+  // Optional for future variants that may need explicit separators.
+  delimiter?: "." | "_" | "-"
   from: "label-path-camelCase"
 }
 
