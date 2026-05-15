@@ -68,13 +68,20 @@ package designregistry
 #KeySchemaRegistry: [string]: #KeySchema
 
 #TargetFormat: "arb.json" | "json" | "yaml" | "go" | "dart" | "cue"
-#CapabilityNodeKind: "i18n" | "text"
+#CapabilityNodeKind: "i18n" | "text" | "validator"
+
+#GeneratorArtifactNaming: {
+  // Optional hints when naming cannot be inferred from artifactPattern or folder layout.
+  goPackageName?:   string & !=""
+  dartLibraryName?: string & !=""
+}
 
 #GeneratorCapability: {
   keySchema:         string & !=""
   target:            #TargetFormat
   supportsNodeKinds: [...#CapabilityNodeKind]
   artifactPattern:   string & !=""
+  artifactNaming?:   #GeneratorArtifactNaming
   scopeFilter?:      #Command
 }
 

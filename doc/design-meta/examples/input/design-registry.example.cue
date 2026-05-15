@@ -97,14 +97,32 @@ designRegistry: #DesignRegistrySpec & {
     {
       keySchema: "input-field"
       target: "json"
-      supportsNodeKinds: ["i18n", "text"]
+      supportsNodeKinds: ["i18n", "text", "validator"]
       artifactPattern: "generated/config/<domain>.json"
     },
     {
       keySchema: "input-field"
       target: "cue"
-      supportsNodeKinds: ["i18n", "text"]
+      supportsNodeKinds: ["i18n", "text", "validator"]
       artifactPattern: "generated/config/<domain>.cue"
+    },
+    {
+      keySchema: "input-field"
+      target: "go"
+      supportsNodeKinds: ["text", "validator"]
+      artifactPattern: "internal/generated/<domain>_config.go"
+      artifactNaming: {
+        goPackageName: "generatedconfig"
+      }
+    },
+    {
+      keySchema: "input-field"
+      target: "dart"
+      supportsNodeKinds: ["text", "validator"]
+      artifactPattern: "lib/generated/<domain>_config.dart"
+      artifactNaming: {
+        dartLibraryName: "generated_config"
+      }
     },
   ]
 }

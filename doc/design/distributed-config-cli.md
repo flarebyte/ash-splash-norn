@@ -126,14 +126,32 @@ designRegistry: #DesignRegistrySpec & {
     {
       keySchema: "input-field"
       target: "json"
-      supportsNodeKinds: ["i18n", "text"]
+      supportsNodeKinds: ["i18n", "text", "validator"]
       artifactPattern: "generated/config/<domain>.json"
     },
     {
       keySchema: "input-field"
       target: "cue"
-      supportsNodeKinds: ["i18n", "text"]
+      supportsNodeKinds: ["i18n", "text", "validator"]
       artifactPattern: "generated/config/<domain>.cue"
+    },
+    {
+      keySchema: "input-field"
+      target: "go"
+      supportsNodeKinds: ["text", "validator"]
+      artifactPattern: "internal/generated/<domain>_config.go"
+      artifactNaming: {
+        goPackageName: "generatedconfig"
+      }
+    },
+    {
+      keySchema: "input-field"
+      target: "dart"
+      supportsNodeKinds: ["text", "validator"]
+      artifactPattern: "lib/generated/<domain>_config.dart"
+      artifactNaming: {
+        dartLibraryName: "generated_config"
+      }
     },
   ]
 }
@@ -212,13 +230,20 @@ package designregistry
 #KeySchemaRegistry: [string]: #KeySchema
 
 #TargetFormat: "arb.json" | "json" | "yaml" | "go" | "dart" | "cue"
-#CapabilityNodeKind: "i18n" | "text"
+#CapabilityNodeKind: "i18n" | "text" | "validator"
+
+#GeneratorArtifactNaming: {
+  // Optional hints when naming cannot be inferred from artifactPattern or folder layout.
+  goPackageName?:   string & !=""
+  dartLibraryName?: string & !=""
+}
 
 #GeneratorCapability: {
   keySchema:         string & !=""
   target:            #TargetFormat
   supportsNodeKinds: [...#CapabilityNodeKind]
   artifactPattern:   string & !=""
+  artifactNaming?:   #GeneratorArtifactNaming
   scopeFilter?:      #Command
 }
 
@@ -318,11 +343,11 @@ the corresponding key entry must exist in the matching config section by node ki
 | artifact_pattern_example | id | in_registry_example | notes | primary_use | supports_node_kinds | target |
 | --- | --- | --- | --- | --- | --- | --- |
 | lib/l10n/app_<locale>.arb.json | out-001 | yes | Preferred i18n output for Dart/Flutter | Flutter i18n bundles | i18n | arb.json |
-| generated/config/<domain>.json | out-002 | yes | Portable exchange format | General machine-readable config | i18n;text | json |
+| generated/config/<domain>.json | out-002 | yes | Portable exchange format | General machine-readable config | i18n;text;validator | json |
 | generated/config/<domain>.yaml | out-003 | no | Planned support; keep parity with JSON where possible | Human-readable config export | text | yaml |
-| internal/generated/<domain>_config.go | out-004 | no | Planned support; intended for Go services/libraries | Generated Go constants/types | text | go |
-| lib/generated/<domain>_config.dart | out-005 | no | Planned support for non-i18n runtime config | Generated Dart config model | text | dart |
-| generated/config/<domain>.cue | out-006 | yes | Useful for round-trip workflows and downstream CUE composition | Canonical CUE config output | i18n;text | cue |
+| internal/generated/<domain>_config.go | out-004 | yes | Expected support for Go services/libraries | Generated Go constants/types | text;validator | go |
+| lib/generated/<domain>_config.dart | out-005 | yes | Expected support for non-i18n runtime config | Generated Dart config model | text;validator | dart |
+| generated/config/<domain>.cue | out-006 | yes | Useful for round-trip workflows and downstream CUE composition | Canonical CUE config output | i18n;text;validator | cue |
 
 ### 04 CLI Commands
 
@@ -532,16 +557,10 @@ validations: [
   "target": "json",
   "nodeKind": "text",
   "generatedAt": "example",
-  "entries": [
-    {
-      "key": "fieldsTextInputValue",
-      "value": "example value",
-      "meta": {
-        "status": "draft",
-        "app": "v1"
-      }
-    }
-  ]
+  "fieldsTextInputValue": "example value",
+  "@fieldsTextInputValue": {
+    "metaArgs": ["meta", "--status", "draft", "--app", "v1"]
+  }
 }
 ```
 
@@ -553,25 +572,20 @@ validations: [
   "target": "json",
   "nodeKind": "validator",
   "generatedAt": "example",
-  "entries": [
-    {
-      "key": "fieldsTextInputValueValidation",
-      "commands": {
-        "validation": {
-          "commandPath": ["validate", "text-input", "value"],
-          "adminOnly": false,
-          "flags": [
-            {
-              "kind": "string",
-              "name": "value",
-              "schema": ["schema", "string", "--required", "--min-length", "1", "--max-length", "120"],
-              "schemas": []
-            }
-          ]
+  "fieldsTextInputValueValidation": {
+    "validation": {
+      "commandPath": ["validate", "text-input", "value"],
+      "adminOnly": false,
+      "flags": [
+        {
+          "kind": "string",
+          "name": "value",
+          "schema": ["schema", "string", "--required", "--min-length", "1", "--max-length", "120"],
+          "schemas": []
         }
-      }
+      ]
     }
-  ]
+  }
 }
 ```
 
