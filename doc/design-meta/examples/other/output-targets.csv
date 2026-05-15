@@ -4,3 +4,4 @@ out-002,json,General machine-readable config,"i18n;text",generated/config/<domai
 out-003,yaml,Human-readable config export,text,generated/config/<domain>.yaml,no,Planned support; keep parity with JSON where possible
 out-004,go,Generated Go constants/types,text,internal/generated/<domain>_config.go,no,Planned support; intended for Go services/libraries
 out-005,dart,Generated Dart config model,text,lib/generated/<domain>_config.dart,no,Planned support for non-i18n runtime config
+out-006,cue,Canonical CUE config output,"i18n;text",generated/config/<domain>.cue,yes,Useful for round-trip workflows and downstream CUE composition

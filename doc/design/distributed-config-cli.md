@@ -129,6 +129,12 @@ designRegistry: #DesignRegistrySpec & {
       supportsNodeKinds: ["i18n", "text"]
       artifactPattern: "generated/config/<domain>.json"
     },
+    {
+      keySchema: "input-field"
+      target: "cue"
+      supportsNodeKinds: ["i18n", "text"]
+      artifactPattern: "generated/config/<domain>.cue"
+    },
   ]
 }
 ```
@@ -205,7 +211,7 @@ package designregistry
 
 #KeySchemaRegistry: [string]: #KeySchema
 
-#TargetFormat: "arb.json" | "json" | "yaml" | "go" | "dart"
+#TargetFormat: "arb.json" | "json" | "yaml" | "go" | "dart" | "cue"
 #CapabilityNodeKind: "i18n" | "text"
 
 #GeneratorCapability: {
@@ -316,6 +322,7 @@ the corresponding key entry must exist in the matching config section by node ki
 | generated/config/<domain>.yaml | out-003 | no | Planned support; keep parity with JSON where possible | Human-readable config export | text | yaml |
 | internal/generated/<domain>_config.go | out-004 | no | Planned support; intended for Go services/libraries | Generated Go constants/types | text | go |
 | lib/generated/<domain>_config.dart | out-005 | no | Planned support for non-i18n runtime config | Generated Dart config model | text | dart |
+| generated/config/<domain>.cue | out-006 | yes | Useful for round-trip workflows and downstream CUE composition | Canonical CUE config output | i18n;text | cue |
 
 ### 04 CLI Commands
 

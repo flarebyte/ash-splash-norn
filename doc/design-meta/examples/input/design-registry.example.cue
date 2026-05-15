@@ -100,5 +100,11 @@ designRegistry: #DesignRegistrySpec & {
       supportsNodeKinds: ["i18n", "text"]
       artifactPattern: "generated/config/<domain>.json"
     },
+    {
+      keySchema: "input-field"
+      target: "cue"
+      supportsNodeKinds: ["i18n", "text"]
+      artifactPattern: "generated/config/<domain>.cue"
+    },
   ]
 }

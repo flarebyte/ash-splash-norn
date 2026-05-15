@@ -67,7 +67,7 @@ package designregistry
 
 #KeySchemaRegistry: [string]: #KeySchema
 
-#TargetFormat: "arb.json" | "json" | "yaml" | "go" | "dart"
+#TargetFormat: "arb.json" | "json" | "yaml" | "go" | "dart" | "cue"
 #CapabilityNodeKind: "i18n" | "text"
 
 #GeneratorCapability: {
