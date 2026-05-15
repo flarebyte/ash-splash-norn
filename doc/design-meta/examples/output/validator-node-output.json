@@ -1,0 +1,20 @@
+{
+  "schemaRef": "input-field",
+  "target": "json",
+  "nodeKind": "validator",
+  "generatedAt": "example",
+  "fieldsTextInputValueValidation": {
+    "validation": {
+      "commandPath": ["validate", "text-input", "value"],
+      "adminOnly": false,
+      "flags": [
+        {
+          "kind": "string",
+          "name": "value",
+          "schema": ["schema", "string", "--required", "--min-length", "1", "--max-length", "120"],
+          "schemas": []
+        }
+      ]
+    }
+  }
+}

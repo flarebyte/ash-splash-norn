@@ -39,6 +39,9 @@ reports: [{
     }, {
       title: "07 CUE Config Samples"
       notes: ["norn.cue.config-key"]
+    }, {
+      title: "08 Output Samples"
+      notes: ["norn.out.text-json", "norn.out.validator-json"]
     }]
   }]
 }]
@@ -126,6 +129,18 @@ the corresponding key entry must exist in the matching config section by node ki
     title: "Key-oriented Config CUE Example"
     filepath: "examples/input/config-key.cue"
     labels: ["cue", "example", "config"]
+  },
+  {
+    name: "norn.out.text-json"
+    title: "Text Node Output Example (JSON)"
+    filepath: "examples/output/text-node-output.json"
+    labels: ["output", "json", "text"]
+  },
+  {
+    name: "norn.out.validator-json"
+    title: "Validator Node Output Example (JSON)"
+    filepath: "examples/output/validator-node-output.json"
+    labels: ["output", "json", "validator"]
   },
 ]
 

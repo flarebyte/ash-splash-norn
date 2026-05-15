@@ -522,3 +522,56 @@ validations: [
 ]
 ```
 
+### 08 Output Samples
+
+#### Text Node Output Example (JSON)
+
+```json
+{
+  "schemaRef": "input-field",
+  "target": "json",
+  "nodeKind": "text",
+  "generatedAt": "example",
+  "entries": [
+    {
+      "key": "fieldsTextInputValue",
+      "value": "example value",
+      "meta": {
+        "status": "draft",
+        "app": "v1"
+      }
+    }
+  ]
+}
+```
+
+#### Validator Node Output Example (JSON)
+
+```json
+{
+  "schemaRef": "input-field",
+  "target": "json",
+  "nodeKind": "validator",
+  "generatedAt": "example",
+  "entries": [
+    {
+      "key": "fieldsTextInputValueValidation",
+      "commands": {
+        "validation": {
+          "commandPath": ["validate", "text-input", "value"],
+          "adminOnly": false,
+          "flags": [
+            {
+              "kind": "string",
+              "name": "value",
+              "schema": ["schema", "string", "--required", "--min-length", "1", "--max-length", "120"],
+              "schemas": []
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
+```
+
