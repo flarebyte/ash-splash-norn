@@ -1,0 +1,6 @@
+id,target,primary_use,supports_node_kinds,artifact_pattern_example,in_registry_example,notes
+out-001,arb.json,Flutter i18n bundles,i18n,lib/l10n/app_<locale>.arb.json,yes,Preferred i18n output for Dart/Flutter
+out-002,json,General machine-readable config,"i18n;text",generated/config/<domain>.json,yes,Portable exchange format
+out-003,yaml,Human-readable config export,text,generated/config/<domain>.yaml,no,Planned support; keep parity with JSON where possible
+out-004,go,Generated Go constants/types,text,internal/generated/<domain>_config.go,no,Planned support; intended for Go services/libraries
+out-005,dart,Generated Dart config model,text,lib/generated/<domain>_config.dart,no,Planned support for non-i18n runtime config

@@ -305,7 +305,19 @@ Mandatory behavior: if a reachable schema node is marked `mandatory: true`,
 the corresponding key entry must exist in the matching config section by node kind
 (`i18nEntries`, `textEntries`, or `validations`), otherwise lint must raise an error.
 
-### 03 CLI Commands
+### 03 Output Targets
+
+#### Output Target Catalog
+
+| artifact_pattern_example | id | in_registry_example | notes | primary_use | supports_node_kinds | target |
+| --- | --- | --- | --- | --- | --- | --- |
+| lib/l10n/app_<locale>.arb.json | out-001 | yes | Preferred i18n output for Dart/Flutter | Flutter i18n bundles | i18n | arb.json |
+| generated/config/<domain>.json | out-002 | yes | Portable exchange format | General machine-readable config | i18n;text | json |
+| generated/config/<domain>.yaml | out-003 | no | Planned support; keep parity with JSON where possible | Human-readable config export | text | yaml |
+| internal/generated/<domain>_config.go | out-004 | no | Planned support; intended for Go services/libraries | Generated Go constants/types | text | go |
+| lib/generated/<domain>_config.dart | out-005 | no | Planned support for non-i18n runtime config | Generated Dart config model | text | dart |
+
+### 04 CLI Commands
 
 #### CLI Command Catalog
 
@@ -326,7 +338,7 @@ the corresponding key entry must exist in the matching config section by node ki
 | dry-run-preview | non-zero exit on unresolved references | cmd-013 | config + generator capabilities | planned artifact list | medium | Preview outputs without writing files |
 | version | always succeeds unless startup fails | cmd-014 | none | stdout version string/json | high | Return CLI version/build metadata |
 
-### 04 Implementation Libraries
+### 05 Implementation Libraries
 
 #### Implementation Libraries
 
@@ -336,7 +348,7 @@ the corresponding key entry must exist in the matching config section by node ki
 | lib-002 | snake-knot-picker | high | Schema-driven argv validation and parsing | Provides strict command/flag validation with stable error semantics |
 | lib-003 | cuelang.org/go | high | Load, evaluate and validate CUE configs | Official CUE implementation for robust package/file handling and validation |
 
-### 05 Implementation Suggestions
+### 06 Implementation Suggestions
 
 #### Implementation Suggestions
 
@@ -373,7 +385,7 @@ the corresponding key entry must exist in the matching config section by node ki
 | mandatory-enforcement | impl-029 | high | Makes mandatory semantics explicit and enforceable in lint | For each reachable node with mandatory=true, require a matching key entry in the section mapped by node kind |
 | config-input | impl-030 | high | Allows split configuration files while keeping load semantics deterministic | Support config input as either directory package (preferred) or single CUE file, with single-package enforcement for directory mode |
 
-### 06 CUE Config Samples
+### 07 CUE Config Samples
 
 #### Key-oriented Config CUE Example
 

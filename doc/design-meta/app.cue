@@ -25,16 +25,19 @@ reports: [{
       title: "02 Key Schema And Validation"
       notes: ["norn.cue.config-key-schema", "norn.validation-source"]
     }, {
-      title: "03 CLI Commands"
+      title: "03 Output Targets"
+      notes: ["norn.outputs.catalog"]
+    }, {
+      title: "04 CLI Commands"
       notes: ["norn.cli.commands"]
     }, {
-      title: "04 Implementation Libraries"
+      title: "05 Implementation Libraries"
       notes: ["norn.impl.libraries"]
     }, {
-      title: "05 Implementation Suggestions"
+      title: "06 Implementation Suggestions"
       notes: ["norn.impl.suggestions"]
     }, {
-      title: "06 CUE Config Samples"
+      title: "07 CUE Config Samples"
       notes: ["norn.cue.config-key"]
     }]
   }]
@@ -89,6 +92,13 @@ the corresponding key entry must exist in the matching config section by node ki
 (`i18nEntries`, `textEntries`, or `validations`), otherwise lint must raise an error.
 """
     labels: ["validation", "cue", "source-of-truth"]
+  },
+  {
+    name: "norn.outputs.catalog"
+    title: "Output Target Catalog"
+    filepath: "examples/other/output-targets.csv"
+    arguments: ["format-csv=table"]
+    labels: ["outputs", "targets", "csv"]
   },
   {
     name: "norn.cli.commands"
