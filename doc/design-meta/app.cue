@@ -28,10 +28,13 @@ reports: [{
       title: "03 CLI Commands"
       notes: ["norn.cli.commands"]
     }, {
-      title: "04 Implementation Suggestions"
+      title: "04 Implementation Libraries"
+      notes: ["norn.impl.libraries"]
+    }, {
+      title: "05 Implementation Suggestions"
       notes: ["norn.impl.suggestions"]
     }, {
-      title: "05 CUE Config Samples"
+      title: "06 CUE Config Samples"
       notes: ["norn.cue.config-key"]
     }]
   }]
@@ -100,6 +103,13 @@ the corresponding key entry must exist in the matching config section by node ki
     filepath: "examples/other/implementation.csv"
     arguments: ["format-csv=table"]
     labels: ["implementation", "csv", "suggestions"]
+  },
+  {
+    name: "norn.impl.libraries"
+    title: "Implementation Libraries"
+    filepath: "examples/other/implementation-libraries.csv"
+    arguments: ["format-csv=table"]
+    labels: ["implementation", "libraries", "csv"]
   },
   {
     name: "norn.cue.config-key"

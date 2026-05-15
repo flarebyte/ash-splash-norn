@@ -324,8 +324,19 @@ the corresponding key entry must exist in the matching config section by node ki
 | lint-graph | non-zero exit on cycle/collision | cmd-011 | nodesByLabel graph | graph diagnostics | high | Enforce no cycles and no generated key collisions |
 | explain-key | soft-fail for unknown labels | cmd-012 | key schema + target label path | human-readable derivation trace | medium | Explain how a canonical key is derived from label-path-camelCase |
 | dry-run-preview | non-zero exit on unresolved references | cmd-013 | config + generator capabilities | planned artifact list | medium | Preview outputs without writing files |
+| version | always succeeds unless startup fails | cmd-014 | none | stdout version string/json | high | Return CLI version/build metadata |
 
-### 04 Implementation Suggestions
+### 04 Implementation Libraries
+
+#### Implementation Libraries
+
+| id | library | priority | purpose | why |
+| --- | --- | --- | --- | --- |
+| lib-001 | cobra | high | CLI command tree, flags, help and completion | De-facto standard Go CLI framework; clear command structure and ergonomics |
+| lib-002 | snake-knot-picker | high | Schema-driven argv validation and parsing | Provides strict command/flag validation with stable error semantics |
+| lib-003 | cuelang.org/go | high | Load, evaluate and validate CUE configs | Official CUE implementation for robust package/file handling and validation |
+
+### 05 Implementation Suggestions
 
 #### Implementation Suggestions
 
@@ -362,7 +373,7 @@ the corresponding key entry must exist in the matching config section by node ki
 | mandatory-enforcement | impl-029 | high | Makes mandatory semantics explicit and enforceable in lint | For each reachable node with mandatory=true, require a matching key entry in the section mapped by node kind |
 | config-input | impl-030 | high | Allows split configuration files while keeping load semantics deterministic | Support config input as either directory package (preferred) or single CUE file, with single-package enforcement for directory mode |
 
-### 05 CUE Config Samples
+### 06 CUE Config Samples
 
 #### Key-oriented Config CUE Example
 

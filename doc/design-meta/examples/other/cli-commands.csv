@@ -12,3 +12,4 @@ cmd-010,lint-patterns,"Validate artifactPattern placeholders against token polic
 cmd-011,lint-graph,"Enforce no cycles and no generated key collisions","nodesByLabel graph","graph diagnostics","non-zero exit on cycle/collision",high
 cmd-012,explain-key,"Explain how a canonical key is derived from label-path-camelCase","key schema + target label path","human-readable derivation trace","soft-fail for unknown labels",medium
 cmd-013,dry-run-preview,"Preview outputs without writing files","config + generator capabilities","planned artifact list","non-zero exit on unresolved references",medium
+cmd-014,version,"Return CLI version/build metadata","none","stdout version string/json","always succeeds unless startup fails",high
