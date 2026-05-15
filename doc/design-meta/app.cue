@@ -59,7 +59,7 @@ Target compatibility is determined by the CLI capabilities, not by extra user-pr
   {
     name: "norn.cue.design-registry-schema"
     title: "CUE Design Registry Schema"
-    filepath: "examples/input/design-registry.schema.cue"
+    filepath: "examples/model/design-registry.schema.cue"
     labels: ["cue", "schema", "registry", "capabilities"]
   },
   {
@@ -71,7 +71,7 @@ Target compatibility is determined by the CLI capabilities, not by extra user-pr
   {
     name: "norn.cue.config-key-schema"
     title: "CUE Config Key Schema"
-    filepath: "examples/input/config-key.schema.cue"
+    filepath: "examples/model/config-key.schema.cue"
     labels: ["cue", "schema", "config", "keys"]
   },
   {

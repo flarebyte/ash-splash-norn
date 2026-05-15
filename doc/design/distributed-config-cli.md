@@ -360,6 +360,7 @@ the corresponding key entry must exist in the matching config section by node ki
 | key-examples | impl-027 | medium | Examples clarify intent without constraining valid configs | Treat generated key examples as documentation artifacts rather than required user input fields |
 | artifact-pattern-policy | impl-028 | medium | Placeholder governance is implementation policy, not user data | Document artifact pattern placeholder policy outside user config schema |
 | mandatory-enforcement | impl-029 | high | Makes mandatory semantics explicit and enforceable in lint | For each reachable node with mandatory=true, require a matching key entry in the section mapped by node kind |
+| config-input | impl-030 | high | Allows split configuration files while keeping load semantics deterministic | Support config input as either directory package (preferred) or single CUE file, with single-package enforcement for directory mode |
 
 ### 05 CUE Config Samples
 
