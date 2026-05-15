@@ -80,6 +80,10 @@ Target compatibility is determined by the CLI capabilities, not by extra user-pr
     markdown: """
 Validation commands are authored in `examples/input/config-key.cue` under the `validations` section.
 This CUE input is the canonical source used to compile snake-knot-picker command documents.
+
+Mandatory behavior: if a reachable schema node is marked `mandatory: true`,
+the corresponding key entry must exist in the matching config section by node kind
+(`i18nEntries`, `textEntries`, or `validations`), otherwise lint must raise an error.
 """
     labels: ["validation", "cue", "source-of-truth"]
   },
