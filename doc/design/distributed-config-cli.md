@@ -31,7 +31,7 @@ package designregistry
 
 designRegistry: #DesignRegistrySpec & {
   keySchemaRegistry: {
-    "input-field@1": {
+    "input-field": {
       metadata: {
         id: "input-field"
         version: "1.0.0"
@@ -118,13 +118,13 @@ designRegistry: #DesignRegistrySpec & {
 
   generatorCapabilities: [
     {
-      keySchema: "input-field@1"
+      keySchema: "input-field"
       target: "arb.json"
       supportsNodeKinds: ["i18n"]
       artifactPattern: "lib/l10n/app_<locale>.arb.json"
     },
     {
-      keySchema: "input-field@1"
+      keySchema: "input-field"
       target: "json"
       supportsNodeKinds: ["i18n", "text"]
       artifactPattern: "generated/config/<domain>.json"
@@ -182,7 +182,8 @@ package designregistry
 
 #KeySchemaMetadata: {
   id:      string & !=""
-  version: string & !=""
+  // Informative schema version (not used as registry lookup key in v1).
+  version?: string & !=""
 }
 
 #KeySchema: {
@@ -328,13 +329,13 @@ This CUE input is the canonical source used to compile snake-knot-picker command
 | --- | --- | --- | --- | --- |
 | key-generation | impl-001 | high | Required to derive canonical keys from nodesByLabel DAG reliably | Implement deterministic traversal from rootLabels and childLabels with visited-set semantics |
 | key-generation | impl-002 | high | Prevents drift between schema intent and generated keys | Use keyGeneration delimiter and from policy as the only key build mechanism |
-| registry-resolution | impl-003 | high | Ensures capability runs with an explicit versioned schema | Resolve generatorCapabilities[*].keySchema against keySchemaRegistry before generation |
+| registry-resolution | impl-003 | high | Ensures capability runs with an explicit known schema | Resolve generatorCapabilities[*].keySchema against keySchemaRegistry before generation |
 | meta-filtering | impl-004 | medium | Enables restrictive generation scope without hardcoding logic | Compile metaArgsValidation command and apply it to entry metaArgs when scopeFilter is present |
 | config-validation | impl-005 | high | Fails early on malformed input shape | Validate config-key.cue sections against config-key.schema.cue before generation |
 | key-coverage | impl-006 | high | Captures schema/data divergence early | Compare derived expected keys by kind with config-key.cue keys and report missing and unexpected keys |
 | section-validation | impl-007 | medium | Keeps command namespaces controlled across versions | Validate command sections in validations against supportedCommandSections |
 | target-routing | impl-008 | high | Prevents silent no-op or wrong output mapping | Select generators by target and supportsNodeKinds and keep unknown target as hard error |
-| versioning | impl-009 | high | Supports safe evolution and backward compatibility | Introduce new keySchemaRegistry id when semantics change and keep older ids immutable |
+| versioning | impl-009 | medium | Keeps registry references simple while leaving room for future migration strategy | Treat metadata.version as informative in v1 and avoid coupling lookup keys to version |
 | diagnostics | impl-010 | medium | Improves automation and troubleshooting reliability | Emit diagnostics with stable IDs for schema, config, and generation stages |
 | i18n-key-naming | impl-011 | high | Aligns with Flutter AppLocalizations naming conventions | Adopt camelCase for ARB keys and generated Dart API compatibility |
 | i18n-key-naming | impl-012 | high | Improves searchability and avoids cross-feature key collisions | Use a stable feature prefix for every key (for example auth, checkout, settings) |

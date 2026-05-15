@@ -44,7 +44,8 @@ package designregistry
 
 #KeySchemaMetadata: {
   id:      string & !=""
-  version: string & !=""
+  // Informative schema version (not used as registry lookup key in v1).
+  version?: string & !=""
 }
 
 #KeySchema: {

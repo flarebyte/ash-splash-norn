@@ -2,7 +2,7 @@ package designregistry
 
 designRegistry: #DesignRegistrySpec & {
   keySchemaRegistry: {
-    "input-field@1": {
+    "input-field": {
       metadata: {
         id: "input-field"
         version: "1.0.0"
@@ -89,13 +89,13 @@ designRegistry: #DesignRegistrySpec & {
 
   generatorCapabilities: [
     {
-      keySchema: "input-field@1"
+      keySchema: "input-field"
       target: "arb.json"
       supportsNodeKinds: ["i18n"]
       artifactPattern: "lib/l10n/app_<locale>.arb.json"
     },
     {
-      keySchema: "input-field@1"
+      keySchema: "input-field"
       target: "json"
       supportsNodeKinds: ["i18n", "text"]
       artifactPattern: "generated/config/<domain>.json"

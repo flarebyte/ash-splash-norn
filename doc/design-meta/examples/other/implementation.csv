@@ -1,13 +1,13 @@
 id,area,suggestion,rationale,priority
 impl-001,key-generation,"Implement deterministic traversal from rootLabels and childLabels with visited-set semantics","Required to derive canonical keys from nodesByLabel DAG reliably",high
 impl-002,key-generation,"Use keyGeneration delimiter and from policy as the only key build mechanism","Prevents drift between schema intent and generated keys",high
-impl-003,registry-resolution,"Resolve generatorCapabilities[*].keySchema against keySchemaRegistry before generation","Ensures capability runs with an explicit versioned schema",high
+impl-003,registry-resolution,"Resolve generatorCapabilities[*].keySchema against keySchemaRegistry before generation","Ensures capability runs with an explicit known schema",high
 impl-004,meta-filtering,"Compile metaArgsValidation command and apply it to entry metaArgs when scopeFilter is present","Enables restrictive generation scope without hardcoding logic",medium
 impl-005,config-validation,"Validate config-key.cue sections against config-key.schema.cue before generation","Fails early on malformed input shape",high
 impl-006,key-coverage,"Compare derived expected keys by kind with config-key.cue keys and report missing and unexpected keys","Captures schema/data divergence early",high
 impl-007,section-validation,"Validate command sections in validations against supportedCommandSections","Keeps command namespaces controlled across versions",medium
 impl-008,target-routing,"Select generators by target and supportsNodeKinds and keep unknown target as hard error","Prevents silent no-op or wrong output mapping",high
-impl-009,versioning,"Introduce new keySchemaRegistry id when semantics change and keep older ids immutable","Supports safe evolution and backward compatibility",high
+impl-009,versioning,"Treat metadata.version as informative in v1 and avoid coupling lookup keys to version","Keeps registry references simple while leaving room for future migration strategy",medium
 impl-010,diagnostics,"Emit diagnostics with stable IDs for schema, config, and generation stages","Improves automation and troubleshooting reliability",medium
 impl-011,i18n-key-naming,"Adopt camelCase for ARB keys and generated Dart API compatibility","Aligns with Flutter AppLocalizations naming conventions",high
 impl-012,i18n-key-naming,"Use a stable feature prefix for every key (for example auth, checkout, settings)","Improves searchability and avoids cross-feature key collisions",high
