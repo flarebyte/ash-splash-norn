@@ -1,36 +1,11 @@
 package designregistry
 
 designRegistry: #DesignRegistrySpec & {
-  supportedCliCommands: ["validate", "generate", "lint", "list"]
-  lintPolicy: {
-    unknownCommandSection: "error"
-  }
-  artifactPatternPolicy: {
-    allowedTokens: ["{schemaRef}", "{target}", "{locale}", "{domain}", "{version}"]
-    requiredByTarget: {
-      "arb.json": ["{locale}"]
-    }
-  }
-  versioningPolicy: {
-    immutableSchemaRefs: true
-    incompatibleChangesRequireNewRef: true
-    deprecatedMeansLintWarn: true
-    supersedesIsAdvisory: true
-  }
-
   keySchemaRegistry: {
     "input-field@1": {
       metadata: {
         id: "input-field"
         version: "1.0.0"
-        status: "stable"
-        features: [
-          "nodesByLabel-graph",
-          "label-path-key-generation",
-          "meta-args-command-spec",
-          "snake-knot-picker-flag-schema",
-        ]
-        compatibleTargets: ["arb.json", "json", "yaml", "go", "dart"]
       }
       supportedLanguages: ["en", "fr"]
       supportedCommandSections: ["validation", "monitoring", "transform"]
@@ -109,19 +84,6 @@ designRegistry: #DesignRegistrySpec & {
         allowCycles: false
         onGeneratedKeyCollision: "error"
       }
-      generatedKeyExamplesMode: "illustrative"
-      generatedKeyExamples: {
-        i18n: [
-          "fieldsTextInputLabel",
-          "fieldsTextInputTooltip",
-          "fieldsTextInputPlaceholder",
-        ]
-        text: ["fieldsTextInputValue"]
-        validator: [
-          "fieldsTextInputValueValidation",
-          "fieldsTagsValidation",
-        ]
-      }
     }
   }
 
@@ -131,7 +93,6 @@ designRegistry: #DesignRegistrySpec & {
       target: "arb.json"
       supportsNodeKinds: ["i18n"]
       artifactPattern: "lib/l10n/app_<locale>.arb.json"
-      notes: "Preferred Flutter/Dart localization target."
     },
     {
       keySchema: "input-field@1"

@@ -22,3 +22,8 @@ impl-020,linting,"Fail lint when validation command sections are outside support
 impl-021,artifact-pattern,"Validate artifactPattern placeholders against an allowed token set and required-by-target policy","Prevents invalid output path templates and target-specific omissions",high
 impl-022,graph-integrity,"Raise errors for graph cycles and generated key collisions during key derivation","Ensures deterministic key generation from nodesByLabel",high
 impl-023,translation-coverage,"Require each i18n entry to provide all supportedLanguages when translationPolicy demands it","Keeps localized output complete and consistent",high
+impl-024,spec-scope,"Keep design-registry CUE schema focused on required runtime inputs only","Reduces user burden and avoids duplicating CLI-owned metadata",high
+impl-025,cli-owned-metadata,"Keep supported CLI commands, lint behavior, and versioning semantics in CLI docs/code and command catalog CSV","The CLI should know built-in command inventory and policy defaults",high
+impl-026,schema-metadata,"Use key schema metadata only for stable identity and version (id + version)","Keeps schema refs minimal and avoids forcing informative fields",medium
+impl-027,key-examples,"Treat generated key examples as documentation artifacts rather than required user input fields","Examples clarify intent without constraining valid configs",medium
+impl-028,artifact-pattern-policy,"Document artifact pattern placeholder policy outside user config schema","Placeholder governance is implementation policy, not user data",medium

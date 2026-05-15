@@ -30,36 +30,11 @@ Concrete examples collected under doc/design-meta/examples.
 package designregistry
 
 designRegistry: #DesignRegistrySpec & {
-  supportedCliCommands: ["validate", "generate", "lint", "list"]
-  lintPolicy: {
-    unknownCommandSection: "error"
-  }
-  artifactPatternPolicy: {
-    allowedTokens: ["{schemaRef}", "{target}", "{locale}", "{domain}", "{version}"]
-    requiredByTarget: {
-      "arb.json": ["{locale}"]
-    }
-  }
-  versioningPolicy: {
-    immutableSchemaRefs: true
-    incompatibleChangesRequireNewRef: true
-    deprecatedMeansLintWarn: true
-    supersedesIsAdvisory: true
-  }
-
   keySchemaRegistry: {
     "input-field@1": {
       metadata: {
         id: "input-field"
         version: "1.0.0"
-        status: "stable"
-        features: [
-          "nodesByLabel-graph",
-          "label-path-key-generation",
-          "meta-args-command-spec",
-          "snake-knot-picker-flag-schema",
-        ]
-        compatibleTargets: ["arb.json", "json", "yaml", "go", "dart"]
       }
       supportedLanguages: ["en", "fr"]
       supportedCommandSections: ["validation", "monitoring", "transform"]
@@ -138,19 +113,6 @@ designRegistry: #DesignRegistrySpec & {
         allowCycles: false
         onGeneratedKeyCollision: "error"
       }
-      generatedKeyExamplesMode: "illustrative"
-      generatedKeyExamples: {
-        i18n: [
-          "fieldsTextInputLabel",
-          "fieldsTextInputTooltip",
-          "fieldsTextInputPlaceholder",
-        ]
-        text: ["fieldsTextInputValue"]
-        validator: [
-          "fieldsTextInputValueValidation",
-          "fieldsTagsValidation",
-        ]
-      }
     }
   }
 
@@ -160,7 +122,6 @@ designRegistry: #DesignRegistrySpec & {
       target: "arb.json"
       supportsNodeKinds: ["i18n"]
       artifactPattern: "lib/l10n/app_<locale>.arb.json"
-      notes: "Preferred Flutter/Dart localization target."
     },
     {
       keySchema: "input-field@1"
@@ -204,19 +165,11 @@ package designregistry
 
 #NodeKind: "branch" | "i18n" | "text" | "validator"
 
-#NodeMaintenance: {
-  intent?:   string
-  do?:       [...string]
-  avoid?:    [...string]
-  examples?: [...string]
-}
-
 #SchemaNode: {
   label:       string & !=""
   kind:        #NodeKind
   mandatory?:  bool
   childLabels: [...string]
-  maintenance?: #NodeMaintenance
 }
 
 #KeyGenerationPolicy: {
@@ -230,17 +183,6 @@ package designregistry
 #KeySchemaMetadata: {
   id:      string & !=""
   version: string & !=""
-  status:  "draft" | "stable" | "deprecated"
-
-  features?:          [...string]
-  compatibleTargets?: [...#TargetFormat]
-  supersedes?:        [...string]
-
-  maintenance?: {
-    intent?: string
-    do?:     [...string]
-    avoid?:  [...string]
-  }
 }
 
 #KeySchema: {
@@ -258,54 +200,24 @@ package designregistry
   nodesByLabel: [string]: #SchemaNode
 
   keyGeneration: #KeyGenerationPolicy
-  generatedKeyExamplesMode: "illustrative" | "normative" | *"illustrative"
-
-  generatedKeyExamples: {
-    i18n:      [...string]
-    text:      [...string]
-    validator: [...string]
-  }
 }
 
 #KeySchemaRegistry: [string]: #KeySchema
 
 #TargetFormat: "arb.json" | "json" | "yaml" | "go" | "dart"
 #CapabilityNodeKind: "i18n" | "text"
-#CliCommand: "validate" | "generate" | "lint" | "list"
-#ArtifactPatternToken: "{schemaRef}" | "{target}" | "{locale}" | "{domain}" | "{version}"
 
 #GeneratorCapability: {
   keySchema:         string & !=""
   target:            #TargetFormat
   supportsNodeKinds: [...#CapabilityNodeKind]
   artifactPattern:   string & !=""
-  notes?:            string
   scopeFilter?:      #Command
 }
 
-#LintPolicy: {
-  unknownCommandSection: "error" | "warn" | "ignore"
-}
-
-#ArtifactPatternPolicy: {
-  allowedTokens: [...#ArtifactPatternToken]
-  requiredByTarget?: [#TargetFormat]: [...#ArtifactPatternToken]
-}
-
-#VersioningPolicy: {
-  immutableSchemaRefs: bool | *true
-  incompatibleChangesRequireNewRef: bool | *true
-  deprecatedMeansLintWarn: bool | *true
-  supersedesIsAdvisory: bool | *true
-}
-
 #DesignRegistrySpec: {
-  supportedCliCommands: [...#CliCommand]
   keySchemaRegistry:     #KeySchemaRegistry
   generatorCapabilities: [...#GeneratorCapability]
-  lintPolicy?: #LintPolicy
-  artifactPatternPolicy?: #ArtifactPatternPolicy
-  versioningPolicy?: #VersioningPolicy
 
   // Every generator capability must reference a known key schema id.
   _keySchemaRefChecks: [for c in generatorCapabilities {
@@ -437,6 +349,11 @@ This CUE input is the canonical source used to compile snake-knot-picker command
 | artifact-pattern | impl-021 | high | Prevents invalid output path templates and target-specific omissions | Validate artifactPattern placeholders against an allowed token set and required-by-target policy |
 | graph-integrity | impl-022 | high | Ensures deterministic key generation from nodesByLabel | Raise errors for graph cycles and generated key collisions during key derivation |
 | translation-coverage | impl-023 | high | Keeps localized output complete and consistent | Require each i18n entry to provide all supportedLanguages when translationPolicy demands it |
+| spec-scope | impl-024 | high | Reduces user burden and avoids duplicating CLI-owned metadata | Keep design-registry CUE schema focused on required runtime inputs only |
+| cli-owned-metadata | impl-025 | high | The CLI should know built-in command inventory and policy defaults | Keep supported CLI commands, lint behavior, and versioning semantics in CLI docs/code and command catalog CSV |
+| schema-metadata | impl-026 | medium | Keeps schema refs minimal and avoids forcing informative fields | Use key schema metadata only for stable identity and version (id + version) |
+| key-examples | impl-027 | medium | Examples clarify intent without constraining valid configs | Treat generated key examples as documentation artifacts rather than required user input fields |
+| artifact-pattern-policy | impl-028 | medium | Placeholder governance is implementation policy, not user data | Document artifact pattern placeholder policy outside user config schema |
 
 ### 05 CUE Config Samples
 
