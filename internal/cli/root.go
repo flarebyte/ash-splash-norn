@@ -47,6 +47,8 @@ func (r Runner) newRootCommand() *cobra.Command {
 
 	root.AddCommand(r.newValidateCommand())
 	root.AddCommand(r.newLintCommand())
+	root.AddCommand(r.newListCommand())
+	root.AddCommand(r.newExplainKeyCommand())
 	root.AddCommand(r.newDryRunPreviewCommand())
 	root.AddCommand(r.newGenerateCommand())
 	root.AddCommand(r.newVersionCommand())

@@ -163,6 +163,92 @@ func (r Runner) newVersionCommand() *cobra.Command {
 	return cmd
 }
 
+func (r Runner) newListCommand() *cobra.Command {
+	var in app.Inputs
+	format := "text"
+	cmd := &cobra.Command{
+		Use:   "list",
+		Short: "List schemas and generation capabilities",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			entries := engine.ValidateInputs(in)
+			if len(entries) > 0 {
+				_ = diag.Write(entries, format, r.Stderr)
+				return fmt.Errorf("list failed")
+			}
+			rows, listEntries := engine.BuildCatalog(in)
+			if len(listEntries) > 0 {
+				_ = diag.Write(listEntries, format, r.Stderr)
+				return fmt.Errorf("list failed")
+			}
+			if format == "json" {
+				enc := json.NewEncoder(r.Stdout)
+				enc.SetIndent("", "  ")
+				return enc.Encode(rows)
+			}
+			if format == "table" {
+				_, _ = fmt.Fprintln(r.Stdout, "SCHEMA         TARGET    ARTIFACT PATTERN                          NODE KINDS")
+				_, _ = fmt.Fprintln(r.Stdout, "-------------  --------  ----------------------------------------  ---------------------")
+				for _, row := range rows {
+					_, _ = fmt.Fprintf(r.Stdout, "%-13s  %-8s  %-40s  %v\n", row.SchemaID, row.Target, row.ArtifactPattern, row.SupportsNode)
+				}
+				return nil
+			}
+			if len(rows) == 0 {
+				_, _ = fmt.Fprintln(r.Stdout, "list: no capabilities")
+				return nil
+			}
+			for _, row := range rows {
+				_, _ = fmt.Fprintf(r.Stdout, "%s | %s | %s | %s\n", row.SchemaID, row.Target, row.ArtifactPattern, row.SupportsNode)
+			}
+			return nil
+		},
+	}
+	addInputFlags(cmd, &in, &format)
+	return cmd
+}
+
+func (r Runner) newExplainKeyCommand() *cobra.Command {
+	var in app.Inputs
+	var schemaID string
+	var labels []string
+	format := "text"
+	cmd := &cobra.Command{
+		Use:   "explain-key",
+		Short: "Explain canonical key derivation from a label path",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			entries := engine.ValidateInputs(in)
+			if len(entries) > 0 {
+				_ = diag.Write(entries, "text", r.Stderr)
+				return fmt.Errorf("explain-key failed")
+			}
+			trace, expEntries := engine.ExplainKeyTrace(in, schemaID, labels)
+			if len(expEntries) > 0 {
+				_ = diag.Write(expEntries, "text", r.Stderr)
+				return fmt.Errorf("explain-key failed")
+			}
+			if format == "json" {
+				enc := json.NewEncoder(r.Stdout)
+				enc.SetIndent("", "  ")
+				return enc.Encode(trace)
+			}
+			_, _ = fmt.Fprintf(r.Stdout, "schema: %s\n", trace.SchemaID)
+			for idx, step := range trace.Steps {
+				_, _ = fmt.Fprintf(r.Stdout, "step %d: %s (%s)\n", idx+1, step.Label, step.Kind)
+			}
+			_, _ = fmt.Fprintf(r.Stdout, "derived-key: %s\n", trace.Key)
+			return nil
+		},
+	}
+	cmd.Flags().StringVar(&in.RegistryPath, "registry", "", "registry cue path")
+	cmd.Flags().StringVar(&in.RegistrySchemaPath, "registry-schema", "", "registry schema cue path")
+	cmd.Flags().StringVar(&in.ConfigPath, "config", "", "config cue path")
+	cmd.Flags().StringVar(&in.ConfigSchemaPath, "config-schema", "", "config schema cue path")
+	cmd.Flags().StringVar(&format, "format", "text", "output format: text|json")
+	cmd.Flags().StringVar(&schemaID, "schema-id", "", "schema id to use")
+	cmd.Flags().StringSliceVar(&labels, "label-path", nil, "ordered labels for key derivation")
+	return cmd
+}
+
 func (r Runner) newGenerateCommand() *cobra.Command {
 	var in app.Inputs
 	outputRoot := "."

@@ -115,3 +115,91 @@ func TestRunDryRunPreviewJSONDeterministicOrder(t *testing.T) {
 		}
 	}
 }
+
+func TestRunListJSON(t *testing.T) {
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	r := Runner{Stdout: &out, Stderr: &stderr}
+	args := append([]string{"list"}, fixtureArgs()...)
+	args = append(args, "--format", "json")
+	code := r.Run(args)
+	if code != 0 {
+		t.Fatalf("expected exit 0 got %d stderr=%s", code, stderr.String())
+	}
+	var rows []map[string]any
+	if err := json.Unmarshal(out.Bytes(), &rows); err != nil {
+		t.Fatalf("invalid json: %v output=%s", err, out.String())
+	}
+	if len(rows) == 0 {
+		t.Fatalf("expected non-empty rows")
+	}
+}
+
+func TestRunListTable(t *testing.T) {
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	r := Runner{Stdout: &out, Stderr: &stderr}
+	args := append([]string{"list"}, fixtureArgs()...)
+	args = append(args, "--format", "table")
+	code := r.Run(args)
+	if code != 0 {
+		t.Fatalf("expected exit 0 got %d stderr=%s", code, stderr.String())
+	}
+	if !strings.Contains(out.String(), "SCHEMA") || !strings.Contains(out.String(), "ARTIFACT PATTERN") {
+		t.Fatalf("unexpected table output: %s", out.String())
+	}
+}
+
+func TestRunExplainKey(t *testing.T) {
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	r := Runner{Stdout: &out, Stderr: &stderr}
+	code := r.Run([]string{
+		"explain-key",
+		"--registry", "../../doc/design-meta/examples/input/design-registry.example.cue",
+		"--registry-schema", "../../doc/design-meta/examples/model/design-registry.schema.cue",
+		"--config", "../../doc/design-meta/examples/input/config-key.cue",
+		"--config-schema", "../../doc/design-meta/examples/model/config-key.schema.cue",
+		"--schema-id", "input-field",
+		"--label-path", "fields,textInput,label",
+	})
+	if code != 0 {
+		t.Fatalf("expected exit 0 got %d stderr=%s", code, stderr.String())
+	}
+	if !strings.Contains(out.String(), "derived-key: fieldsTextInputLabel") {
+		t.Fatalf("unexpected explain-key output: %s", out.String())
+	}
+}
+
+func TestRunExplainKeyJSON(t *testing.T) {
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	r := Runner{Stdout: &out, Stderr: &stderr}
+	code := r.Run([]string{
+		"explain-key",
+		"--registry", "../../doc/design-meta/examples/input/design-registry.example.cue",
+		"--registry-schema", "../../doc/design-meta/examples/model/design-registry.schema.cue",
+		"--config", "../../doc/design-meta/examples/input/config-key.cue",
+		"--config-schema", "../../doc/design-meta/examples/model/config-key.schema.cue",
+		"--schema-id", "input-field",
+		"--label-path", "fields,textInput,label",
+		"--format", "json",
+	})
+	if code != 0 {
+		t.Fatalf("expected exit 0 got %d stderr=%s", code, stderr.String())
+	}
+	var payload struct {
+		SchemaID string `json:"schemaId"`
+		Key      string `json:"key"`
+		Steps    []struct {
+			Label string `json:"label"`
+			Kind  string `json:"kind"`
+		} `json:"steps"`
+	}
+	if err := json.Unmarshal(out.Bytes(), &payload); err != nil {
+		t.Fatalf("invalid json: %v output=%s", err, out.String())
+	}
+	if payload.SchemaID != "input-field" || payload.Key != "fieldsTextInputLabel" || len(payload.Steps) != 3 {
+		t.Fatalf("unexpected payload: %+v", payload)
+	}
+}
