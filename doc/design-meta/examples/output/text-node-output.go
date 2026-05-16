@@ -9,5 +9,5 @@ var TextByKey = map[string]string{
 }
 
 var MetaArgsByKey = map[string][]string{
-	FieldsTextInputValueKey: []string{"meta", "--status", "draft", "--app", "v1"},
+	FieldsTextInputValueKey: {"meta", "--status", "draft", "--app", "v1"},
 }
