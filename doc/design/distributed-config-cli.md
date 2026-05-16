@@ -359,13 +359,13 @@ the corresponding key entry must exist in the matching config section by node ki
 | generate | hard-fail on generation errors | cmd-002 | resolved key schema + config entries | files by target format | high | Generate target artifacts from validated config |
 | lint | non-zero exit on lint policy error | cmd-003 | design registry + config entries | lint diagnostics | high | Run policy checks across schema and config |
 | list | soft-fail for empty lists | cmd-004 | registry input | stdout table/json | medium | List available registries, schemas, and targets |
-| lint-schema | non-zero exit on violation | cmd-005 | key schema metadata + policies | lint diagnostics | high | Validate schema governance rules |
-| lint-config | non-zero exit on violation | cmd-006 | config-key.cue + selected key schema | lint diagnostics | high | Validate config content quality and completeness |
-| lint-sections | non-zero exit on unknown section | cmd-007 | validations[].commands[].args | lint diagnostics | high | Ensure command sections are allowed by supportedCommandSections |
-| lint-keys | non-zero exit on mismatch | cmd-008 | nodesByLabel traversal + config entries | missing/unexpected key diagnostics | high | Check generated/expected keys versus config keys |
-| lint-translations | non-zero exit when required language missing | cmd-009 | i18nEntries + supportedLanguages | translation coverage diagnostics | high | Ensure i18n entries satisfy supportedLanguages policy |
-| lint-patterns | non-zero exit on invalid or missing required token | cmd-010 | generatorCapabilities[].artifactPattern | pattern diagnostics | medium | Validate artifactPattern placeholders against token policy |
-| lint-graph | non-zero exit on cycle/collision | cmd-011 | nodesByLabel graph | graph diagnostics | high | Enforce no cycles and no generated key collisions |
+| lint schema | non-zero exit on violation | cmd-005 | key schema metadata + policies | lint diagnostics | high | Validate schema governance rules |
+| lint config | non-zero exit on violation | cmd-006 | config-key.cue + selected key schema | lint diagnostics | high | Validate config content quality and completeness |
+| lint sections | non-zero exit on unknown section | cmd-007 | validations[].commands[].args | lint diagnostics | high | Ensure command sections are allowed by supportedCommandSections |
+| lint keys | non-zero exit on mismatch | cmd-008 | nodesByLabel traversal + config entries | missing/unexpected key diagnostics | high | Check generated/expected keys versus config keys |
+| lint translations | non-zero exit when required language missing | cmd-009 | i18nEntries + supportedLanguages | translation coverage diagnostics | high | Ensure i18n entries satisfy supportedLanguages policy |
+| lint patterns | non-zero exit on invalid or missing required token | cmd-010 | generatorCapabilities[].artifactPattern | pattern diagnostics | medium | Validate artifactPattern placeholders against token policy |
+| lint graph | non-zero exit on cycle/collision | cmd-011 | nodesByLabel graph | graph diagnostics | high | Enforce no cycles and no generated key collisions |
 | explain-key | soft-fail for unknown labels | cmd-012 | key schema + target label path | human-readable derivation trace | medium | Explain how a canonical key is derived from label-path-camelCase |
 | dry-run-preview | non-zero exit on unresolved references | cmd-013 | config + generator capabilities | planned artifact list | medium | Preview outputs without writing files |
 | version | always succeeds unless startup fails | cmd-014 | none | stdout version string/json | high | Return CLI version/build metadata |
@@ -727,4 +727,3 @@ var ValidationByKey = map[string]CommandSpec{
   }
 }
 ```
-

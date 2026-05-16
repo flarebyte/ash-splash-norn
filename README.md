@@ -44,14 +44,14 @@ Reference examples in this repo:
 ## CLI commands
 
 - `validate`: Validate registry/config CUE inputs.
-- `lint`: Run full policy checks.
-- `lint-schema`: Validate schema governance rules.
-- `lint-config`: Validate config completeness and quality.
-- `lint-sections`: Check validation command sections.
-- `lint-keys`: Verify expected vs actual generated keys.
-- `lint-translations`: Enforce required language coverage.
-- `lint-patterns`: Validate artifact pattern tokens.
-- `lint-graph`: Detect cycles and key collisions.
+- `lint`: Run full policy checks (aggregate).
+- `lint schema`: Validate schema governance rules.
+- `lint config`: Validate config completeness and quality.
+- `lint sections`: Check validation command sections.
+- `lint keys`: Verify expected vs actual generated keys.
+- `lint translations`: Enforce required language coverage.
+- `lint patterns`: Validate artifact pattern tokens.
+- `lint graph`: Detect cycles and key collisions.
 - `list`: List available schemas and target capabilities.
 - `explain-key`: Show key derivation trace from label path.
 - `dry-run-preview`: Show planned outputs without writing files.
@@ -70,6 +70,11 @@ flyb validate \
 
 # Lint all checks
 flyb lint \
+  --registry doc/design-meta/examples/input/design-registry.example.cue \
+  --config doc/design-meta/examples/input/config-key.cue
+
+# Lint translation coverage only
+flyb lint translations \
   --registry doc/design-meta/examples/input/design-registry.example.cue \
   --config doc/design-meta/examples/input/config-key.cue
 
