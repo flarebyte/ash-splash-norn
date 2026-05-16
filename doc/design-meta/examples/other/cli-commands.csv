@@ -1,0 +1,15 @@
+id,command,purpose,inputs,outputs,error_policy,priority
+cmd-001,validate,"Validate registry and config inputs against CUE schemas","design-registry.example.cue; config-key.cue","validation report","hard-fail on schema errors",high
+cmd-002,generate,"Generate target artifacts from validated config","resolved key schema + config entries","files by target format","hard-fail on generation errors",high
+cmd-003,lint,"Run policy checks across schema and config","design registry + config entries","lint diagnostics","non-zero exit on lint policy error",high
+cmd-004,list,"List available registries, schemas, and targets","registry input","stdout table/json","soft-fail for empty lists",medium
+cmd-005,lint-schema,"Validate schema governance rules","key schema metadata + policies","lint diagnostics","non-zero exit on violation",high
+cmd-006,lint-config,"Validate config content quality and completeness","config-key.cue + selected key schema","lint diagnostics","non-zero exit on violation",high
+cmd-007,lint-sections,"Ensure command sections are allowed by supportedCommandSections","validations[].commands[].args","lint diagnostics","non-zero exit on unknown section",high
+cmd-008,lint-keys,"Check generated/expected keys versus config keys","nodesByLabel traversal + config entries","missing/unexpected key diagnostics","non-zero exit on mismatch",high
+cmd-009,lint-translations,"Ensure i18n entries satisfy supportedLanguages policy","i18nEntries + supportedLanguages","translation coverage diagnostics","non-zero exit when required language missing",high
+cmd-010,lint-patterns,"Validate artifactPattern placeholders against token policy","generatorCapabilities[].artifactPattern","pattern diagnostics","non-zero exit on invalid or missing required token",medium
+cmd-011,lint-graph,"Enforce no cycles and no generated key collisions","nodesByLabel graph","graph diagnostics","non-zero exit on cycle/collision",high
+cmd-012,explain-key,"Explain how a canonical key is derived from label-path-camelCase","key schema + target label path","human-readable derivation trace","soft-fail for unknown labels",medium
+cmd-013,dry-run-preview,"Preview outputs without writing files","config + generator capabilities","planned artifact list","non-zero exit on unresolved references",medium
+cmd-014,version,"Return CLI version/build metadata","none","stdout version string/json","always succeeds unless startup fails",high

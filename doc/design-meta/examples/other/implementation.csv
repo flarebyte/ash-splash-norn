@@ -1,0 +1,39 @@
+id,area,suggestion,rationale,priority
+impl-001,key-generation,"Implement deterministic traversal from rootLabels and childLabels with visited-set semantics","Required to derive canonical keys from nodesByLabel DAG reliably",high
+impl-002,key-generation,"Use keyGeneration delimiter and from policy as the only key build mechanism","Prevents drift between schema intent and generated keys",high
+impl-003,registry-resolution,"Resolve generatorCapabilities[*].keySchema against keySchemaRegistry before generation","Ensures capability runs with an explicit known schema",high
+impl-004,meta-filtering,"Compile metaArgsValidation command and apply it to entry metaArgs when scopeFilter is present","Enables restrictive generation scope without hardcoding logic",medium
+impl-005,config-validation,"Validate config-key.cue sections against config-key.schema.cue before generation","Fails early on malformed input shape",high
+impl-006,key-coverage,"Compare derived expected keys by kind with config-key.cue keys and report missing and unexpected keys","Captures schema/data divergence early",high
+impl-007,section-validation,"Validate command sections in validations against supportedCommandSections","Keeps command namespaces controlled across versions",medium
+impl-008,target-routing,"Select generators by target and supportsNodeKinds and keep unknown target as hard error","Prevents silent no-op or wrong output mapping",high
+impl-009,versioning,"Treat metadata.version as informative in v1 and avoid coupling lookup keys to version","Keeps registry references simple while leaving room for future migration strategy",medium
+impl-010,diagnostics,"Emit diagnostics with stable IDs for schema, config, and generation stages","Improves automation and troubleshooting reliability",medium
+impl-011,i18n-key-naming,"Adopt camelCase for ARB keys and generated Dart API compatibility","Aligns with Flutter AppLocalizations naming conventions",high
+impl-012,i18n-key-naming,"Use a stable feature prefix for every key (for example auth, checkout, settings)","Improves searchability and avoids cross-feature key collisions",high
+impl-013,i18n-key-naming,"Prefer semantic intent suffixes such as Title Label Button Error DialogBody","Clarifies UI role without encoding fragile layout position",medium
+impl-014,i18n-key-naming,"Ban generic shared keys like saveButton in favor of feature-scoped keys","Reduces ambiguity and accidental reuse across unrelated contexts",high
+impl-015,i18n-key-naming,"Treat key renames as schema migrations and preserve stability across copy tweaks","Keys should survive wording and minor UI updates",high
+impl-016,i18n-key-naming,"Avoid strict positional naming templates; keep structure loose but consistent","Prevents artificial verbose keys and supports real-world complexity",medium
+impl-017,i18n-key-metadata,"Store strict structural metadata outside the key string (ARB metadata or external config)","Keeps keys readable while preserving machine-usable structure",medium
+impl-018,i18n-key-review,"Add a naming lint check that enforces prefix and generic-key denylist rules","Automates consistency and prevents regressions",medium
+impl-019,cli-contract,"Publish supported CLI commands in registry metadata and fail unknown command invocation","Makes CLI capabilities explicit and versioned with the spec",high
+impl-020,linting,"Fail lint when validation command sections are outside supportedCommandSections","Converts section governance from convention into an enforceable rule",high
+impl-021,artifact-pattern,"Validate artifactPattern placeholders against an allowed token set and required-by-target policy","Prevents invalid output path templates and target-specific omissions",high
+impl-022,graph-integrity,"Raise errors for graph cycles and generated key collisions during key derivation","Ensures deterministic key generation from nodesByLabel",high
+impl-023,translation-coverage,"Require each i18n entry to provide all supportedLanguages when translationPolicy demands it","Keeps localized output complete and consistent",high
+impl-024,spec-scope,"Keep design-registry CUE schema focused on required runtime inputs only","Reduces user burden and avoids duplicating CLI-owned metadata",high
+impl-025,cli-owned-metadata,"Keep supported CLI commands, lint behavior, and versioning semantics in CLI docs/code and command catalog CSV","The CLI should know built-in command inventory and policy defaults",high
+impl-026,schema-metadata,"Use key schema metadata only for stable identity and version (id + version)","Keeps schema refs minimal and avoids forcing informative fields",medium
+impl-027,key-examples,"Treat generated key examples as documentation artifacts rather than required user input fields","Examples clarify intent without constraining valid configs",medium
+impl-028,artifact-pattern-policy,"Document artifact pattern placeholder policy outside user config schema","Placeholder governance is implementation policy, not user data",medium
+impl-029,mandatory-enforcement,"For each reachable node with mandatory=true, require a matching key entry in the section mapped by node kind","Makes mandatory semantics explicit and enforceable in lint",high
+impl-030,config-input,"Support config input as either directory package (preferred) or single CUE file, with single-package enforcement for directory mode","Allows split configuration files while keeping load semantics deterministic",high
+impl-031,codegen-determinism,"Sort keys lexicographically before emitting Go and Dart artifacts","Keeps generated outputs stable across runs and simplifies diffs",high
+impl-032,codegen-header,"Emit a generated-file header in Go and Dart outputs","Makes ownership clear and prevents manual edits drifting from source",medium
+impl-033,codegen-identifiers,"Define a stable key-to-identifier transform and fail on identifier collisions","Prevents ambiguous constant/type names in generated code",high
+impl-034,codegen-escaping,"Apply language-native string escaping for Go and Dart while preserving exact runtime value","Avoids invalid source code and unintended value changes",high
+impl-035,codegen-long-strings,"Allow multiline literals for long strings when semantics are preserved; avoid fragile manual concatenation","Keeps generated files readable without altering values",medium
+impl-036,codegen-unicode,"Preserve Unicode and newline content exactly from source entries","Prevents localization and formatting regressions",high
+impl-037,codegen-optional-meta,"When no metadata exists for a key, omit that key in MetaArgsByKey/metaArgsByKey maps","Keeps outputs compact while preserving fast lookup behavior",medium
+impl-038,codegen-formatting,"Ensure generated Go and Dart source is formatter-compatible (gofmt and dart format style)","Improves readability and integration with standard tooling",medium

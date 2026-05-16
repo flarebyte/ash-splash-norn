@@ -1,0 +1,11 @@
+{
+  "checkoutPaymentErrorCardDeclined": "...",
+  "@checkoutPaymentErrorCardDeclined": {
+    "context": {
+      "feature": "checkout",
+      "component": "payment",
+      "type": "error",
+      "surface": "snackbar"
+    }
+  }
+}

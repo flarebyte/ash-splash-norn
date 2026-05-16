@@ -1,0 +1,36 @@
+package,area,input_type,rule_or_feature,parameter_or_option,what_it_checks,typical_use,built_in,notes
+validomix,string,String,charsLessThan,limit:int,String has fewer than N characters,Max length (exclusive),Yes,Core text-length rule
+validomix,string,String,charsMoreThan,limit:int,String has more than N characters,Min length (exclusive),Yes,Core text-length rule
+validomix,string,String,charsLessThanOrEqual,limit:int,String has at most N characters,Max length (inclusive),Yes,Core text-length rule
+validomix,string,String,charsMoreThanOrEqual,limit:int,String has at least N characters,Min length (inclusive),Yes,Core text-length rule
+validomix,string,String,wordsLessThan,limit:int,String has fewer than N words,Max words (exclusive),Yes,Word-count rule
+validomix,string,String,wordsMoreThan,limit:int,String has more than N words,Min words (exclusive),Yes,Word-count rule
+validomix,string,String,wordsLessThanOrEqual,limit:int,String has at most N words,Max words (inclusive),Yes,Word-count rule
+validomix,string,String,wordsMoreThanOrEqual,limit:int,String has at least N words,Min words (inclusive),Yes,Word-count rule
+validomix,string,String,followFormat,formatter,Value matches formatter-defined format,Formatter-based format validation,Yes,Closest generic format check; not a regex/enum primitive
+validomix,url,String/Uri,validUri,none,Value parses as a URI,Basic URL validity,Yes,Implemented as part of VxUrlRule behavior
+validomix,url,String/Uri,schemeHttpOrHttps,none,Scheme must be http or https,Allow only web URLs,Yes,Implemented as part of VxUrlRule behavior
+validomix,url,String/Uri,secure,bool,Require https scheme,HTTPS-only URL,Yes,Dedicated URL option
+validomix,url,String/Uri,allowDomains,List<String>,Host must match allowed domain suffixes,Restrict to example.com domains,Yes,Dedicated URL option
+validomix,url,String/Uri,allowFragment,bool,Whether #fragment is allowed,Allow/disallow fragments,Yes,Dedicated URL option
+validomix,url,String/Uri,allowQuery,bool,Whether query string is allowed,Allow/disallow ?q=...,Yes,Dedicated URL option
+validomix,url,String/Uri,allowIP,bool,Whether IP-host URLs are allowed,Allow/disallow https://127.0.0.1,Yes,Dedicated URL option
+validomix,url,String/Uri,rejectPort,none,Port component is not allowed,Reject :8080,Yes,Implemented as part of VxUrlRule behavior
+validomix,url,String/Uri,rejectUserInfo,none,User info is not allowed,Reject user:pass@host,Yes,Implemented as part of VxUrlRule behavior
+validomix,number,num,greaterThan,value:num,Number is greater than threshold,x > 10,Yes,Numeric comparison
+validomix,number,num,greaterThanOrEqual,value:num,Number is at least threshold,x >= 10,Yes,Numeric comparison
+validomix,number,num,lessThan,value:num,Number is less than threshold,x < 10,Yes,Numeric comparison
+validomix,number,num,lessThanOrEqual,value:num,Number is at most threshold,x <= 10,Yes,Numeric comparison
+validomix,number,num,equalTo,value:num,Number equals threshold,x == 10,Yes,Numeric comparison
+validomix,number,num,notEqualTo,value:num,Number does not equal threshold,x != 10,Yes,Numeric comparison
+validomix,number,num,multipleOf,value:num,Number is a multiple of threshold,x % 5 == 0,Yes,Divisibility rule
+validomix,list,List<dynamic>,greaterThan,length:int,List length is greater than N,More than 2 items,Yes,"Applies to list size, not contents"
+validomix,list,List<dynamic>,greaterThanOrEqual,length:int,List length is at least N,At least 2 items,Yes,"Applies to list size, not contents"
+validomix,list,List<dynamic>,lessThan,length:int,List length is less than N,Fewer than 5 items,Yes,"Applies to list size, not contents"
+validomix,list,List<dynamic>,lessThanOrEqual,length:int,List length is at most N,No more than 5 items,Yes,"Applies to list size, not contents"
+validomix,list,List<dynamic>,equalTo,length:int,List length equals N,Exactly 3 items,Yes,"Applies to list size, not contents"
+validomix,list,List<dynamic>,itemValidator,validator,Each item is validated using a supplied validator,Validate every tag as a string,Optional,Items are only validated when itemValidator is provided
+validomix,list,List<dynamic>,parser,parser,Input can be parsed into a list before validation,"""a,b,c"" -> [""a"",""b"",""c""]",Optional,Useful for text-to-list workflows
+validomix,gap,String,enum / oneOf / allowedValues,n/a,No first-class built-in enum membership rule found,Custom rule needed,No,Can be approximated via custom validator or formatter logic
+validomix,gap,String,regex,n/a,No dedicated regex rule found in the main exported rule files checked,Custom rule needed,No,Use custom validation if required
+validomix,gap,String,email / phone / UUID / slug,n/a,No dedicated built-in validators found for these in the main exported rule files checked,Custom rule needed,No,URL is the notable built-in specialized text validator

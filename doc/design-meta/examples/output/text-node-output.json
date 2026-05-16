@@ -1,0 +1,10 @@
+{
+  "schemaRef": "input-field",
+  "target": "json",
+  "nodeKind": "text",
+  "generatedAt": "example",
+  "fieldsTextInputValue": "example value",
+  "@fieldsTextInputValue": {
+    "metaArgs": ["meta", "--status", "draft", "--app", "v1"]
+  }
+}

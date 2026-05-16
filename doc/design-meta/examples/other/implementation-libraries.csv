@@ -1,0 +1,4 @@
+id,library,purpose,why,priority
+lib-001,cobra,"CLI command tree, flags, help and completion","De-facto standard Go CLI framework; clear command structure and ergonomics",high
+lib-002,snake-knot-picker,"Schema-driven argv validation and parsing","Provides strict command/flag validation with stable error semantics",high
+lib-003,cuelang.org/go,"Load, evaluate and validate CUE configs","Official CUE implementation for robust package/file handling and validation",high
