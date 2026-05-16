@@ -14,36 +14,7 @@ import (
 
 type lintRegistry struct {
 	DesignRegistry struct {
-		KeySchemaRegistry map[string]struct {
-			Metadata struct {
-				ID      string `cue:"id"`
-				Version string `cue:"version"`
-			} `cue:"metadata"`
-			SupportedLanguages       []string `cue:"supportedLanguages"`
-			SupportedCommandSections []string `cue:"supportedCommandSections"`
-			TranslationPolicy        struct {
-				RequireAllSupportedLanguages bool `cue:"requireAllSupportedLanguages"`
-			} `cue:"translationPolicy"`
-			MetaArgsValidation struct {
-				Args map[string]struct {
-					CommandPath []string `cue:"commandPath"`
-					AdminOnly   bool     `cue:"adminOnly"`
-					Flags       []struct {
-						Kind    string     `cue:"kind"`
-						Name    string     `cue:"name"`
-						Schema  []string   `cue:"schema"`
-						Schemas [][]string `cue:"schemas"`
-					} `cue:"flags"`
-				} `cue:"args"`
-			} `cue:"metaArgsValidation"`
-			RootLabels   []string `cue:"rootLabels"`
-			NodesByLabel map[string]struct {
-				Label       string   `cue:"label"`
-				Kind        string   `cue:"kind"`
-				Mandatory   bool     `cue:"mandatory"`
-				ChildLabels []string `cue:"childLabels"`
-			} `cue:"nodesByLabel"`
-		} `cue:"keySchemaRegistry"`
+		KeySchemaRegistry     map[string]keySchemaSpec `cue:"keySchemaRegistry"`
 		GeneratorCapabilities []struct {
 			Target          string `cue:"target"`
 			ArtifactPattern string `cue:"artifactPattern"`
@@ -68,6 +39,37 @@ type lintConfig struct {
 			Args map[string]any `cue:"args"`
 		} `cue:"commands"`
 	} `cue:"validations"`
+}
+
+type keySchemaSpec struct {
+	Metadata struct {
+		ID      string `cue:"id"`
+		Version string `cue:"version"`
+	} `cue:"metadata"`
+	SupportedLanguages       []string `cue:"supportedLanguages"`
+	SupportedCommandSections []string `cue:"supportedCommandSections"`
+	TranslationPolicy        struct {
+		RequireAllSupportedLanguages bool `cue:"requireAllSupportedLanguages"`
+	} `cue:"translationPolicy"`
+	MetaArgsValidation struct {
+		Args map[string]struct {
+			CommandPath []string `cue:"commandPath"`
+			AdminOnly   bool     `cue:"adminOnly"`
+			Flags       []struct {
+				Kind    string     `cue:"kind"`
+				Name    string     `cue:"name"`
+				Schema  []string   `cue:"schema"`
+				Schemas [][]string `cue:"schemas"`
+			} `cue:"flags"`
+		} `cue:"args"`
+	} `cue:"metaArgsValidation"`
+	RootLabels   []string `cue:"rootLabels"`
+	NodesByLabel map[string]struct {
+		Label       string   `cue:"label"`
+		Kind        string   `cue:"kind"`
+		Mandatory   bool     `cue:"mandatory"`
+		ChildLabels []string `cue:"childLabels"`
+	} `cue:"nodesByLabel"`
 }
 
 func LintDiagnostics(in app.Inputs, check string) []diag.Entry {
@@ -414,36 +416,7 @@ func lintSchemaGovernance(reg lintRegistry) []diag.Entry {
 	return out
 }
 
-func lintConfigQuality(cfg lintConfig, ks struct {
-	Metadata struct {
-		ID      string `cue:"id"`
-		Version string `cue:"version"`
-	} `cue:"metadata"`
-	SupportedLanguages       []string `cue:"supportedLanguages"`
-	SupportedCommandSections []string `cue:"supportedCommandSections"`
-	TranslationPolicy        struct {
-		RequireAllSupportedLanguages bool `cue:"requireAllSupportedLanguages"`
-	} `cue:"translationPolicy"`
-	MetaArgsValidation struct {
-		Args map[string]struct {
-			CommandPath []string `cue:"commandPath"`
-			AdminOnly   bool     `cue:"adminOnly"`
-			Flags       []struct {
-				Kind    string     `cue:"kind"`
-				Name    string     `cue:"name"`
-				Schema  []string   `cue:"schema"`
-				Schemas [][]string `cue:"schemas"`
-			} `cue:"flags"`
-		} `cue:"args"`
-	} `cue:"metaArgsValidation"`
-	RootLabels   []string `cue:"rootLabels"`
-	NodesByLabel map[string]struct {
-		Label       string   `cue:"label"`
-		Kind        string   `cue:"kind"`
-		Mandatory   bool     `cue:"mandatory"`
-		ChildLabels []string `cue:"childLabels"`
-	} `cue:"nodesByLabel"`
-}) []diag.Entry {
+func lintConfigQuality(cfg lintConfig, ks keySchemaSpec) []diag.Entry {
 	out := make([]diag.Entry, 0)
 	out = append(out, lintDuplicateKeys("i18nEntries", collectI18nKeys(cfg))...)
 	out = append(out, lintDuplicateKeys("textEntries", collectTextKeys(cfg))...)

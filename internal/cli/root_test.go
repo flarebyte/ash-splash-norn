@@ -17,6 +17,27 @@ func fixtureArgs() []string {
 	}
 }
 
+func runExplainKey(t *testing.T, format string) (int, string, string) {
+	t.Helper()
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	r := Runner{Stdout: &out, Stderr: &stderr}
+	args := []string{
+		"explain-key",
+		"--registry", "../../doc/design-meta/examples/input/design-registry.example.cue",
+		"--registry-schema", "../../doc/design-meta/examples/model/design-registry.schema.cue",
+		"--config", "../../doc/design-meta/examples/input/config-key.cue",
+		"--config-schema", "../../doc/design-meta/examples/model/config-key.schema.cue",
+		"--schema-id", "input-field",
+		"--label-path", "fields,textInput,label",
+	}
+	if format != "" {
+		args = append(args, "--format", format)
+	}
+	code := r.Run(args)
+	return code, out.String(), stderr.String()
+}
+
 func TestRunVersionJSON(t *testing.T) {
 	var out bytes.Buffer
 	var err bytes.Buffer
@@ -199,42 +220,19 @@ func TestRunListTable(t *testing.T) {
 }
 
 func TestRunExplainKey(t *testing.T) {
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-	r := Runner{Stdout: &out, Stderr: &stderr}
-	code := r.Run([]string{
-		"explain-key",
-		"--registry", "../../doc/design-meta/examples/input/design-registry.example.cue",
-		"--registry-schema", "../../doc/design-meta/examples/model/design-registry.schema.cue",
-		"--config", "../../doc/design-meta/examples/input/config-key.cue",
-		"--config-schema", "../../doc/design-meta/examples/model/config-key.schema.cue",
-		"--schema-id", "input-field",
-		"--label-path", "fields,textInput,label",
-	})
+	code, out, stderr := runExplainKey(t, "")
 	if code != 0 {
-		t.Fatalf("expected exit 0 got %d stderr=%s", code, stderr.String())
+		t.Fatalf("expected exit 0 got %d stderr=%s", code, stderr)
 	}
-	if !strings.Contains(out.String(), "derived-key: fieldsTextInputLabel") {
-		t.Fatalf("unexpected explain-key output: %s", out.String())
+	if !strings.Contains(out, "derived-key: fieldsTextInputLabel") {
+		t.Fatalf("unexpected explain-key output: %s", out)
 	}
 }
 
 func TestRunExplainKeyJSON(t *testing.T) {
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-	r := Runner{Stdout: &out, Stderr: &stderr}
-	code := r.Run([]string{
-		"explain-key",
-		"--registry", "../../doc/design-meta/examples/input/design-registry.example.cue",
-		"--registry-schema", "../../doc/design-meta/examples/model/design-registry.schema.cue",
-		"--config", "../../doc/design-meta/examples/input/config-key.cue",
-		"--config-schema", "../../doc/design-meta/examples/model/config-key.schema.cue",
-		"--schema-id", "input-field",
-		"--label-path", "fields,textInput,label",
-		"--format", "json",
-	})
+	code, out, stderr := runExplainKey(t, "json")
 	if code != 0 {
-		t.Fatalf("expected exit 0 got %d stderr=%s", code, stderr.String())
+		t.Fatalf("expected exit 0 got %d stderr=%s", code, stderr)
 	}
 	var payload struct {
 		SchemaID string `json:"schemaId"`
@@ -244,8 +242,8 @@ func TestRunExplainKeyJSON(t *testing.T) {
 			Kind  string `json:"kind"`
 		} `json:"steps"`
 	}
-	if err := json.Unmarshal(out.Bytes(), &payload); err != nil {
-		t.Fatalf("invalid json: %v output=%s", err, out.String())
+	if err := json.Unmarshal([]byte(out), &payload); err != nil {
+		t.Fatalf("invalid json: %v output=%s", err, out)
 	}
 	if payload.SchemaID != "input-field" || payload.Key != "fieldsTextInputLabel" || len(payload.Steps) != 3 {
 		t.Fatalf("unexpected payload: %+v", payload)

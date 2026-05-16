@@ -2,7 +2,6 @@ package engine
 
 import (
 	"fmt"
-	"os"
 	"sort"
 
 	"cuelang.org/go/cue"
@@ -30,7 +29,7 @@ type registryDoc struct {
 }
 
 func BuildPreview(in app.Inputs) ([]PreviewRow, []diag.Entry) {
-	src, entries := mergeCueSources(in.RegistrySchemaPath, in.RegistryPath, "preview")
+	src, entries := mergeCueSourcesWithConfigDir(in.RegistrySchemaPath, in.RegistryPath, "preview", false)
 	if len(entries) > 0 {
 		return nil, entries
 	}
@@ -94,46 +93,4 @@ func BuildPreview(in app.Inputs) ([]PreviewRow, []diag.Entry) {
 		return rows[i].SchemaRef < rows[j].SchemaRef
 	})
 	return rows, nil
-}
-
-func mergeCueSources(schemaPath, inputPath, stage string) (string, []diag.Entry) {
-	schemaSrc, err := os.ReadFile(schemaPath)
-	if err != nil {
-		return "", []diag.Entry{{
-			Stage:    stage,
-			ID:       "SCH-0101",
-			Severity: diag.SeverityError,
-			Message:  fmt.Sprintf("failed to read schema file: %v", err),
-			Path:     schemaPath,
-		}}
-	}
-	inputSrc, err := os.ReadFile(inputPath)
-	if err != nil {
-		return "", []diag.Entry{{
-			Stage:    stage,
-			ID:       "SCH-0102",
-			Severity: diag.SeverityError,
-			Message:  fmt.Sprintf("failed to read input file: %v", err),
-			Path:     inputPath,
-		}}
-	}
-	schemaPkg := extractPackage(string(schemaSrc))
-	inputPkg := extractPackage(string(inputSrc))
-	inputBody := stripPackageDecl(string(inputSrc))
-	merged := string(schemaSrc)
-	if inputPkg == "" && schemaPkg != "" {
-		merged += "\n\n" + inputBody
-		return merged, nil
-	}
-	if schemaPkg != "" && inputPkg != "" && schemaPkg != inputPkg {
-		return "", []diag.Entry{{
-			Stage:    stage,
-			ID:       "SCH-0103",
-			Severity: diag.SeverityError,
-			Message:  fmt.Sprintf("package mismatch between schema (%s) and input (%s)", schemaPkg, inputPkg),
-			Path:     inputPath,
-		}}
-	}
-	merged += "\n\n" + inputBody
-	return merged, nil
 }

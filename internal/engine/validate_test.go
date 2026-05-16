@@ -98,42 +98,20 @@ func TestValidateInputsConfigDirMixedPackage(t *testing.T) {
 }
 
 func TestValidateInputsRejectsUnsafeArtifactPattern(t *testing.T) {
-	dir := t.TempDir()
-	regSchema := filepath.Join(dir, "reg.schema.cue")
-	regInput := filepath.Join(dir, "reg.cue")
-	cfgSchema := filepath.Join(dir, "cfg.schema.cue")
-	cfgInput := filepath.Join(dir, "cfg.cue")
-	if err := os.WriteFile(regSchema, []byte(`package designregistry
+	entries := ValidateInputs(writeInputsFixture(t, `package designregistry
 #DesignRegistrySpec: {
   keySchemaRegistry: [string]: _
   generatorCapabilities: [...{ keySchema: string, target: string, supportsNodeKinds: [...string], artifactPattern: string }]
 }
-`), 0o644); err != nil {
-		t.Fatalf("write reg schema: %v", err)
-	}
-	if err := os.WriteFile(regInput, []byte(`package designregistry
+`, `package designregistry
 designRegistry: #DesignRegistrySpec & {
   keySchemaRegistry: {"x": {}}
   generatorCapabilities: [{ keySchema: "x", target: "json", supportsNodeKinds: ["text"], artifactPattern: "../bad/<domain>.json" }]
 }
-`), 0o644); err != nil {
-		t.Fatalf("write reg input: %v", err)
-	}
-	if err := os.WriteFile(cfgSchema, []byte(`package configkey
+`, `package configkey
 textEntries: [...{ key: string }]
-`), 0o644); err != nil {
-		t.Fatalf("write cfg schema: %v", err)
-	}
-	if err := os.WriteFile(cfgInput, []byte(`textEntries: [{key: "ok"}]
-`), 0o644); err != nil {
-		t.Fatalf("write cfg input: %v", err)
-	}
-	entries := ValidateInputs(app.Inputs{
-		RegistryPath:       regInput,
-		RegistrySchemaPath: regSchema,
-		ConfigPath:         cfgInput,
-		ConfigSchemaPath:   cfgSchema,
-	})
+`, `textEntries: [{key: "ok"}]
+`))
 	found := false
 	for _, e := range entries {
 		if e.ID == "SCH-0008" {

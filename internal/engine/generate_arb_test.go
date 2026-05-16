@@ -6,8 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
-
-	"github.com/flarebyte/ash-splash-norn/internal/app"
 )
 
 func TestGenerateArtifactsARBJsonGoldenSnapshots(t *testing.T) {
@@ -37,13 +35,7 @@ func TestGenerateArtifactsARBJsonGoldenSnapshots(t *testing.T) {
 }
 
 func TestGenerateArtifactsARBJsonMissingRequiredLocaleFails(t *testing.T) {
-	dir := t.TempDir()
-	regSchema := filepath.Join(dir, "reg.schema.cue")
-	regInput := filepath.Join(dir, "reg.cue")
-	cfgSchema := filepath.Join(dir, "cfg.schema.cue")
-	cfgInput := filepath.Join(dir, "cfg.cue")
-
-	mustWrite(t, regSchema, `package designregistry
+	in := writeInputsFixture(t, `package designregistry
 #DesignRegistrySpec: {
   keySchemaRegistry: [string]: {
     supportedLanguages: [...string]
@@ -56,8 +48,7 @@ func TestGenerateArtifactsARBJsonMissingRequiredLocaleFails(t *testing.T) {
     artifactPattern: string
   }]
 }
-`)
-	mustWrite(t, regInput, `package designregistry
+`, `package designregistry
 designRegistry: #DesignRegistrySpec & {
   keySchemaRegistry: {
     "input-field": {
@@ -72,8 +63,7 @@ designRegistry: #DesignRegistrySpec & {
     artifactPattern: "lib/l10n/app_<locale>.arb.json"
   }]
 }
-`)
-	mustWrite(t, cfgSchema, `package configkey
+`, `package configkey
 i18nEntries: [...{
   key: string
   description: string
@@ -82,8 +72,7 @@ i18nEntries: [...{
 }]
 textEntries: [..._]
 validations: [..._]
-`)
-	mustWrite(t, cfgInput, `i18nEntries: [{
+`, `i18nEntries: [{
   key: "helloKey"
   description: "desc"
   metaArgs: ["meta"]
@@ -94,8 +83,6 @@ validations: [..._]
 textEntries: []
 validations: []
 `)
-
-	in := app.Inputs{RegistryPath: regInput, RegistrySchemaPath: regSchema, ConfigPath: cfgInput, ConfigSchemaPath: cfgSchema}
 	_, entries := GenerateArtifacts(in, "arb.json", t.TempDir())
 	if len(entries) == 0 {
 		t.Fatalf("expected missing-locale error")

@@ -111,6 +111,10 @@ func mergeCueSourcesWithConfigDir(schemaPath, inputPath, stage string, allowConf
 	return merged, nil
 }
 
+func mergeCueSources(schemaPath, inputPath, stage string) (string, []diag.Entry) {
+	return mergeCueSourcesWithConfigDir(schemaPath, inputPath, stage, false)
+}
+
 func extractPackage(src string) string {
 	m := pkgPattern.FindStringSubmatch(src)
 	if len(m) < 2 {

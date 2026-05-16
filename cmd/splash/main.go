@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/flarebyte/ash-splash-norn/internal/cli"
+	"github.com/flarebyte/ash-splash-norn/internal/runmain"
 )
 
 var (
@@ -13,14 +13,5 @@ var (
 )
 
 func main() {
-	r := cli.Runner{
-		Stdout: os.Stdout,
-		Stderr: os.Stderr,
-		Build: cli.BuildInfo{
-			Version: version,
-			Commit:  commit,
-			Date:    date,
-		},
-	}
-	os.Exit(r.Run(os.Args[1:]))
+	os.Exit(runmain.Run(version, commit, date))
 }

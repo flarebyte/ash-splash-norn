@@ -44,16 +44,11 @@ func TestGenerateArtifactsJSONYAMLCUE(t *testing.T) {
 }
 
 func TestGenerateArtifactsConfigDirectoryPath(t *testing.T) {
-	in := fixtureInputs()
-	raw, err := os.ReadFile(in.ConfigPath)
+	base := fixtureInputs()
+	in, err := fixtureInputsWithConfigDirFromFile(t, base.ConfigPath)
 	if err != nil {
 		t.Fatalf("read fixture config: %v", err)
 	}
-	cfgDir := t.TempDir()
-	if err := os.WriteFile(filepath.Join(cfgDir, "part1.cue"), raw, 0o644); err != nil {
-		t.Fatalf("write config fragment: %v", err)
-	}
-	in.ConfigPath = cfgDir
 
 	arts, entries := GenerateArtifacts(in, "json", t.TempDir())
 	if len(entries) > 0 {
@@ -61,6 +56,35 @@ func TestGenerateArtifactsConfigDirectoryPath(t *testing.T) {
 	}
 	if len(arts) == 0 {
 		t.Fatal("expected artifacts")
+	}
+}
+
+func assertGoldenSnapshotsForTarget(t *testing.T, in app.Inputs, target string, expectedCount int) {
+	t.Helper()
+	outDir := t.TempDir()
+	arts, entries := GenerateArtifacts(in, target, outDir)
+	if len(entries) > 0 {
+		t.Fatalf("entries=%v", entries)
+	}
+	if len(arts) != expectedCount {
+		t.Fatalf("expected %d artifacts, got %d", expectedCount, len(arts))
+	}
+	for _, a := range arts {
+		got, err := os.ReadFile(a.Path)
+		if err != nil {
+			t.Fatalf("read generated file: %v", err)
+		}
+		base := filepath.Base(a.Path)
+		wantPath := filepath.Join("testdata", "golden", base)
+		want, err := os.ReadFile(wantPath)
+		if err != nil {
+			t.Fatalf("read golden file %s: %v", wantPath, err)
+		}
+		got = bytes.TrimRight(got, "\n")
+		want = bytes.TrimRight(want, "\n")
+		if !bytes.Equal(got, want) {
+			t.Fatalf("golden mismatch for %s", base)
+		}
 	}
 }
 
@@ -155,90 +179,15 @@ func TestGenerateArtifactsPerKindFileNames(t *testing.T) {
 }
 
 func TestGenerateArtifactsJSONGoldenSnapshots(t *testing.T) {
-	in := fixtureInputs()
-	outDir := t.TempDir()
-	arts, entries := GenerateArtifacts(in, "json", outDir)
-	if len(entries) > 0 {
-		t.Fatalf("entries=%v", entries)
-	}
-	if len(arts) != 3 {
-		t.Fatalf("expected 3 artifacts, got %d", len(arts))
-	}
-	for _, a := range arts {
-		got, err := os.ReadFile(a.Path)
-		if err != nil {
-			t.Fatalf("read generated file: %v", err)
-		}
-		base := filepath.Base(a.Path)
-		wantPath := filepath.Join("testdata", "golden", base)
-		want, err := os.ReadFile(wantPath)
-		if err != nil {
-			t.Fatalf("read golden file %s: %v", wantPath, err)
-		}
-		got = bytes.TrimRight(got, "\n")
-		want = bytes.TrimRight(want, "\n")
-		if !bytes.Equal(got, want) {
-			t.Fatalf("golden mismatch for %s", base)
-		}
-	}
+	assertGoldenSnapshotsForTarget(t, fixtureInputs(), "json", 3)
 }
 
 func TestGenerateArtifactsYAMLGoldenSnapshots(t *testing.T) {
-	in := fixtureInputs()
-	outDir := t.TempDir()
-	arts, entries := GenerateArtifacts(in, "yaml", outDir)
-	if len(entries) > 0 {
-		t.Fatalf("entries=%v", entries)
-	}
-	if len(arts) != 3 {
-		t.Fatalf("expected 3 artifacts, got %d", len(arts))
-	}
-	for _, a := range arts {
-		got, err := os.ReadFile(a.Path)
-		if err != nil {
-			t.Fatalf("read generated file: %v", err)
-		}
-		base := filepath.Base(a.Path)
-		wantPath := filepath.Join("testdata", "golden", base)
-		want, err := os.ReadFile(wantPath)
-		if err != nil {
-			t.Fatalf("read golden file %s: %v", wantPath, err)
-		}
-		got = bytes.TrimRight(got, "\n")
-		want = bytes.TrimRight(want, "\n")
-		if !bytes.Equal(got, want) {
-			t.Fatalf("golden mismatch for %s", base)
-		}
-	}
+	assertGoldenSnapshotsForTarget(t, fixtureInputs(), "yaml", 3)
 }
 
 func TestGenerateArtifactsCUEGoldenSnapshots(t *testing.T) {
-	in := fixtureInputs()
-	outDir := t.TempDir()
-	arts, entries := GenerateArtifacts(in, "cue", outDir)
-	if len(entries) > 0 {
-		t.Fatalf("entries=%v", entries)
-	}
-	if len(arts) != 3 {
-		t.Fatalf("expected 3 artifacts, got %d", len(arts))
-	}
-	for _, a := range arts {
-		got, err := os.ReadFile(a.Path)
-		if err != nil {
-			t.Fatalf("read generated file: %v", err)
-		}
-		base := filepath.Base(a.Path)
-		wantPath := filepath.Join("testdata", "golden", base)
-		want, err := os.ReadFile(wantPath)
-		if err != nil {
-			t.Fatalf("read golden file %s: %v", wantPath, err)
-		}
-		got = bytes.TrimRight(got, "\n")
-		want = bytes.TrimRight(want, "\n")
-		if !bytes.Equal(got, want) {
-			t.Fatalf("golden mismatch for %s", base)
-		}
-	}
+	assertGoldenSnapshotsForTarget(t, fixtureInputs(), "cue", 3)
 }
 
 func TestGenerateArtifactsGoAndDart(t *testing.T) {
@@ -450,12 +399,7 @@ validations: [..._]
 }
 
 func TestGenerateArtifactsRejectsUnsafePattern(t *testing.T) {
-	dir := t.TempDir()
-	regSchema := filepath.Join(dir, "reg.schema.cue")
-	regInput := filepath.Join(dir, "reg.cue")
-	cfgSchema := filepath.Join(dir, "cfg.schema.cue")
-	cfgInput := filepath.Join(dir, "cfg.cue")
-	mustWrite(t, regSchema, `package designregistry
+	in := writeInputsFixture(t, `package designregistry
 #DesignRegistrySpec: {
   keySchemaRegistry: [string]: _
   generatorCapabilities: [...{
@@ -465,8 +409,7 @@ func TestGenerateArtifactsRejectsUnsafePattern(t *testing.T) {
     artifactPattern: string
   }]
 }
-`)
-	mustWrite(t, regInput, `package designregistry
+`, `package designregistry
 designRegistry: #DesignRegistrySpec & {
   keySchemaRegistry: {"input-field": {}}
   generatorCapabilities: [{
@@ -476,17 +419,14 @@ designRegistry: #DesignRegistrySpec & {
     artifactPattern: "../bad/<domain>.json"
   }]
 }
-`)
-	mustWrite(t, cfgSchema, `package configkey
+`, `package configkey
 textEntries: [...{ key: string, value: string, metaArgs: [...string] }]
 i18nEntries: [..._]
 validations: [..._]
-`)
-	mustWrite(t, cfgInput, `textEntries: [{key: "k", value: "v", metaArgs: []}]
+`, `textEntries: [{key: "k", value: "v", metaArgs: []}]
 i18nEntries: []
 validations: []
 `)
-	in := app.Inputs{RegistryPath: regInput, RegistrySchemaPath: regSchema, ConfigPath: cfgInput, ConfigSchemaPath: cfgSchema}
 	_, entries := GenerateArtifacts(in, "json", t.TempDir())
 	if len(entries) == 0 || entries[0].ID != "GEN-0009" {
 		t.Fatalf("expected GEN-0009, got %v", entries)
