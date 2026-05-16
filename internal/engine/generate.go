@@ -658,15 +658,6 @@ func sortedMapKeysString(m map[string]string) []string {
 	return out
 }
 
-func sortedMapKeysAny(m map[string]map[string]any) []string {
-	out := make([]string, 0, len(m))
-	for k := range m {
-		out = append(out, k)
-	}
-	sort.Strings(out)
-	return out
-}
-
 func sortedMapKeysSpec(m map[string]commandSpecLit) []string {
 	out := make([]string, 0, len(m))
 	for k := range m {

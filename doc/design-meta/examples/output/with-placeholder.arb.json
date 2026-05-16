@@ -1,11 +1,11 @@
 {
-  "userGreeting": "{gender, select, male{Hello sir} female{Hello ma'am} other{Hello}}",
-  "@userGreeting": {
-    "description": "Polite welcome",
-    "placeholders": {
-      "gender": {
-        "type": "String"
-      }
-    }
-  }
+	"userGreeting": "{gender, select, male{Hello sir} female{Hello ma'am} other{Hello}}",
+	"@userGreeting": {
+		"description": "Polite welcome",
+		"placeholders": {
+			"gender": {
+				"type": "String"
+			}
+		}
+	}
 }

@@ -29,7 +29,7 @@ func (r Runner) Run(args []string) int {
 		if errors.Is(err, ErrUsage) {
 			return 2
 		}
-		fmt.Fprintf(r.Stderr, "%v\n", err)
+		_, _ = fmt.Fprintf(r.Stderr, "%v\n", err)
 		return 1
 	}
 	return 0

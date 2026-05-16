@@ -1,11 +1,11 @@
 {
-  "checkoutPaymentErrorCardDeclined": "...",
-  "@checkoutPaymentErrorCardDeclined": {
-    "context": {
-      "feature": "checkout",
-      "component": "payment",
-      "type": "error",
-      "surface": "snackbar"
-    }
-  }
+	"checkoutPaymentErrorCardDeclined": "...",
+	"@checkoutPaymentErrorCardDeclined": {
+		"context": {
+			"feature": "checkout",
+			"component": "payment",
+			"type": "error",
+			"surface": "snackbar"
+		}
+	}
 }

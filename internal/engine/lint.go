@@ -234,9 +234,6 @@ func deriveExpectedKeys(rootLabels []string, nodes map[string]struct {
 			})
 			return
 		}
-		if visited[label] {
-			// Already validated from another path; still traverse path-specific key leaves below in caller recursion.
-		}
 		visiting[label] = true
 		nextPath := append(path, node.Label)
 		if node.Kind != "branch" {

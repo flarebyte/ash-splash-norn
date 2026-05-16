@@ -26,6 +26,7 @@ profile.cov
 # Go cache and local tool state
 .gocache/
 .gomodcache/
+.golangci-lint-cache/
 
 # Go workspace file
 go.work
@@ -54,3 +55,6 @@ scratch/
 # Editor/IDE
 # .idea/
 # .vscode/
+
+/temp
+/tmp
