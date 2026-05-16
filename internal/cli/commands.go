@@ -162,3 +162,36 @@ func (r Runner) newVersionCommand() *cobra.Command {
 	cmd.Flags().StringVar(&format, "format", "text", "output format: text|json")
 	return cmd
 }
+
+func (r Runner) newGenerateCommand() *cobra.Command {
+	var in app.Inputs
+	outputRoot := "."
+	cmd := &cobra.Command{
+		Use:   "generate <target>",
+		Short: "Generate artifacts by target",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			target := args[0]
+			entries := engine.ValidateInputs(in)
+			if len(entries) > 0 {
+				_ = diag.Write(entries, "text", r.Stderr)
+				return fmt.Errorf("generate failed")
+			}
+			arts, genEntries := engine.GenerateArtifacts(in, target, outputRoot)
+			if len(genEntries) > 0 {
+				_ = diag.Write(genEntries, "text", r.Stderr)
+				return fmt.Errorf("generate failed")
+			}
+			for _, a := range arts {
+				_, _ = fmt.Fprintf(r.Stdout, "generated: %s\n", a.Path)
+			}
+			return nil
+		},
+	}
+	cmd.Flags().StringVar(&in.RegistryPath, "registry", "", "registry cue path")
+	cmd.Flags().StringVar(&in.RegistrySchemaPath, "registry-schema", "", "registry schema cue path")
+	cmd.Flags().StringVar(&in.ConfigPath, "config", "", "config cue path")
+	cmd.Flags().StringVar(&in.ConfigSchemaPath, "config-schema", "", "config schema cue path")
+	cmd.Flags().StringVar(&outputRoot, "output-root", ".", "output root directory")
+	return cmd
+}
