@@ -416,6 +416,14 @@ the corresponding key entry must exist in the matching config section by node ki
 | artifact-pattern-policy | impl-028 | medium | Placeholder governance is implementation policy, not user data | Document artifact pattern placeholder policy outside user config schema |
 | mandatory-enforcement | impl-029 | high | Makes mandatory semantics explicit and enforceable in lint | For each reachable node with mandatory=true, require a matching key entry in the section mapped by node kind |
 | config-input | impl-030 | high | Allows split configuration files while keeping load semantics deterministic | Support config input as either directory package (preferred) or single CUE file, with single-package enforcement for directory mode |
+| codegen-determinism | impl-031 | high | Keeps generated outputs stable across runs and simplifies diffs | Sort keys lexicographically before emitting Go and Dart artifacts |
+| codegen-header | impl-032 | medium | Makes ownership clear and prevents manual edits drifting from source | Emit a generated-file header in Go and Dart outputs |
+| codegen-identifiers | impl-033 | high | Prevents ambiguous constant/type names in generated code | Define a stable key-to-identifier transform and fail on identifier collisions |
+| codegen-escaping | impl-034 | high | Avoids invalid source code and unintended value changes | Apply language-native string escaping for Go and Dart while preserving exact runtime value |
+| codegen-long-strings | impl-035 | medium | Keeps generated files readable without altering values | Allow multiline literals for long strings when semantics are preserved; avoid fragile manual concatenation |
+| codegen-unicode | impl-036 | high | Prevents localization and formatting regressions | Preserve Unicode and newline content exactly from source entries |
+| codegen-optional-meta | impl-037 | medium | Keeps outputs compact while preserving fast lookup behavior | When no metadata exists for a key, omit that key in MetaArgsByKey/metaArgsByKey maps |
+| codegen-formatting | impl-038 | medium | Improves readability and integration with standard tooling | Ensure generated Go and Dart source is formatter-compatible (gofmt and dart format style) |
 
 ### 07 CUE Config Samples
 
@@ -581,7 +589,7 @@ var TextByKey = map[string]string{
 }
 
 var MetaArgsByKey = map[string][]string{
-	FieldsTextInputValueKey: []string{"meta", "--status", "draft", "--app", "v1"},
+	FieldsTextInputValueKey: {"meta", "--status", "draft", "--app", "v1"},
 }
 ```
 

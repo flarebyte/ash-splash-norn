@@ -29,3 +29,11 @@ impl-027,key-examples,"Treat generated key examples as documentation artifacts r
 impl-028,artifact-pattern-policy,"Document artifact pattern placeholder policy outside user config schema","Placeholder governance is implementation policy, not user data",medium
 impl-029,mandatory-enforcement,"For each reachable node with mandatory=true, require a matching key entry in the section mapped by node kind","Makes mandatory semantics explicit and enforceable in lint",high
 impl-030,config-input,"Support config input as either directory package (preferred) or single CUE file, with single-package enforcement for directory mode","Allows split configuration files while keeping load semantics deterministic",high
+impl-031,codegen-determinism,"Sort keys lexicographically before emitting Go and Dart artifacts","Keeps generated outputs stable across runs and simplifies diffs",high
+impl-032,codegen-header,"Emit a generated-file header in Go and Dart outputs","Makes ownership clear and prevents manual edits drifting from source",medium
+impl-033,codegen-identifiers,"Define a stable key-to-identifier transform and fail on identifier collisions","Prevents ambiguous constant/type names in generated code",high
+impl-034,codegen-escaping,"Apply language-native string escaping for Go and Dart while preserving exact runtime value","Avoids invalid source code and unintended value changes",high
+impl-035,codegen-long-strings,"Allow multiline literals for long strings when semantics are preserved; avoid fragile manual concatenation","Keeps generated files readable without altering values",medium
+impl-036,codegen-unicode,"Preserve Unicode and newline content exactly from source entries","Prevents localization and formatting regressions",high
+impl-037,codegen-optional-meta,"When no metadata exists for a key, omit that key in MetaArgsByKey/metaArgsByKey maps","Keeps outputs compact while preserving fast lookup behavior",medium
+impl-038,codegen-formatting,"Ensure generated Go and Dart source is formatter-compatible (gofmt and dart format style)","Improves readability and integration with standard tooling",medium
