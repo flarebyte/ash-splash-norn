@@ -68,6 +68,12 @@ func BuildPreview(in app.Inputs) ([]PreviewRow, []diag.Entry) {
 			Path:     in.RegistryPath,
 		}}
 	}
+	for _, c := range doc.DesignRegistry.GeneratorCapabilities {
+		entries := artifactPatternIssuesToDiag("preview", "PRV-0004", "PRV-0005", "PRV-0007", "PRV-0006", c.Target, c.ArtifactPattern)
+		if len(entries) > 0 {
+			return nil, entries
+		}
+	}
 
 	rows := make([]PreviewRow, 0, len(doc.DesignRegistry.GeneratorCapabilities))
 	for _, c := range doc.DesignRegistry.GeneratorCapabilities {

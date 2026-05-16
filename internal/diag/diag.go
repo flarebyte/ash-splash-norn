@@ -22,6 +22,8 @@ type Entry struct {
 	Severity Severity `json:"severity"`
 	Message  string   `json:"message"`
 	Path     string   `json:"path,omitempty"`
+	Location string   `json:"location,omitempty"`
+	Suggest  string   `json:"suggestion,omitempty"`
 }
 
 func Sort(entries []Entry) {
@@ -37,11 +39,19 @@ func Sort(entries []Entry) {
 		if a.Path != b.Path {
 			return a.Path < b.Path
 		}
+		if a.Location != b.Location {
+			return a.Location < b.Location
+		}
 		return a.Message < b.Message
 	})
 }
 
 func Write(entries []Entry, format string, w io.Writer) error {
+	for i := range entries {
+		if entries[i].Location == "" && entries[i].Path != "" {
+			entries[i].Location = entries[i].Path
+		}
+	}
 	Sort(entries)
 	if format == "json" {
 		enc := json.NewEncoder(w)
@@ -49,8 +59,12 @@ func Write(entries []Entry, format string, w io.Writer) error {
 		return enc.Encode(entries)
 	}
 	for _, e := range entries {
-		if e.Path != "" {
-			if _, err := fmt.Fprintf(w, "%s %s [%s] %s (%s)\n", e.Severity, e.ID, e.Stage, e.Message, e.Path); err != nil {
+		loc := e.Location
+		if loc == "" {
+			loc = e.Path
+		}
+		if loc != "" {
+			if _, err := fmt.Fprintf(w, "%s %s [%s] %s (%s)\n", e.Severity, e.ID, e.Stage, e.Message, loc); err != nil {
 				return err
 			}
 			continue

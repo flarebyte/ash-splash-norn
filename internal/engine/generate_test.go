@@ -43,6 +43,27 @@ func TestGenerateArtifactsJSONYAMLCUE(t *testing.T) {
 	}
 }
 
+func TestGenerateArtifactsConfigDirectoryPath(t *testing.T) {
+	in := fixtureInputs()
+	raw, err := os.ReadFile(in.ConfigPath)
+	if err != nil {
+		t.Fatalf("read fixture config: %v", err)
+	}
+	cfgDir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(cfgDir, "part1.cue"), raw, 0o644); err != nil {
+		t.Fatalf("write config fragment: %v", err)
+	}
+	in.ConfigPath = cfgDir
+
+	arts, entries := GenerateArtifacts(in, "json", t.TempDir())
+	if len(entries) > 0 {
+		t.Fatalf("entries=%v", entries)
+	}
+	if len(arts) == 0 {
+		t.Fatal("expected artifacts")
+	}
+}
+
 func TestGenerateArtifactsUnknownTarget(t *testing.T) {
 	in := app.Inputs{}
 	_, entries := GenerateArtifacts(in, "tsx", t.TempDir())
@@ -425,5 +446,49 @@ validations: [..._]
 	}
 	if !strings.Contains(string(dartRaw), "café") {
 		t.Fatalf("expected unicode preserved in dart output")
+	}
+}
+
+func TestGenerateArtifactsRejectsUnsafePattern(t *testing.T) {
+	dir := t.TempDir()
+	regSchema := filepath.Join(dir, "reg.schema.cue")
+	regInput := filepath.Join(dir, "reg.cue")
+	cfgSchema := filepath.Join(dir, "cfg.schema.cue")
+	cfgInput := filepath.Join(dir, "cfg.cue")
+	mustWrite(t, regSchema, `package designregistry
+#DesignRegistrySpec: {
+  keySchemaRegistry: [string]: _
+  generatorCapabilities: [...{
+    keySchema: string
+    target: "json"
+    supportsNodeKinds: [..."text"]
+    artifactPattern: string
+  }]
+}
+`)
+	mustWrite(t, regInput, `package designregistry
+designRegistry: #DesignRegistrySpec & {
+  keySchemaRegistry: {"input-field": {}}
+  generatorCapabilities: [{
+    keySchema: "input-field"
+    target: "json"
+    supportsNodeKinds: ["text"]
+    artifactPattern: "../bad/<domain>.json"
+  }]
+}
+`)
+	mustWrite(t, cfgSchema, `package configkey
+textEntries: [...{ key: string, value: string, metaArgs: [...string] }]
+i18nEntries: [..._]
+validations: [..._]
+`)
+	mustWrite(t, cfgInput, `textEntries: [{key: "k", value: "v", metaArgs: []}]
+i18nEntries: []
+validations: []
+`)
+	in := app.Inputs{RegistryPath: regInput, RegistrySchemaPath: regSchema, ConfigPath: cfgInput, ConfigSchemaPath: cfgSchema}
+	_, entries := GenerateArtifacts(in, "json", t.TempDir())
+	if len(entries) == 0 || entries[0].ID != "GEN-0009" {
+		t.Fatalf("expected GEN-0009, got %v", entries)
 	}
 }

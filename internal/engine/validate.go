@@ -13,6 +13,7 @@ func ValidateInputs(in app.Inputs) []diag.Entry {
 	entries := make([]diag.Entry, 0)
 	hasPathErrors := false
 	for _, p := range in.Paths() {
+		isConfigPath := p == in.ConfigPath
 		if p == "" {
 			entries = append(entries, diag.Entry{
 				Stage:    "schema",
@@ -36,6 +37,21 @@ func ValidateInputs(in app.Inputs) []diag.Entry {
 			continue
 		}
 		if st.IsDir() {
+			if isConfigPath {
+				if _, cfgEntries := readConfigInputSource(p, "schema"); len(cfgEntries) > 0 {
+					hasPathErrors = true
+					for _, e := range cfgEntries {
+						switch e.ID {
+						case "CFG-0006":
+							e.ID = "SCH-0004"
+						case "CFG-0004":
+							e.ID = "SCH-0005"
+						}
+						entries = append(entries, e)
+					}
+				}
+				continue
+			}
 			entries = append(entries, diag.Entry{
 				Stage:    "schema",
 				ID:       "SCH-0003",
@@ -50,5 +66,11 @@ func ValidateInputs(in app.Inputs) []diag.Entry {
 		return entries
 	}
 	entries = append(entries, ValidateCuePairs(in)...)
+	rows, listEntries := BuildCatalog(in)
+	if len(listEntries) == 0 {
+		for _, row := range rows {
+			entries = append(entries, artifactPatternIssuesToDiag("schema", "SCH-0006", "SCH-0007", "SCH-0007", "SCH-0008", row.Target, row.ArtifactPattern)...)
+		}
+	}
 	return entries
 }

@@ -101,6 +101,12 @@ func GenerateArtifacts(in app.Inputs, target, outputRoot string) ([]GeneratedArt
 	if len(caps) == 0 {
 		return nil, []diag.Entry{{Stage: "generate", ID: "GEN-0001", Severity: diag.SeverityError, Message: fmt.Sprintf("no generator capability for target %s", target)}}
 	}
+	for _, cap := range caps {
+		patternEntries := artifactPatternIssuesToDiag("generate", "GEN-0007", "GEN-0008", "GEN-0010", "GEN-0009", cap.Target, cap.ArtifactPattern)
+		if len(patternEntries) > 0 {
+			return nil, patternEntries
+		}
+	}
 
 	artifacts := make([]GeneratedArtifact, 0)
 	for _, cap := range caps {
@@ -345,19 +351,24 @@ func loadGenerateDocs(in app.Inputs) (genRegistry, genConfig, []diag.Entry) {
 		return reg, cfg, []diag.Entry{{Stage: "generate", ID: "GEN-0101", Severity: diag.SeverityError, Message: fmt.Sprintf("registry decode failed: %v", sanitizeCueErr(err)), Path: in.RegistryPath}}
 	}
 
-	cfgSchemaSrc, err := os.ReadFile(in.ConfigSchemaPath)
-	if err != nil {
-		return reg, cfg, []diag.Entry{{Stage: "generate", ID: "GEN-0102", Severity: diag.SeverityError, Message: fmt.Sprintf("failed to read config schema: %v", err), Path: in.ConfigSchemaPath}}
-	}
-	cfgInputSrc, err := os.ReadFile(in.ConfigPath)
-	if err != nil {
-		return reg, cfg, []diag.Entry{{Stage: "generate", ID: "GEN-0103", Severity: diag.SeverityError, Message: fmt.Sprintf("failed to read config input: %v", err), Path: in.ConfigPath}}
-	}
-
-	cfgSchemaPkg := extractPackage(string(cfgSchemaSrc))
-	cfgInputBody := string(cfgInputSrc)
-	if extractPackage(cfgInputBody) == "" && cfgSchemaPkg != "" {
-		cfgInputBody = "package " + cfgSchemaPkg + "\n\n" + cfgInputBody
+	cfgInputBody, cfgEntries := readConfigInputSource(in.ConfigPath, "generate")
+	if len(cfgEntries) > 0 {
+		out := make([]diag.Entry, 0, len(cfgEntries))
+		for _, e := range cfgEntries {
+			switch e.ID {
+			case "CFG-0001", "CFG-0002", "CFG-0003", "CFG-0005":
+				e.ID = "GEN-0103"
+			case "CFG-0004":
+				e.ID = "GEN-0106"
+			case "CFG-0006":
+				e.ID = "GEN-0107"
+			default:
+				e.ID = "GEN-0103"
+			}
+			e.Stage = "generate"
+			out = append(out, e)
+		}
+		return reg, cfg, out
 	}
 	cfgVal := ctx.CompileString(cfgInputBody, cue.Filename("generate-config.cue"))
 	if err := cfgVal.Err(); err != nil {

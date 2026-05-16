@@ -96,6 +96,26 @@ flyb generate json \
 - Non-zero exit on lint violations.
 - Deterministic output ordering for generated files and machine-readable diagnostics.
 
+## Diagnostics contract
+
+Diagnostics can be emitted as JSON (`--format json`) and follow a stable shape:
+
+- `stage`
+- `id`
+- `severity`
+- `message`
+- `location` (when available)
+- `suggestion` (when available)
+
+Current ID families:
+
+- `SCH-*`: schema/input validation and artifact-pattern preflight.
+- `LNT-*`: lint checks (`schema`, `config`, `sections`, `keys`, `translations`, `patterns`, `graph`).
+- `GEN-*`: generation pipeline and artifact writing policy.
+- `PRV-*`: dry-run preview registry parsing and pattern policy.
+- `KEY-*`: explain-key command validation.
+- `LST-*`: list command registry decoding.
+
 ## Repository helpers
 
 Common local tasks:

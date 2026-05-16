@@ -2,6 +2,7 @@ package engine
 
 import (
 	"fmt"
+	"os"
 	"regexp"
 	"strings"
 
@@ -28,7 +29,7 @@ func ValidateCuePairs(in app.Inputs) []diag.Entry {
 
 func validateCuePair(schemaPath, inputPath, stage string) []diag.Entry {
 	entries := make([]diag.Entry, 0)
-	merged, mergeEntries := mergeCueSources(schemaPath, inputPath, stage)
+	merged, mergeEntries := mergeCueSourcesWithConfigDir(schemaPath, inputPath, stage, stage == "config")
 	if len(mergeEntries) > 0 {
 		return mergeEntries
 	}
@@ -55,6 +56,59 @@ func validateCuePair(schemaPath, inputPath, stage string) []diag.Entry {
 		})
 	}
 	return entries
+}
+
+func mergeCueSourcesWithConfigDir(schemaPath, inputPath, stage string, allowConfigDir bool) (string, []diag.Entry) {
+	schemaSrc, err := os.ReadFile(schemaPath)
+	if err != nil {
+		return "", []diag.Entry{{
+			Stage:    stage,
+			ID:       "SCH-0101",
+			Severity: diag.SeverityError,
+			Message:  fmt.Sprintf("failed to read schema file: %v", err),
+			Path:     schemaPath,
+		}}
+	}
+	var inputSrc string
+	if allowConfigDir {
+		src, entries := readConfigInputSource(inputPath, stage)
+		if len(entries) > 0 {
+			return "", entries
+		}
+		inputSrc = src
+	} else {
+		b, err := os.ReadFile(inputPath)
+		if err != nil {
+			return "", []diag.Entry{{
+				Stage:    stage,
+				ID:       "SCH-0102",
+				Severity: diag.SeverityError,
+				Message:  fmt.Sprintf("failed to read input file: %v", err),
+				Path:     inputPath,
+			}}
+		}
+		inputSrc = string(b)
+	}
+
+	schemaPkg := extractPackage(string(schemaSrc))
+	inputPkg := extractPackage(inputSrc)
+	inputBody := stripPackageDecl(inputSrc)
+	merged := string(schemaSrc)
+	if inputPkg == "" && schemaPkg != "" {
+		merged += "\n\n" + inputBody
+		return merged, nil
+	}
+	if schemaPkg != "" && inputPkg != "" && schemaPkg != inputPkg {
+		return "", []diag.Entry{{
+			Stage:    stage,
+			ID:       "SCH-0103",
+			Severity: diag.SeverityError,
+			Message:  fmt.Sprintf("package mismatch between schema (%s) and input (%s)", schemaPkg, inputPkg),
+			Path:     inputPath,
+		}}
+	}
+	merged += "\n\n" + inputBody
+	return merged, nil
 }
 
 func extractPackage(src string) string {

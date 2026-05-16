@@ -23,6 +23,29 @@ func TestLintDiagnosticsFixtureHappyPath(t *testing.T) {
 	}
 }
 
+func TestLintDiagnosticsConfigDirectoryPath(t *testing.T) {
+	in := app.Inputs{
+		RegistryPath:       filepath.Clean("../../doc/design-meta/examples/input/design-registry.example.cue"),
+		RegistrySchemaPath: filepath.Clean("../../doc/design-meta/examples/model/design-registry.schema.cue"),
+		ConfigPath:         filepath.Clean("../../doc/design-meta/examples/input/config-key.cue"),
+		ConfigSchemaPath:   filepath.Clean("../../doc/design-meta/examples/model/config-key.schema.cue"),
+	}
+	raw, err := os.ReadFile(in.ConfigPath)
+	if err != nil {
+		t.Fatalf("read fixture config: %v", err)
+	}
+	cfgDir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(cfgDir, "part1.cue"), raw, 0o644); err != nil {
+		t.Fatalf("write config fragment: %v", err)
+	}
+	in.ConfigPath = cfgDir
+
+	entries := LintDiagnostics(in, "config")
+	if len(entries) > 0 {
+		t.Fatalf("expected no diagnostics, got %v", entries)
+	}
+}
+
 func TestLintDiagnosticsGraphCycle(t *testing.T) {
 	dir := t.TempDir()
 	regSchema := filepath.Join(dir, "reg.schema.cue")

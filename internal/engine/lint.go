@@ -2,7 +2,6 @@ package engine
 
 import (
 	"fmt"
-	"os"
 	"sort"
 	"strings"
 
@@ -364,39 +363,8 @@ func toPathCamel(path []string) string {
 
 func lintPatterns(reg lintRegistry) []diag.Entry {
 	out := make([]diag.Entry, 0)
-	allowedTokens := map[string]struct{}{
-		"<domain>": {},
-		"<locale>": {},
-	}
 	for _, c := range reg.DesignRegistry.GeneratorCapabilities {
-		tokens := extractPatternTokens(c.ArtifactPattern)
-		for _, tok := range tokens {
-			if _, ok := allowedTokens[tok]; ok {
-				continue
-			}
-			out = append(out, diag.Entry{
-				Stage:    "lint",
-				ID:       "LNT-0009",
-				Severity: diag.SeverityError,
-				Message:  fmt.Sprintf("unsupported artifact pattern token %q for target %q", tok, c.Target),
-			})
-		}
-		if c.Target == "arb.json" && !containsToken(tokens, "<locale>") {
-			out = append(out, diag.Entry{
-				Stage:    "lint",
-				ID:       "LNT-0010",
-				Severity: diag.SeverityError,
-				Message:  "artifact pattern for arb.json target must include <locale>",
-			})
-		}
-		if c.Target != "arb.json" && !containsToken(tokens, "<domain>") {
-			out = append(out, diag.Entry{
-				Stage:    "lint",
-				ID:       "LNT-0011",
-				Severity: diag.SeverityError,
-				Message:  fmt.Sprintf("artifact pattern for target %q must include <domain>", c.Target),
-			})
-		}
+		out = append(out, artifactPatternIssuesToDiag("lint", "LNT-0009", "LNT-0010", "LNT-0011", "LNT-0011", c.Target, c.ArtifactPattern)...)
 	}
 	return out
 }
@@ -654,19 +622,24 @@ func loadLintDocs(in app.Inputs) (lintRegistry, lintConfig, []diag.Entry) {
 		}}
 	}
 
-	cfgSchemaSrc, err := os.ReadFile(in.ConfigSchemaPath)
-	if err != nil {
-		return reg, cfg, []diag.Entry{{Stage: "lint", ID: "LNT-0102", Severity: diag.SeverityError, Message: fmt.Sprintf("failed to read config schema: %v", err), Path: in.ConfigSchemaPath}}
-	}
-	cfgInputSrc, err := os.ReadFile(in.ConfigPath)
-	if err != nil {
-		return reg, cfg, []diag.Entry{{Stage: "lint", ID: "LNT-0103", Severity: diag.SeverityError, Message: fmt.Sprintf("failed to read config input: %v", err), Path: in.ConfigPath}}
-	}
-
-	cfgSchemaPkg := extractPackage(string(cfgSchemaSrc))
-	cfgInputBody := string(cfgInputSrc)
-	if extractPackage(cfgInputBody) == "" && cfgSchemaPkg != "" {
-		cfgInputBody = "package " + cfgSchemaPkg + "\n\n" + cfgInputBody
+	cfgInputBody, cfgEntries := readConfigInputSource(in.ConfigPath, "lint")
+	if len(cfgEntries) > 0 {
+		out := make([]diag.Entry, 0, len(cfgEntries))
+		for _, e := range cfgEntries {
+			switch e.ID {
+			case "CFG-0001", "CFG-0002", "CFG-0003", "CFG-0005":
+				e.ID = "LNT-0103"
+			case "CFG-0004":
+				e.ID = "LNT-0105"
+			case "CFG-0006":
+				e.ID = "LNT-0106"
+			default:
+				e.ID = "LNT-0103"
+			}
+			e.Stage = "lint"
+			out = append(out, e)
+		}
+		return reg, cfg, out
 	}
 	cfgVal, cfgErr := compileCue("lint-config", cfgInputBody)
 	if cfgErr != nil {

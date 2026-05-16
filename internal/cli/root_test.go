@@ -43,6 +43,29 @@ func TestRunValidateMissingFlags(t *testing.T) {
 	}
 }
 
+func TestRunValidateJSONDiagnosticsDeterministic(t *testing.T) {
+	var out1 bytes.Buffer
+	var err1 bytes.Buffer
+	r1 := Runner{Stdout: &out1, Stderr: &err1}
+	code1 := r1.Run([]string{"validate", "--format", "json"})
+	if code1 == 0 {
+		t.Fatalf("expected non-zero code")
+	}
+	var out2 bytes.Buffer
+	var err2 bytes.Buffer
+	r2 := Runner{Stdout: &out2, Stderr: &err2}
+	code2 := r2.Run([]string{"validate", "--format", "json"})
+	if code2 == 0 {
+		t.Fatalf("expected non-zero code")
+	}
+	if err1.String() != err2.String() {
+		t.Fatalf("expected deterministic diagnostics json")
+	}
+	if !strings.Contains(err1.String(), "\"id\": \"SCH-0001\"") {
+		t.Fatalf("expected schema diagnostics: %s", err1.String())
+	}
+}
+
 func TestRunLintSubcommandJSON(t *testing.T) {
 	var out bytes.Buffer
 	var stderr bytes.Buffer
