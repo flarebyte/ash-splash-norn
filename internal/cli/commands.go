@@ -3,6 +3,7 @@ package cli
 import (
 	"encoding/json"
 	"fmt"
+	"runtime"
 
 	"github.com/flarebyte/ash-splash-norn/internal/app"
 	"github.com/flarebyte/ash-splash-norn/internal/diag"
@@ -145,17 +146,29 @@ func (r Runner) newVersionCommand() *cobra.Command {
 		Use:   "version",
 		Short: "Print build metadata",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			payload := map[string]string{
+				"version":   r.Build.Version,
+				"commitId":  r.Build.Commit,
+				"date":      r.Build.Date,
+				"os":        runtime.GOOS,
+				"arch":      runtime.GOARCH,
+				"goVersion": runtime.Version(),
+			}
 			if format == "json" {
-				payload := map[string]string{
-					"version": r.Build.Version,
-					"commit":  r.Build.Commit,
-					"date":    r.Build.Date,
-				}
 				enc := json.NewEncoder(r.Stdout)
 				enc.SetIndent("", "  ")
 				return enc.Encode(payload)
 			}
-			_, _ = fmt.Fprintf(r.Stdout, "%s\n", r.Build.Version)
+			_, _ = fmt.Fprintf(
+				r.Stdout,
+				"version=%s commitId=%s date=%s os=%s arch=%s goVersion=%s\n",
+				payload["version"],
+				payload["commitId"],
+				payload["date"],
+				payload["os"],
+				payload["arch"],
+				payload["goVersion"],
+			)
 			return nil
 		},
 	}

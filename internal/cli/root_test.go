@@ -25,8 +25,33 @@ func TestRunVersionJSON(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("expected exit 0 got %d stderr=%s", code, err.String())
 	}
-	if !strings.Contains(out.String(), "1.2.3") {
-		t.Fatalf("missing version: %s", out.String())
+	var payload map[string]string
+	if err := json.Unmarshal(out.Bytes(), &payload); err != nil {
+		t.Fatalf("invalid json: %v output=%s", err, out.String())
+	}
+	if payload["version"] != "1.2.3" || payload["commitId"] != "abc" || payload["date"] != "today" {
+		t.Fatalf("unexpected payload: %#v", payload)
+	}
+	for _, key := range []string{"os", "arch", "goVersion"} {
+		if payload[key] == "" {
+			t.Fatalf("missing %s in payload: %#v", key, payload)
+		}
+	}
+}
+
+func TestRunVersionText(t *testing.T) {
+	var out bytes.Buffer
+	var err bytes.Buffer
+	r := Runner{Stdout: &out, Stderr: &err, Build: BuildInfo{Version: "1.2.3", Commit: "abc", Date: "today"}}
+	code := r.Run([]string{"version"})
+	if code != 0 {
+		t.Fatalf("expected exit 0 got %d stderr=%s", code, err.String())
+	}
+	txt := out.String()
+	for _, tok := range []string{"version=1.2.3", "commitId=abc", "date=today", "os=", "arch=", "goVersion="} {
+		if !strings.Contains(txt, tok) {
+			t.Fatalf("missing token %q in output: %s", tok, txt)
+		}
 	}
 }
 
