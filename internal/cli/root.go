@@ -37,7 +37,7 @@ func (r Runner) Run(args []string) int {
 
 func (r Runner) newRootCommand() *cobra.Command {
 	root := &cobra.Command{
-		Use:           "flyb",
+		Use:           "splash",
 		Short:         "Distributed config CLI",
 		SilenceErrors: true,
 		SilenceUsage:  true,

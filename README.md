@@ -62,30 +62,30 @@ Reference examples in this repo:
 
 ```bash
 # Validate sample inputs
-flyb validate \
+splash validate \
   --registry doc/design-meta/examples/input/design-registry.example.cue \
   --registry-schema doc/design-meta/examples/model/design-registry.schema.cue \
   --config doc/design-meta/examples/input/config-key.cue \
   --config-schema doc/design-meta/examples/model/config-key.schema.cue
 
 # Lint all checks
-flyb lint \
+splash lint \
   --registry doc/design-meta/examples/input/design-registry.example.cue \
   --config doc/design-meta/examples/input/config-key.cue
 
 # Lint translation coverage only
-flyb lint translations \
+splash lint translations \
   --registry doc/design-meta/examples/input/design-registry.example.cue \
   --config doc/design-meta/examples/input/config-key.cue
 
 # Preview output plan
-flyb dry-run-preview \
+splash dry-run-preview \
   --registry doc/design-meta/examples/input/design-registry.example.cue \
   --config doc/design-meta/examples/input/config-key.cue \
   --format json
 
 # Generate JSON artifacts
-flyb generate json \
+splash generate json \
   --registry doc/design-meta/examples/input/design-registry.example.cue \
   --config doc/design-meta/examples/input/config-key.cue
 ```
