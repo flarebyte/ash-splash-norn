@@ -41,7 +41,14 @@ reports: [{
       notes: ["norn.cue.config-key"]
     }, {
       title: "08 Output Samples"
-      notes: ["norn.out.text-json", "norn.out.validator-json"]
+      notes: [
+        "norn.out.text-json",
+        "norn.out.validator-json",
+        "norn.out.text-go",
+        "norn.out.validator-go",
+        "norn.out.text-dart",
+        "norn.out.validator-dart",
+      ]
     }]
   }]
 }]
@@ -141,6 +148,30 @@ the corresponding key entry must exist in the matching config section by node ki
     title: "Validator Node Output Example (JSON)"
     filepath: "examples/output/validator-node-output.json"
     labels: ["output", "json", "validator"]
+  },
+  {
+    name: "norn.out.text-go"
+    title: "Text Node Output Example (Go)"
+    filepath: "examples/output/text-node-output.go"
+    labels: ["output", "go", "text"]
+  },
+  {
+    name: "norn.out.validator-go"
+    title: "Validator Node Output Example (Go)"
+    filepath: "examples/output/validator-node-output.go"
+    labels: ["output", "go", "validator"]
+  },
+  {
+    name: "norn.out.text-dart"
+    title: "Text Node Output Example (Dart)"
+    filepath: "examples/output/text-node-output.dart"
+    labels: ["output", "dart", "text"]
+  },
+  {
+    name: "norn.out.validator-dart"
+    title: "Validator Node Output Example (Dart)"
+    filepath: "examples/output/validator-node-output.dart"
+    labels: ["output", "dart", "validator"]
   },
 ]
 
