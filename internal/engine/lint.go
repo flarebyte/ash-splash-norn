@@ -15,6 +15,10 @@ import (
 type lintRegistry struct {
 	DesignRegistry struct {
 		KeySchemaRegistry map[string]struct {
+			Metadata struct {
+				ID      string `cue:"id"`
+				Version string `cue:"version"`
+			} `cue:"metadata"`
 			SupportedLanguages       []string `cue:"supportedLanguages"`
 			SupportedCommandSections []string `cue:"supportedCommandSections"`
 			TranslationPolicy        struct {
@@ -77,6 +81,15 @@ func LintDiagnostics(in app.Inputs, check string) []diag.Entry {
 	runKeys := check == "" || check == "keys"
 	runGraph := check == "" || check == "graph"
 	runPatterns := check == "" || check == "patterns"
+	runSchema := check == "" || check == "schema"
+	runConfig := check == "" || check == "config"
+
+	if runSchema {
+		out = append(out, lintSchemaGovernance(reg)...)
+	}
+	if runConfig {
+		out = append(out, lintConfigQuality(cfg)...)
+	}
 
 	if runSections {
 		out = append(out, lintSections(cfg, supportedSections)...)
@@ -367,6 +380,105 @@ func lintPatterns(reg lintRegistry) []diag.Entry {
 		}
 	}
 	return out
+}
+
+func lintSchemaGovernance(reg lintRegistry) []diag.Entry {
+	out := make([]diag.Entry, 0)
+	if len(reg.DesignRegistry.KeySchemaRegistry) == 0 {
+		out = append(out, diag.Entry{
+			Stage:    "lint",
+			ID:       "LNT-0012",
+			Severity: diag.SeverityError,
+			Message:  "keySchemaRegistry must contain at least one schema",
+		})
+		return out
+	}
+	for key, ks := range reg.DesignRegistry.KeySchemaRegistry {
+		if strings.TrimSpace(ks.Metadata.ID) == "" {
+			out = append(out, diag.Entry{
+				Stage:    "lint",
+				ID:       "LNT-0013",
+				Severity: diag.SeverityError,
+				Message:  fmt.Sprintf("schema %q metadata.id is required", key),
+			})
+		}
+		if ks.Metadata.ID != "" && ks.Metadata.ID != key {
+			out = append(out, diag.Entry{
+				Stage:    "lint",
+				ID:       "LNT-0014",
+				Severity: diag.SeverityError,
+				Message:  fmt.Sprintf("schema key %q must match metadata.id %q", key, ks.Metadata.ID),
+			})
+		}
+		if len(ks.SupportedLanguages) == 0 {
+			out = append(out, diag.Entry{
+				Stage:    "lint",
+				ID:       "LNT-0015",
+				Severity: diag.SeverityError,
+				Message:  fmt.Sprintf("schema %q must declare supportedLanguages", key),
+			})
+		}
+		if len(ks.SupportedCommandSections) == 0 {
+			out = append(out, diag.Entry{
+				Stage:    "lint",
+				ID:       "LNT-0016",
+				Severity: diag.SeverityError,
+				Message:  fmt.Sprintf("schema %q must declare supportedCommandSections", key),
+			})
+		}
+	}
+	return out
+}
+
+func lintConfigQuality(cfg lintConfig) []diag.Entry {
+	out := make([]diag.Entry, 0)
+	out = append(out, lintDuplicateKeys("i18nEntries", collectI18nKeys(cfg))...)
+	out = append(out, lintDuplicateKeys("textEntries", collectTextKeys(cfg))...)
+	out = append(out, lintDuplicateKeys("validations", collectValidationKeys(cfg))...)
+	return out
+}
+
+func lintDuplicateKeys(section string, keys []string) []diag.Entry {
+	seen := map[string]int{}
+	for _, k := range keys {
+		seen[k]++
+	}
+	out := make([]diag.Entry, 0)
+	for key, count := range seen {
+		if count > 1 {
+			out = append(out, diag.Entry{
+				Stage:    "lint",
+				ID:       "LNT-0017",
+				Severity: diag.SeverityError,
+				Message:  fmt.Sprintf("duplicate key %q in %s", key, section),
+			})
+		}
+	}
+	return out
+}
+
+func collectI18nKeys(cfg lintConfig) []string {
+	keys := make([]string, 0, len(cfg.I18nEntries))
+	for _, e := range cfg.I18nEntries {
+		keys = append(keys, e.Key)
+	}
+	return keys
+}
+
+func collectTextKeys(cfg lintConfig) []string {
+	keys := make([]string, 0, len(cfg.TextEntries))
+	for _, e := range cfg.TextEntries {
+		keys = append(keys, e.Key)
+	}
+	return keys
+}
+
+func collectValidationKeys(cfg lintConfig) []string {
+	keys := make([]string, 0, len(cfg.Validations))
+	for _, e := range cfg.Validations {
+		keys = append(keys, e.Key)
+	}
+	return keys
 }
 
 func extractPatternTokens(pattern string) []string {
