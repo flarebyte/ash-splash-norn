@@ -26,8 +26,14 @@ func TestRunGenerateJSON(t *testing.T) {
 	if !strings.Contains(out.String(), "generated:") {
 		t.Fatalf("unexpected output: %s", out.String())
 	}
-	wantPath := filepath.Join(dir, "generated/config/input-field.json")
-	if !strings.Contains(out.String(), wantPath) {
-		t.Fatalf("expected generated path in output, got %s", out.String())
+	wantPaths := []string{
+		filepath.Join(dir, "generated/config/input-field.i18n.json"),
+		filepath.Join(dir, "generated/config/input-field.text.json"),
+		filepath.Join(dir, "generated/config/input-field.validator.json"),
+	}
+	for _, wantPath := range wantPaths {
+		if !strings.Contains(out.String(), wantPath) {
+			t.Fatalf("expected generated path in output: %s; got %s", wantPath, out.String())
+		}
 	}
 }
