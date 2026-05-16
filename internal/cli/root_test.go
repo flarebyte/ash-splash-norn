@@ -31,3 +31,23 @@ func TestRunValidateMissingFlags(t *testing.T) {
 		t.Fatalf("expected diagnostic id, got %s", stderr.String())
 	}
 }
+
+func TestRunLintSubcommandJSON(t *testing.T) {
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	r := Runner{Stdout: &out, Stderr: &stderr}
+	code := r.Run([]string{
+		"lint", "translations",
+		"--registry", "../../doc/design-meta/examples/input/design-registry.example.cue",
+		"--registry-schema", "../../doc/design-meta/examples/model/design-registry.schema.cue",
+		"--config", "../../doc/design-meta/examples/input/config-key.cue",
+		"--config-schema", "../../doc/design-meta/examples/model/config-key.schema.cue",
+		"--format", "json",
+	})
+	if code != 0 {
+		t.Fatalf("expected exit 0 got %d stderr=%s", code, stderr.String())
+	}
+	if !strings.Contains(out.String(), "\"translations\"") {
+		t.Fatalf("missing subcommand check in output: %s", out.String())
+	}
+}

@@ -3,6 +3,7 @@ package cli
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/flarebyte/ash-splash-norn/internal/app"
 	"github.com/flarebyte/ash-splash-norn/internal/diag"
@@ -35,6 +36,12 @@ func (r Runner) runValidate(args []string) error {
 }
 
 func (r Runner) runLint(args []string) error {
+	lintSubcommand := ""
+	if len(args) > 0 && !strings.HasPrefix(args[0], "-") {
+		lintSubcommand = args[0]
+		args = args[1:]
+	}
+
 	fs := newFlagSet("lint")
 	var in app.Inputs
 	var format string
@@ -46,16 +53,36 @@ func (r Runner) runLint(args []string) error {
 	if err := fs.Parse(args); err != nil {
 		return ErrUsage
 	}
+	if lintSubcommand != "" {
+		switch lintSubcommand {
+		case "schema", "config", "sections", "keys", "translations", "patterns", "graph":
+		default:
+			return fmt.Errorf("lint failed: unknown lint subcommand: %s", lintSubcommand)
+		}
+	}
 	entries := engine.ValidateInputs(in)
 	if len(entries) > 0 {
 		_ = diag.Write(entries, format, r.Stderr)
 		return fmt.Errorf("lint failed")
 	}
+	lintEntries := engine.LintDiagnostics(in, lintSubcommand)
+	if len(lintEntries) > 0 {
+		_ = diag.Write(lintEntries, format, r.Stderr)
+		return fmt.Errorf("lint failed")
+	}
 	if format == "json" {
-		_, _ = fmt.Fprintln(r.Stdout, `{"ok":true,"stage":"lint","checks":["schema-inputs"]}`)
+		if lintSubcommand == "" {
+			_, _ = fmt.Fprintln(r.Stdout, `{"ok":true,"stage":"lint","checks":["schema","config","sections","keys","translations","patterns","graph"]}`)
+			return nil
+		}
+		_, _ = fmt.Fprintf(r.Stdout, "{\"ok\":true,\"stage\":\"lint\",\"checks\":[%q]}\n", lintSubcommand)
 		return nil
 	}
-	_, _ = fmt.Fprintln(r.Stdout, "lint: ok (schema-inputs)")
+	if lintSubcommand == "" {
+		_, _ = fmt.Fprintln(r.Stdout, "lint: ok (schema, config, sections, keys, translations, patterns, graph)")
+		return nil
+	}
+	_, _ = fmt.Fprintf(r.Stdout, "lint %s: ok\n", lintSubcommand)
 	return nil
 }
 
@@ -76,18 +103,10 @@ func (r Runner) runDryRunPreview(args []string) error {
 		_ = diag.Write(entries, format, r.Stderr)
 		return fmt.Errorf("dry-run-preview failed")
 	}
-	type row struct {
-		SchemaRef       string   `json:"schemaRef"`
-		Target          string   `json:"target"`
-		SupportsNode    []string `json:"supportsNodeKinds"`
-		ArtifactPattern string   `json:"artifactPattern"`
-	}
-	preview := []row{
-		{SchemaRef: "input-field", Target: "arb.json", SupportsNode: []string{"i18n"}, ArtifactPattern: "lib/l10n/app_<locale>.arb.json"},
-		{SchemaRef: "input-field", Target: "cue", SupportsNode: []string{"i18n", "text", "validator"}, ArtifactPattern: "generated/config/<domain>.cue"},
-		{SchemaRef: "input-field", Target: "dart", SupportsNode: []string{"text", "validator"}, ArtifactPattern: "lib/generated/<domain>_config.dart"},
-		{SchemaRef: "input-field", Target: "go", SupportsNode: []string{"text", "validator"}, ArtifactPattern: "internal/generated/<domain>_config.go"},
-		{SchemaRef: "input-field", Target: "json", SupportsNode: []string{"i18n", "text", "validator"}, ArtifactPattern: "generated/config/<domain>.json"},
+	preview, prvEntries := engine.BuildPreview(in)
+	if len(prvEntries) > 0 {
+		_ = diag.Write(prvEntries, format, r.Stderr)
+		return fmt.Errorf("dry-run-preview failed")
 	}
 	if format == "json" {
 		enc := json.NewEncoder(r.Stdout)

@@ -11,6 +11,7 @@ import (
 func ValidateInputs(in app.Inputs) []diag.Entry {
 	in = in.Cleaned()
 	entries := make([]diag.Entry, 0)
+	hasPathErrors := false
 	for _, p := range in.Paths() {
 		if p == "" {
 			entries = append(entries, diag.Entry{
@@ -19,6 +20,7 @@ func ValidateInputs(in app.Inputs) []diag.Entry {
 				Severity: diag.SeverityError,
 				Message:  "required path flag is missing",
 			})
+			hasPathErrors = true
 			continue
 		}
 		st, err := os.Stat(p)
@@ -30,6 +32,7 @@ func ValidateInputs(in app.Inputs) []diag.Entry {
 				Message:  fmt.Sprintf("path does not exist: %s", p),
 				Path:     p,
 			})
+			hasPathErrors = true
 			continue
 		}
 		if st.IsDir() {
@@ -40,7 +43,12 @@ func ValidateInputs(in app.Inputs) []diag.Entry {
 				Message:  "path must be a file",
 				Path:     p,
 			})
+			hasPathErrors = true
 		}
 	}
+	if hasPathErrors {
+		return entries
+	}
+	entries = append(entries, ValidateCuePairs(in)...)
 	return entries
 }
