@@ -2,9 +2,20 @@ package cli
 
 import (
 	"bytes"
+	"encoding/json"
+	"reflect"
 	"strings"
 	"testing"
 )
+
+func fixtureArgs() []string {
+	return []string{
+		"--registry", "../../doc/design-meta/examples/input/design-registry.example.cue",
+		"--registry-schema", "../../doc/design-meta/examples/model/design-registry.schema.cue",
+		"--config", "../../doc/design-meta/examples/input/config-key.cue",
+		"--config-schema", "../../doc/design-meta/examples/model/config-key.schema.cue",
+	}
+}
 
 func TestRunVersionJSON(t *testing.T) {
 	var out bytes.Buffer
@@ -49,5 +60,58 @@ func TestRunLintSubcommandJSON(t *testing.T) {
 	}
 	if !strings.Contains(out.String(), "\"translations\"") {
 		t.Fatalf("missing subcommand check in output: %s", out.String())
+	}
+}
+
+func TestRunLintAggregateJSONContract(t *testing.T) {
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	r := Runner{Stdout: &out, Stderr: &stderr}
+	args := append([]string{"lint"}, fixtureArgs()...)
+	args = append(args, "--format", "json")
+	code := r.Run(args)
+	if code != 0 {
+		t.Fatalf("expected exit 0 got %d stderr=%s", code, stderr.String())
+	}
+	var payload struct {
+		OK     bool     `json:"ok"`
+		Stage  string   `json:"stage"`
+		Checks []string `json:"checks"`
+	}
+	if err := json.Unmarshal(out.Bytes(), &payload); err != nil {
+		t.Fatalf("invalid json: %v output=%s", err, out.String())
+	}
+	wantChecks := []string{"schema", "config", "sections", "keys", "translations", "patterns", "graph"}
+	if !payload.OK || payload.Stage != "lint" || !reflect.DeepEqual(payload.Checks, wantChecks) {
+		t.Fatalf("unexpected payload: %#v", payload)
+	}
+}
+
+func TestRunDryRunPreviewJSONDeterministicOrder(t *testing.T) {
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	r := Runner{Stdout: &out, Stderr: &stderr}
+	args := append([]string{"dry-run-preview"}, fixtureArgs()...)
+	args = append(args, "--format", "json")
+	code := r.Run(args)
+	if code != 0 {
+		t.Fatalf("expected exit 0 got %d stderr=%s", code, stderr.String())
+	}
+	var rows []struct {
+		Target          string `json:"target"`
+		ArtifactPattern string `json:"artifactPattern"`
+		SchemaRef       string `json:"schemaRef"`
+	}
+	if err := json.Unmarshal(out.Bytes(), &rows); err != nil {
+		t.Fatalf("invalid json: %v output=%s", err, out.String())
+	}
+	if len(rows) != 5 {
+		t.Fatalf("expected 5 rows, got %d", len(rows))
+	}
+	wantTargets := []string{"arb.json", "cue", "dart", "go", "json"}
+	for i, want := range wantTargets {
+		if rows[i].Target != want {
+			t.Fatalf("row %d target mismatch: got=%s want=%s", i, rows[i].Target, want)
+		}
 	}
 }
