@@ -10,6 +10,7 @@ import (
 	"cuelang.org/go/cue/cuecontext"
 	"github.com/flarebyte/ash-splash-norn/internal/app"
 	"github.com/flarebyte/ash-splash-norn/internal/diag"
+	picker "github.com/flarebyte/snake-knot-picker"
 )
 
 type lintRegistry struct {
@@ -24,6 +25,18 @@ type lintRegistry struct {
 			TranslationPolicy        struct {
 				RequireAllSupportedLanguages bool `cue:"requireAllSupportedLanguages"`
 			} `cue:"translationPolicy"`
+			MetaArgsValidation struct {
+				Args map[string]struct {
+					CommandPath []string `cue:"commandPath"`
+					AdminOnly   bool     `cue:"adminOnly"`
+					Flags       []struct {
+						Kind    string     `cue:"kind"`
+						Name    string     `cue:"name"`
+						Schema  []string   `cue:"schema"`
+						Schemas [][]string `cue:"schemas"`
+					} `cue:"flags"`
+				} `cue:"args"`
+			} `cue:"metaArgsValidation"`
 			RootLabels   []string `cue:"rootLabels"`
 			NodesByLabel map[string]struct {
 				Label       string   `cue:"label"`
@@ -43,12 +56,15 @@ type lintConfig struct {
 	I18nEntries []struct {
 		Key          string                    `cue:"key"`
 		Translations map[string]map[string]any `cue:"translations"`
+		MetaArgs     []string                  `cue:"metaArgs"`
 	} `cue:"i18nEntries"`
 	TextEntries []struct {
-		Key string `cue:"key"`
+		Key      string   `cue:"key"`
+		MetaArgs []string `cue:"metaArgs"`
 	} `cue:"textEntries"`
 	Validations []struct {
-		Key      string `cue:"key"`
+		Key      string   `cue:"key"`
+		MetaArgs []string `cue:"metaArgs"`
 		Commands []struct {
 			Args map[string]any `cue:"args"`
 		} `cue:"commands"`
@@ -88,7 +104,10 @@ func LintDiagnostics(in app.Inputs, check string) []diag.Entry {
 		out = append(out, lintSchemaGovernance(reg)...)
 	}
 	if runConfig {
-		out = append(out, lintConfigQuality(cfg)...)
+		for _, ks := range reg.DesignRegistry.KeySchemaRegistry {
+			out = append(out, lintConfigQuality(cfg, ks)...)
+			break
+		}
 	}
 
 	if runSections {
@@ -430,11 +449,41 @@ func lintSchemaGovernance(reg lintRegistry) []diag.Entry {
 	return out
 }
 
-func lintConfigQuality(cfg lintConfig) []diag.Entry {
+func lintConfigQuality(cfg lintConfig, ks struct {
+	Metadata struct {
+		ID      string `cue:"id"`
+		Version string `cue:"version"`
+	} `cue:"metadata"`
+	SupportedLanguages       []string `cue:"supportedLanguages"`
+	SupportedCommandSections []string `cue:"supportedCommandSections"`
+	TranslationPolicy        struct {
+		RequireAllSupportedLanguages bool `cue:"requireAllSupportedLanguages"`
+	} `cue:"translationPolicy"`
+	MetaArgsValidation struct {
+		Args map[string]struct {
+			CommandPath []string `cue:"commandPath"`
+			AdminOnly   bool     `cue:"adminOnly"`
+			Flags       []struct {
+				Kind    string     `cue:"kind"`
+				Name    string     `cue:"name"`
+				Schema  []string   `cue:"schema"`
+				Schemas [][]string `cue:"schemas"`
+			} `cue:"flags"`
+		} `cue:"args"`
+	} `cue:"metaArgsValidation"`
+	RootLabels   []string `cue:"rootLabels"`
+	NodesByLabel map[string]struct {
+		Label       string   `cue:"label"`
+		Kind        string   `cue:"kind"`
+		Mandatory   bool     `cue:"mandatory"`
+		ChildLabels []string `cue:"childLabels"`
+	} `cue:"nodesByLabel"`
+}) []diag.Entry {
 	out := make([]diag.Entry, 0)
 	out = append(out, lintDuplicateKeys("i18nEntries", collectI18nKeys(cfg))...)
 	out = append(out, lintDuplicateKeys("textEntries", collectTextKeys(cfg))...)
 	out = append(out, lintDuplicateKeys("validations", collectValidationKeys(cfg))...)
+	out = append(out, lintMetaArgs(cfg, ks.MetaArgsValidation.Args)...)
 	return out
 }
 
@@ -479,6 +528,82 @@ func collectValidationKeys(cfg lintConfig) []string {
 		keys = append(keys, e.Key)
 	}
 	return keys
+}
+
+func lintMetaArgs(cfg lintConfig, args map[string]struct {
+	CommandPath []string `cue:"commandPath"`
+	AdminOnly   bool     `cue:"adminOnly"`
+	Flags       []struct {
+		Kind    string     `cue:"kind"`
+		Name    string     `cue:"name"`
+		Schema  []string   `cue:"schema"`
+		Schemas [][]string `cue:"schemas"`
+	} `cue:"flags"`
+}) []diag.Entry {
+	if len(args) == 0 {
+		return nil
+	}
+	sections := make([]string, 0, len(args))
+	for s := range args {
+		sections = append(sections, s)
+	}
+	sort.Strings(sections)
+	base := args[sections[0]]
+	doc := picker.CommandDocument{
+		Version:     "1",
+		CommandPath: append([]string(nil), base.CommandPath...),
+		AdminOnly:   base.AdminOnly,
+		Flags:       make([]picker.CommandFlagDef, 0, len(base.Flags)),
+	}
+	for _, f := range base.Flags {
+		doc.Flags = append(doc.Flags, picker.CommandFlagDef{
+			Kind:    f.Kind,
+			Name:    f.Name,
+			Schema:  append([]string(nil), f.Schema...),
+			Schemas: append([][]string(nil), f.Schemas...),
+		})
+	}
+	compiled, err := picker.CompileCommandDocument(doc)
+	if err != nil {
+		return []diag.Entry{{
+			Stage:    "lint",
+			ID:       "LNT-0018",
+			Severity: diag.SeverityError,
+			Message:  fmt.Sprintf("metaArgsValidation compile failed: %v", err),
+		}}
+	}
+
+	validateEntry := func(section, key string, metaArgs []string, out *[]diag.Entry) {
+		if len(metaArgs) == 0 {
+			*out = append(*out, diag.Entry{
+				Stage:    "lint",
+				ID:       "LNT-0019",
+				Severity: diag.SeverityError,
+				Message:  fmt.Sprintf("metaArgs is required for key %q in %s", key, section),
+			})
+			return
+		}
+		if _, err := picker.Validate(compiled, metaArgs); err != nil {
+			*out = append(*out, diag.Entry{
+				Stage:    "lint",
+				ID:       "LNT-0020",
+				Severity: diag.SeverityError,
+				Message:  fmt.Sprintf("invalid metaArgs for key %q in %s: %v", key, section, err),
+			})
+		}
+	}
+
+	out := make([]diag.Entry, 0)
+	for _, e := range cfg.I18nEntries {
+		validateEntry("i18nEntries", e.Key, e.MetaArgs, &out)
+	}
+	for _, e := range cfg.TextEntries {
+		validateEntry("textEntries", e.Key, e.MetaArgs, &out)
+	}
+	for _, e := range cfg.Validations {
+		validateEntry("validations", e.Key, e.MetaArgs, &out)
+	}
+	return out
 }
 
 func extractPatternTokens(pattern string) []string {
