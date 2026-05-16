@@ -1,0 +1,14 @@
+{
+  "@fieldsTextInputLabel": {
+    "description": "After checkout form"
+  },
+  "@fieldsTextInputPlaceholder": {
+    "description": "Placeholder for text input"
+  },
+  "@fieldsTextInputTooltip": {
+    "description": "Tooltip for text input"
+  },
+  "fieldsTextInputLabel": "Payment",
+  "fieldsTextInputPlaceholder": "Saisissez ici",
+  "fieldsTextInputTooltip": "Saisissez la valeur utilisee pour le paiement."
+}

@@ -1,0 +1,34 @@
+{
+  "@fieldsTextInputLabel": {
+    "context": {
+      "component": "payment",
+      "feature": "checkout",
+      "surface": "snackbar",
+      "type": "error"
+    },
+    "description": "After checkout form",
+    "placeholders": {
+      "component": {
+        "type": "String"
+      },
+      "feature": {
+        "type": "String"
+      },
+      "surface": {
+        "type": "String"
+      },
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "@fieldsTextInputPlaceholder": {
+    "description": "Placeholder for text input"
+  },
+  "@fieldsTextInputTooltip": {
+    "description": "Tooltip for text input"
+  },
+  "fieldsTextInputLabel": "Checkout Payment",
+  "fieldsTextInputPlaceholder": "Type here",
+  "fieldsTextInputTooltip": "Enter the value used for checkout."
+}

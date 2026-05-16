@@ -24,6 +24,12 @@ type GeneratedArtifact struct {
 
 type genRegistry struct {
 	DesignRegistry struct {
+		KeySchemaRegistry map[string]struct {
+			SupportedLanguages []string `cue:"supportedLanguages"`
+			TranslationPolicy  struct {
+				RequireAllSupportedLanguages bool `cue:"requireAllSupportedLanguages"`
+			} `cue:"translationPolicy"`
+		} `cue:"keySchemaRegistry"`
 		GeneratorCapabilities []struct {
 			KeySchema         string   `cue:"keySchema"`
 			Target            string   `cue:"target"`
@@ -41,6 +47,7 @@ type genConfig struct {
 	I18nEntries []struct {
 		Key          string                    `cue:"key"`
 		MetaArgs     []string                  `cue:"metaArgs"`
+		Description  string                    `cue:"description"`
 		Translations map[string]map[string]any `cue:"translations"`
 	} `cue:"i18nEntries"`
 	TextEntries []struct {
@@ -82,7 +89,7 @@ type commandSpecLit struct {
 }
 
 func GenerateArtifacts(in app.Inputs, target, outputRoot string) ([]GeneratedArtifact, []diag.Entry) {
-	if target != "json" && target != "yaml" && target != "cue" && target != "go" && target != "dart" {
+	if target != "json" && target != "yaml" && target != "cue" && target != "go" && target != "dart" && target != "arb.json" {
 		return nil, []diag.Entry{{Stage: "generate", ID: "GEN-0002", Severity: diag.SeverityError, Message: fmt.Sprintf("unsupported target for P02: %s", target)}}
 	}
 	reg, cfg, entries := loadGenerateDocs(in)
@@ -97,6 +104,38 @@ func GenerateArtifacts(in app.Inputs, target, outputRoot string) ([]GeneratedArt
 
 	artifacts := make([]GeneratedArtifact, 0)
 	for _, cap := range caps {
+		if target == "arb.json" {
+			langs := []string{}
+			requireAll := true
+			if ks, ok := reg.DesignRegistry.KeySchemaRegistry[cap.KeySchema]; ok {
+				langs = append(langs, ks.SupportedLanguages...)
+				requireAll = ks.TranslationPolicy.RequireAllSupportedLanguages
+			}
+			sort.Strings(langs)
+			if len(langs) == 0 {
+				return nil, []diag.Entry{{Stage: "generate", ID: "GEN-0300", Severity: diag.SeverityError, Message: fmt.Sprintf("no supportedLanguages found for key schema %s", cap.KeySchema)}}
+			}
+			for _, lang := range langs {
+				doc, dEntries := buildArbDoc(cap.KeySchema, lang, requireAll, cfg)
+				if len(dEntries) > 0 {
+					return nil, dEntries
+				}
+				rel := strings.ReplaceAll(cap.ArtifactPattern, "<locale>", lang)
+				outPath := filepath.Clean(filepath.Join(outputRoot, rel))
+				if err := os.MkdirAll(filepath.Dir(outPath), 0o755); err != nil {
+					return nil, []diag.Entry{{Stage: "generate", ID: "GEN-0004", Severity: diag.SeverityError, Message: fmt.Sprintf("failed to create output directory: %v", err), Path: outPath}}
+				}
+				data, err := json.MarshalIndent(doc, "", "  ")
+				if err != nil {
+					return nil, []diag.Entry{{Stage: "generate", ID: "GEN-0005", Severity: diag.SeverityError, Message: fmt.Sprintf("failed to encode output: %v", err), Path: outPath}}
+				}
+				if err := os.WriteFile(outPath, append(data, '\n'), 0o644); err != nil {
+					return nil, []diag.Entry{{Stage: "generate", ID: "GEN-0006", Severity: diag.SeverityError, Message: fmt.Sprintf("failed to write output file: %v", err), Path: outPath}}
+				}
+				artifacts = append(artifacts, GeneratedArtifact{Path: outPath})
+			}
+			continue
+		}
 		if target == "go" || target == "dart" {
 			rel := strings.ReplaceAll(cap.ArtifactPattern, "<domain>", cap.KeySchema)
 			outPath := filepath.Clean(filepath.Join(outputRoot, rel))
@@ -247,6 +286,45 @@ func encodeDocByTarget(doc emitDoc, target string) ([]byte, error) {
 	default:
 		return nil, fmt.Errorf("unsupported target: %s", target)
 	}
+}
+
+func buildArbDoc(schemaRef, locale string, requireAll bool, cfg genConfig) (map[string]any, []diag.Entry) {
+	_ = schemaRef
+	doc := map[string]any{}
+	for _, e := range cfg.I18nEntries {
+		tr, ok := e.Translations[locale]
+		if !ok {
+			if requireAll {
+				return nil, []diag.Entry{{
+					Stage:    "generate",
+					ID:       "GEN-0301",
+					Severity: diag.SeverityError,
+					Message:  fmt.Sprintf("missing translation for locale %s and key %s", locale, e.Key),
+				}}
+			}
+			continue
+		}
+		txt, _ := tr["text"].(string)
+		doc[e.Key] = txt
+		meta := map[string]any{}
+		if strings.TrimSpace(e.Description) != "" {
+			meta["description"] = e.Description
+		}
+		if ctx, ok := tr["context"].(map[string]any); ok && len(ctx) > 0 {
+			meta["context"] = ctx
+			placeholders := map[string]any{}
+			for k := range ctx {
+				placeholders[k] = map[string]any{"type": "String"}
+			}
+			if len(placeholders) > 0 {
+				meta["placeholders"] = placeholders
+			}
+		}
+		if len(meta) > 0 {
+			doc["@"+e.Key] = meta
+		}
+	}
+	return doc, nil
 }
 
 func loadGenerateDocs(in app.Inputs) (genRegistry, genConfig, []diag.Entry) {
