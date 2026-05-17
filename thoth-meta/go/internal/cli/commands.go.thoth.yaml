@@ -11,3 +11,6 @@ meta:
     - github.com/spf13/cobra
     - runtime
   language: go
+  purpose: "Implements end-user CLI commands that map flags and args to engine operations."
+  responsibilities: "Parse command options, call engine workflows, and render success/diagnostic outputs."
+  architecture_notes: "Command handlers keep orchestration only; domain validation and generation rules stay in engine."

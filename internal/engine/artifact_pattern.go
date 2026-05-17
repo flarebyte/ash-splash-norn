@@ -1,3 +1,7 @@
+// purpose: Validates artifact pattern tokens and path safety rules before file generation occurs.
+// responsibilities: Check required/allowed tokens per target and map policy violations to diagnostics.
+// architecture notes: Unsafe path rejection and token policy are centralized to keep lint/validate/generate behavior aligned.
+
 package engine
 
 import (

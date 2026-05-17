@@ -1,3 +1,7 @@
+// purpose: Applies schema governance and artifact-pattern policy checks for lint workflows.
+// responsibilities: Validate registry metadata conventions and route pattern policy diagnostics.
+// architecture notes: Policy checks are isolated to keep governance evolution independent from graph/config rules.
+
 package engine
 
 import (

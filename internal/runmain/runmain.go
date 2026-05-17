@@ -1,3 +1,7 @@
+// purpose: Shares CLI runtime bootstrap logic so multiple binaries can execute the same command surface.
+// responsibilities: Instantiate cli.Runner with build metadata and execute argv with consistent IO streams.
+// architecture notes: This indirection intentionally avoids duplicated main wiring across compatibility entrypoints.
+
 package runmain
 
 import (

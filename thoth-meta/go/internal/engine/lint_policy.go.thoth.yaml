@@ -8,3 +8,6 @@ meta:
     - github.com/flarebyte/ash-splash-norn/internal/diag
     - strings
   language: go
+  purpose: "Applies schema governance and artifact-pattern policy checks for lint workflows."
+  responsibilities: "Validate registry metadata conventions and route pattern policy diagnostics."
+  architecture_notes: "Policy checks are isolated to keep governance evolution independent from graph/config rules."

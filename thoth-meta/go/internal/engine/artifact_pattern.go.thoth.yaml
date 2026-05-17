@@ -8,3 +8,6 @@ meta:
     - path/filepath
     - strings
   language: go
+  purpose: "Validates artifact pattern tokens and path safety rules before file generation occurs."
+  responsibilities: "Check required/allowed tokens per target and map policy violations to diagnostics."
+  architecture_notes: "Unsafe path rejection and token policy are centralized to keep lint/validate/generate behavior aligned."

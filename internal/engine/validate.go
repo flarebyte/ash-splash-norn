@@ -1,3 +1,7 @@
+// purpose: Performs top-level input path checks and schema validation gatekeeping for commands.
+// responsibilities: Validate required paths/layout, map config-directory errors, and run CUE pair validation checks.
+// architecture notes: This is the common preflight boundary so all commands fail consistently before deeper workflows.
+
 package engine
 
 import (

@@ -1,3 +1,7 @@
+// purpose: Defines lint decode models and graph expectation structures shared by lint subsystems.
+// responsibilities: Declare registry/config lint shapes and expected/mandatory key tracking containers.
+// architecture notes: Shared type ownership here prevents subtle shape mismatches across lint modules.
+
 package engine
 
 type lintRegistry struct {

@@ -1,3 +1,7 @@
+// purpose: Builds deterministic dry-run preview rows from registry generation capabilities.
+// responsibilities: Decode registry capabilities, validate pattern policy, and return sorted preview records.
+// architecture notes: Preview remains read-only and intentionally does not inspect config content beyond shared validation gates.
+
 package engine
 
 import (

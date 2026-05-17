@@ -1,3 +1,7 @@
+// purpose: Derives expected key graphs and validates key coverage, cycles, and collisions.
+// responsibilities: Traverse label graphs, compute expected/mandatory key sets, and compare with config entries.
+// architecture notes: Traversal emits stable IDs for cycle/collision issues to keep lint behavior automation-friendly.
+
 package engine
 
 import (

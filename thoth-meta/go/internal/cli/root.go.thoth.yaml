@@ -7,3 +7,6 @@ meta:
     - github.com/spf13/cobra
     - io
   language: go
+  purpose: "Constructs and runs the top-level CLI command tree and process exit semantics."
+  responsibilities: "Wire root command, route execution errors, and translate usage/runtime failures to exit codes."
+  architecture_notes: "Cobra setup is centralized here so command registration changes do not leak into main packages."

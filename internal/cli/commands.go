@@ -1,3 +1,7 @@
+// purpose: Implements end-user CLI commands that map flags and args to engine operations.
+// responsibilities: Parse command options, call engine workflows, and render success/diagnostic outputs.
+// architecture notes: Command handlers keep orchestration only; domain validation and generation rules stay in engine.
+
 package cli
 
 import (

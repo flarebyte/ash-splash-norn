@@ -1,3 +1,7 @@
+// purpose: Provides lightweight token extraction helpers used by artifact-pattern policy checks.
+// responsibilities: Scan placeholder tokens and test token membership in pattern strings.
+// architecture notes: Simple local helpers are kept separate to avoid coupling policy logic to parser details.
+
 package engine
 
 func extractPatternTokens(pattern string) []string {

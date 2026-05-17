@@ -1,3 +1,7 @@
+// purpose: Builds list/explain-key views from registry CUE input for discoverability commands.
+// responsibilities: Decode registry capabilities, derive sorted catalog rows, and trace key derivation steps.
+// architecture notes: Read-only query logic is separated from generation flows to keep command semantics predictable.
+
 package engine
 
 import (

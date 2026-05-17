@@ -1,3 +1,7 @@
+// purpose: Loads and compiles registry/config CUE documents for lint workflows.
+// responsibilities: Merge sources, decode lint models, and map config-input loader diagnostics into lint IDs.
+// architecture notes: Input-loading error remapping is centralized so lint callers get stable ID contracts.
+
 package engine
 
 import (

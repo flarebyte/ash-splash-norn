@@ -1,3 +1,7 @@
+// purpose: Validates config-entry quality rules including duplicate keys and meta-args command schemas.
+// responsibilities: Check duplicate key sets and validate metaArgs values against compiled snake-knot-picker specs.
+// architecture notes: Meta-args compilation is intentionally single-source to mirror runtime argv validation semantics.
+
 package engine
 
 import (

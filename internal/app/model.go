@@ -1,3 +1,7 @@
+// purpose: Defines CLI input/build models so command and engine layers share a stable contract.
+// responsibilities: Normalize and expose input path sets for downstream validation and execution.
+// architecture notes: Model logic is intentionally thin to keep business rules in engine and command wiring in cli.
+
 package app
 
 import "path/filepath"

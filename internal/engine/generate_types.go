@@ -1,3 +1,7 @@
+// purpose: Defines generation-time data structures used across generation orchestration and code emitters.
+// responsibilities: Declare registry/config decode shapes, capability models, and codegen intermediate structures.
+// architecture notes: Type centralization avoids drift between orchestration and language-specific emitters.
+
 package engine
 
 type GeneratedArtifact struct {

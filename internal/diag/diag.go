@@ -1,3 +1,7 @@
+// purpose: Provides a stable diagnostics contract for text and JSON output across CLI workflows.
+// responsibilities: Sort diagnostic entries deterministically and render them to human or machine formats.
+// architecture notes: Deterministic ordering is intentional to support snapshot tests and reproducible automation.
+
 package diag
 
 import (

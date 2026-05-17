@@ -14,3 +14,6 @@ meta:
     - sort
     - strings
   language: go
+  purpose: "Coordinates artifact generation across supported targets from validated registry/config inputs."
+  responsibilities: "Resolve capabilities, enforce pattern preflight, and route writes to target-specific emit paths."
+  architecture_notes: "Target routing is explicit to keep failure modes stable and diagnostics deterministic."

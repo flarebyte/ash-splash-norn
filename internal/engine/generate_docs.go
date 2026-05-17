@@ -1,3 +1,7 @@
+// purpose: Builds generic and ARB document payloads and loads generation inputs from CUE.
+// responsibilities: Assemble node-kind docs, encode target formats, and decode registry/config generation models.
+// architecture notes: Document shaping is split from file IO so output contracts remain easy to test in isolation.
+
 package engine
 
 import (

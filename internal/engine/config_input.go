@@ -1,3 +1,7 @@
+// purpose: Loads config input from file or directory package with deterministic merge behavior.
+// responsibilities: Read CUE fragments, enforce single-package constraints, and emit stable layout diagnostics.
+// architecture notes: Directory-package support is strict by design to avoid ambiguous compile units in automation.
+
 package engine
 
 import (

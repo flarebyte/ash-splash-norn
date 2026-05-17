@@ -18,3 +18,6 @@ meta:
     - regexp
     - strings
   language: go
+  purpose: "Validates schema/input CUE pairs and shared merge semantics for engine consumers."
+  responsibilities: "Merge schema and input sources, compile/validate via CUE, and emit stable schema diagnostics."
+  architecture_notes: "Package matching and merge behavior are intentionally shared to prevent command-level divergence."

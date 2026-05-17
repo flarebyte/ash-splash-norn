@@ -1,3 +1,7 @@
+// purpose: Coordinates artifact generation across supported targets from validated registry/config inputs.
+// responsibilities: Resolve capabilities, enforce pattern preflight, and route writes to target-specific emit paths.
+// architecture notes: Target routing is explicit to keep failure modes stable and diagnostics deterministic.
+
 package engine
 
 import (

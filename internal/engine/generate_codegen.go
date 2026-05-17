@@ -1,3 +1,7 @@
+// purpose: Emits deterministic Go and Dart source artifacts from normalized codegen input data.
+// responsibilities: Transform keys, build language-specific maps/types, and serialize command-spec metadata.
+// architecture notes: Codegen formatting and identifier-collision guards are intentional to keep outputs compilable and stable.
+
 package engine
 
 import (

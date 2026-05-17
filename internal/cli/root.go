@@ -1,3 +1,7 @@
+// purpose: Constructs and runs the top-level CLI command tree and process exit semantics.
+// responsibilities: Wire root command, route execution errors, and translate usage/runtime failures to exit codes.
+// architecture notes: Cobra setup is centralized here so command registration changes do not leak into main packages.
+
 package cli
 
 import (

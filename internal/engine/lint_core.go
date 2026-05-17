@@ -1,3 +1,7 @@
+// purpose: Runs lint checks by category and aggregates deterministic diagnostics for CLI consumers.
+// responsibilities: Compute active check set, collect schema/config/key/pattern/translation diagnostics, and sort output.
+// architecture notes: The orchestration layer intentionally delegates all rule logic to specialized lint modules.
+
 package engine
 
 import (
