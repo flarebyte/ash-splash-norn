@@ -1,0 +1,13 @@
+locator: internal/engine/lint_keys_graph.go
+meta:
+  function_list:
+    - deriveExpectedKeys
+    - lintKeySet
+    - lintKeys
+    - lintMandatory
+    - toPathCamel
+  import_files_list:
+    - fmt
+    - github.com/flarebyte/ash-splash-norn/internal/diag
+    - strings
+  language: go

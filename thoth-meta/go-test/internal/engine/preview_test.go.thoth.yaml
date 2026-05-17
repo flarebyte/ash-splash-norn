@@ -1,0 +1,11 @@
+locator: internal/engine/preview_test.go
+meta:
+  function_list:
+    - TestBuildPreviewFromRegistryFixture
+    - TestBuildPreviewRejectsUnsafePattern
+  import_files_list:
+    - github.com/flarebyte/ash-splash-norn/internal/app
+    - os
+    - path/filepath
+    - testing
+  language: go

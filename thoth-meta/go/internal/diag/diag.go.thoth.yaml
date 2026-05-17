@@ -1,0 +1,11 @@
+locator: internal/diag/diag.go
+meta:
+  function_list:
+    - Sort
+    - Write
+  import_files_list:
+    - encoding/json
+    - fmt
+    - io
+    - sort
+  language: go

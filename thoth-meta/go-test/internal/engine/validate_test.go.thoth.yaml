@@ -1,0 +1,14 @@
+locator: internal/engine/validate_test.go
+meta:
+  function_list:
+    - TestValidateInputsConfigDirMixedPackage
+    - TestValidateInputsConfigDirNoCue
+    - TestValidateInputsMissingPath
+    - TestValidateInputsOK
+    - TestValidateInputsRejectsUnsafeArtifactPattern
+  import_files_list:
+    - github.com/flarebyte/ash-splash-norn/internal/app
+    - os
+    - path/filepath
+    - testing
+  language: go

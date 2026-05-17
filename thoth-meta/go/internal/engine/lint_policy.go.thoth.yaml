@@ -1,0 +1,10 @@
+locator: internal/engine/lint_policy.go
+meta:
+  function_list:
+    - lintPatterns
+    - lintSchemaGovernance
+  import_files_list:
+    - fmt
+    - github.com/flarebyte/ash-splash-norn/internal/diag
+    - strings
+  language: go

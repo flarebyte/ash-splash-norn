@@ -1,0 +1,7 @@
+locator: internal/engine/lint_tokens.go
+meta:
+  function_list:
+    - containsToken
+    - extractPatternTokens
+  import_files_list: []
+  language: go

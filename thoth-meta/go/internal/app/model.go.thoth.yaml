@@ -1,0 +1,6 @@
+locator: internal/app/model.go
+meta:
+  function_list: []
+  import_files_list:
+    - path/filepath
+  language: go

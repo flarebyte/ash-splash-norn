@@ -1,0 +1,17 @@
+locator: internal/engine/generate_docs.go
+meta:
+  function_list:
+    - buildArbDoc
+    - buildNodeKindDoc
+    - encodeDocByTarget
+    - loadGenerateDocs
+  import_files_list:
+    - cuelang.org/go/cue
+    - cuelang.org/go/cue/cuecontext
+    - encoding/json
+    - fmt
+    - github.com/flarebyte/ash-splash-norn/internal/app
+    - github.com/flarebyte/ash-splash-norn/internal/diag
+    - gopkg.in/yaml.v3
+    - strings
+  language: go

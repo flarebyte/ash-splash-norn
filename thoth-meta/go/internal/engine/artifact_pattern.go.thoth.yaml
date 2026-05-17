@@ -1,0 +1,10 @@
+locator: internal/engine/artifact_pattern.go
+meta:
+  function_list:
+    - artifactPatternIssuesToDiag
+    - validateArtifactPatternPolicy
+  import_files_list:
+    - github.com/flarebyte/ash-splash-norn/internal/diag
+    - path/filepath
+    - strings
+  language: go

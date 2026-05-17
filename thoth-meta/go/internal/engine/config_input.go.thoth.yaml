@@ -1,0 +1,12 @@
+locator: internal/engine/config_input.go
+meta:
+  function_list:
+    - readConfigInputSource
+  import_files_list:
+    - fmt
+    - github.com/flarebyte/ash-splash-norn/internal/diag
+    - os
+    - path/filepath
+    - sort
+    - strings
+  language: go

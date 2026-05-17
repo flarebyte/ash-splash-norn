@@ -1,0 +1,8 @@
+locator: internal/runmain/runmain.go
+meta:
+  function_list:
+    - Run
+  import_files_list:
+    - github.com/flarebyte/ash-splash-norn/internal/cli
+    - os
+  language: go

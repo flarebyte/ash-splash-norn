@@ -1,0 +1,5 @@
+locator: doc/design-meta/examples/output/validator-node-output.go
+meta:
+  function_list: []
+  import_files_list: []
+  language: go

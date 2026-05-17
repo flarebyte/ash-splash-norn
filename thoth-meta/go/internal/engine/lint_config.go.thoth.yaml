@@ -1,0 +1,15 @@
+locator: internal/engine/lint_config.go
+meta:
+  function_list:
+    - collectI18nKeys
+    - collectTextKeys
+    - collectValidationKeys
+    - lintConfigQuality
+    - lintDuplicateKeys
+    - lintMetaArgs
+  import_files_list:
+    - fmt
+    - github.com/flarebyte/ash-splash-norn/internal/diag
+    - github.com/flarebyte/snake-knot-picker
+    - sort
+  language: go

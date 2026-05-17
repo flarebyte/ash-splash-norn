@@ -1,0 +1,16 @@
+locator: internal/engine/generate_core.go
+meta:
+  function_list:
+    - GenerateArtifacts
+    - injectNodeKindInPath
+    - resolveCapabilities
+  import_files_list:
+    - encoding/json
+    - fmt
+    - github.com/flarebyte/ash-splash-norn/internal/app
+    - github.com/flarebyte/ash-splash-norn/internal/diag
+    - os
+    - path/filepath
+    - sort
+    - strings
+  language: go

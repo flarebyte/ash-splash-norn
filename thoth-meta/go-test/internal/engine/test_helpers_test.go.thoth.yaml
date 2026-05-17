@@ -1,0 +1,11 @@
+locator: internal/engine/test_helpers_test.go
+meta:
+  function_list:
+    - fixtureInputsWithConfigDirFromFile
+    - writeInputsFixture
+  import_files_list:
+    - github.com/flarebyte/ash-splash-norn/internal/app
+    - os
+    - path/filepath
+    - testing
+  language: go

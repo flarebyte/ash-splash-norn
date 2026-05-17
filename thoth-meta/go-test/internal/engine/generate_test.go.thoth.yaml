@@ -1,0 +1,32 @@
+locator: internal/engine/generate_test.go
+meta:
+  function_list:
+    - TestGenerateArtifactsCUEGoldenSnapshots
+    - TestGenerateArtifactsConfigDirectoryPath
+    - TestGenerateArtifactsDeterministicBytes
+    - TestGenerateArtifactsEscapingAndUnicode
+    - TestGenerateArtifactsGoAndDart
+    - TestGenerateArtifactsGoAndDartGoldenSnapshots
+    - TestGenerateArtifactsGoSourceParses
+    - TestGenerateArtifactsIdentifierCollision
+    - TestGenerateArtifactsJSONContractFields
+    - TestGenerateArtifactsJSONGoldenSnapshots
+    - TestGenerateArtifactsJSONYAMLCUE
+    - TestGenerateArtifactsPerKindFileNames
+    - TestGenerateArtifactsRejectsUnsafePattern
+    - TestGenerateArtifactsUnknownTarget
+    - TestGenerateArtifactsYAMLGoldenSnapshots
+    - assertGoldenSnapshotsForTarget
+    - fixtureInputs
+  import_files_list:
+    - bytes
+    - encoding/json
+    - github.com/flarebyte/ash-splash-norn/internal/app
+    - go/parser
+    - go/token
+    - os
+    - path/filepath
+    - sort
+    - strings
+    - testing
+  language: go

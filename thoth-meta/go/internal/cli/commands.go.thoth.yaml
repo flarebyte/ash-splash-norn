@@ -1,0 +1,13 @@
+locator: internal/cli/commands.go
+meta:
+  function_list:
+    - addInputFlags
+  import_files_list:
+    - encoding/json
+    - fmt
+    - github.com/flarebyte/ash-splash-norn/internal/app
+    - github.com/flarebyte/ash-splash-norn/internal/diag
+    - github.com/flarebyte/ash-splash-norn/internal/engine
+    - github.com/spf13/cobra
+    - runtime
+  language: go

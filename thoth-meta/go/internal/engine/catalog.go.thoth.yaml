@@ -1,0 +1,14 @@
+locator: internal/engine/catalog.go
+meta:
+  function_list:
+    - BuildCatalog
+    - ExplainKey
+    - ExplainKeyTrace
+  import_files_list:
+    - cuelang.org/go/cue
+    - cuelang.org/go/cue/cuecontext
+    - fmt
+    - github.com/flarebyte/ash-splash-norn/internal/app
+    - github.com/flarebyte/ash-splash-norn/internal/diag
+    - sort
+  language: go

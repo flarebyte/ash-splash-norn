@@ -1,0 +1,13 @@
+locator: internal/engine/generate_arb_test.go
+meta:
+  function_list:
+    - TestGenerateArtifactsARBJsonGoldenSnapshots
+    - TestGenerateArtifactsARBJsonMetadataShape
+    - TestGenerateArtifactsARBJsonMissingRequiredLocaleFails
+  import_files_list:
+    - bytes
+    - encoding/json
+    - os
+    - path/filepath
+    - testing
+  language: go

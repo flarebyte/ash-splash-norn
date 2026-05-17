@@ -1,0 +1,11 @@
+locator: internal/cli/generate_test.go
+meta:
+  function_list:
+    - TestRunGenerateGo
+    - TestRunGenerateJSON
+  import_files_list:
+    - bytes
+    - path/filepath
+    - strings
+    - testing
+  language: go

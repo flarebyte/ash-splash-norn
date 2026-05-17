@@ -1,0 +1,10 @@
+locator: internal/engine/validate.go
+meta:
+  function_list:
+    - ValidateInputs
+  import_files_list:
+    - fmt
+    - github.com/flarebyte/ash-splash-norn/internal/app
+    - github.com/flarebyte/ash-splash-norn/internal/diag
+    - os
+  language: go
