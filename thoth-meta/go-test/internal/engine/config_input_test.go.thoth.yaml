@@ -1,0 +1,11 @@
+locator: internal/engine/config_input_test.go
+meta:
+  function_list:
+    - TestReadConfigInputSourceDirectoryMixedPackage
+    - TestReadConfigInputSourceDirectoryNoCue
+    - TestReadConfigInputSourceFile
+  import_files_list:
+    - os
+    - path/filepath
+    - testing
+  language: go

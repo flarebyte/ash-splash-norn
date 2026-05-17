@@ -1,0 +1,80 @@
+{
+  "@fieldsTagsValidation": {
+    "metaArgs": [
+      "meta",
+      "--status",
+      "experimental",
+      "--app",
+      "v2"
+    ]
+  },
+  "@fieldsTextInputValueValidation": {
+    "metaArgs": [
+      "meta",
+      "--status",
+      "draft",
+      "--app",
+      "v1"
+    ]
+  },
+  "fieldsTagsValidation": {
+    "validation": {
+      "adminOnly": false,
+      "commandPath": [
+        "validate",
+        "tags"
+      ],
+      "flags": [
+        {
+          "kind": "string",
+          "name": "tags",
+          "schema": [
+            "schema",
+            "string",
+            "--alphabetic"
+          ],
+          "schemas": [
+            [
+              "schema",
+              "repeatable",
+              "--min-length",
+              "1",
+              "--max-length",
+              "20"
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "fieldsTextInputValueValidation": {
+    "validation": {
+      "adminOnly": false,
+      "commandPath": [
+        "validate",
+        "text-input",
+        "value"
+      ],
+      "flags": [
+        {
+          "kind": "string",
+          "name": "value",
+          "schema": [
+            "schema",
+            "string",
+            "--required",
+            "--min-length",
+            "1",
+            "--max-length",
+            "120"
+          ],
+          "schemas": []
+        }
+      ]
+    }
+  },
+  "generatedAt": "deterministic",
+  "nodeKind": "validator",
+  "schemaRef": "input-field",
+  "target": "json"
+}

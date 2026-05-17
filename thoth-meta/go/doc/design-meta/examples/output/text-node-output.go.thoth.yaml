@@ -1,0 +1,8 @@
+locator: doc/design-meta/examples/output/text-node-output.go
+meta:
+  function_list: []
+  import_files_list: []
+  language: go
+  purpose: "Provides a generated Go output example for design-meta documentation and contract illustration."
+  responsibilities: "Show expected generated text-node structures and stable map/type layout for consumers."
+  architecture_notes: "This file is generated example output and should be treated as reference artifact, not hand-maintained logic."

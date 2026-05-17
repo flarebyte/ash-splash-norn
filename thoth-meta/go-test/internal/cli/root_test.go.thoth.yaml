@@ -1,0 +1,23 @@
+locator: internal/cli/root_test.go
+meta:
+  function_list:
+    - TestRunDryRunPreviewJSONDeterministicOrder
+    - TestRunExplainKey
+    - TestRunExplainKeyJSON
+    - TestRunLintAggregateJSONContract
+    - TestRunLintSubcommandJSON
+    - TestRunListJSON
+    - TestRunListTable
+    - TestRunValidateJSONDiagnosticsDeterministic
+    - TestRunValidateMissingFlags
+    - TestRunVersionJSON
+    - TestRunVersionText
+    - fixtureArgs
+    - runExplainKey
+  import_files_list:
+    - bytes
+    - encoding/json
+    - reflect
+    - strings
+    - testing
+  language: go

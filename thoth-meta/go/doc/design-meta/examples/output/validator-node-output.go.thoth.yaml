@@ -1,0 +1,8 @@
+locator: doc/design-meta/examples/output/validator-node-output.go
+meta:
+  function_list: []
+  import_files_list: []
+  language: go
+  purpose: "Provides a generated Go validator-output example for design-meta documentation and contract illustration."
+  responsibilities: "Show expected generated validator structures including command-path and flag schema payload shapes."
+  architecture_notes: "This file is generated example output and should be treated as reference artifact, not hand-maintained logic."

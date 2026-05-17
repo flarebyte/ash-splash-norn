@@ -1,0 +1,14 @@
+locator: internal/engine/lint_test.go
+meta:
+  function_list:
+    - TestLintDiagnosticsConfigDirectoryPath
+    - TestLintDiagnosticsConfigInvalidMetaArgs
+    - TestLintDiagnosticsFixtureHappyPath
+    - TestLintDiagnosticsGraphCycle
+    - mustWrite
+  import_files_list:
+    - github.com/flarebyte/ash-splash-norn/internal/app
+    - os
+    - path/filepath
+    - testing
+  language: go

@@ -1,0 +1,14 @@
+locator: internal/diag/diag_test.go
+meta:
+  function_list:
+    - TestSortStableOrder
+    - TestWriteJSON
+    - TestWriteJSONDeterministic
+    - TestWriteJSONIncludesLocationFromPath
+  import_files_list:
+    - bytes
+    - encoding/json
+    - reflect
+    - strings
+    - testing
+  language: go

@@ -1,0 +1,18 @@
+locator: internal/engine/lint_config.go
+meta:
+  function_list:
+    - collectI18nKeys
+    - collectTextKeys
+    - collectValidationKeys
+    - lintConfigQuality
+    - lintDuplicateKeys
+    - lintMetaArgs
+  import_files_list:
+    - fmt
+    - github.com/flarebyte/ash-splash-norn/internal/diag
+    - github.com/flarebyte/snake-knot-picker
+    - sort
+  language: go
+  purpose: "Validates config-entry quality rules including duplicate keys and meta-args command schemas."
+  responsibilities: "Check duplicate key sets and validate metaArgs values against compiled snake-knot-picker specs."
+  architecture_notes: "Meta-args compilation is intentionally single-source to mirror runtime argv validation semantics."

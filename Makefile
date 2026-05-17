@@ -3,7 +3,8 @@
 .PHONY: build test test-go test-unit test-race test-fixtures \
 	lint lint-go lint-ts format format-go format-ts \
 	typecheck-ts review coverage coverage-go coverage-critical coverage-threshold \
-	doc-design doc-decision cue-input dup complexity release sec \
+	doc-design doc-decision cue-input dup complexity release release-dist build-dist \
+	ghf-config-validate ghf-repo-update ghf-repo-audit \
 	thoth-meta thoth-meta-go thoth-meta-go-test \
 	check-tools install-tools-help help
 
@@ -22,6 +23,7 @@ BUN_ENV := TMPDIR=$(TMP_DIR)
 BIOME := $(BUN_ENV) $(BUN) run biome
 THOTH := thoth
 FLYB := flyb
+GH_FLAREBYTE := gh flarebyte
 GOLINT_ENV := $(GO_ENV) GOLANGCI_LINT_CACHE=$(GO_LINT_CACHE_DIR)
 COVER_PROFILE := $(TMP_DIR)/test-unit.coverage.out
 COVER_HTML := $(TMP_DIR)/test-unit.coverage.html
@@ -146,6 +148,21 @@ complexity:
 release:
 	$(BUN_ENV) $(BUN) run release-go.ts
 
+build-dist:
+	$(GH_FLAREBYTE) build
+
+release-dist:
+	$(GH_FLAREBYTE) release
+
+ghf-config-validate:
+	$(GH_FLAREBYTE) config validate --config .gh-flarebyte.cue
+
+ghf-repo-update:
+	$(GH_FLAREBYTE) repo update --repo flarebyte/ash-splash-norn
+
+ghf-repo-audit:
+	$(GH_FLAREBYTE) repo audit --repo flarebyte/ash-splash-norn --json
+
 sec:
 	semgrep scan --config auto
 
@@ -204,6 +221,11 @@ help:
 	@printf "  dup          Run duplicate code detection.\n"
 	@printf "  complexity   Show top Go and TypeScript files by complexity.\n"
 	@printf "  release      Run the local release helper script.\n"
+	@printf "  build-dist   Build release artifacts via gh flarebyte.\n"
+	@printf "  release-dist Publish a GitHub release via gh flarebyte.\n"
+	@printf "  ghf-config-validate Validate .gh-flarebyte.cue.\n"
+	@printf "  ghf-repo-update Apply repository settings from .gh-flarebyte.cue.\n"
+	@printf "  ghf-repo-audit Audit repository drift against .gh-flarebyte.cue.\n"
 	@printf "  sec          Run Semgrep security scan.\n"
 	@printf "  thoth-meta   Refresh thoth metadata for Go and Go tests.\n"
 	@printf "  check-tools  Report required tool availability as key=value pairs.\n"

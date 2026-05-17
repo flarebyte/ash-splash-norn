@@ -1,0 +1,13 @@
+locator: internal/engine/validate.go
+meta:
+  function_list:
+    - ValidateInputs
+  import_files_list:
+    - fmt
+    - github.com/flarebyte/ash-splash-norn/internal/app
+    - github.com/flarebyte/ash-splash-norn/internal/diag
+    - os
+  language: go
+  purpose: "Performs top-level input path checks and schema validation gatekeeping for commands."
+  responsibilities: "Validate required paths/layout, map config-directory errors, and run CUE pair validation checks."
+  architecture_notes: "This is the common preflight boundary so all commands fail consistently before deeper workflows."

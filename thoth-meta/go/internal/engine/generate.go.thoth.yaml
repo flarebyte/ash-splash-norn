@@ -1,0 +1,8 @@
+locator: internal/engine/generate.go
+meta:
+  function_list: []
+  import_files_list: []
+  language: go
+  purpose: "Holds the package anchor for generation components split across focused source files."
+  responsibilities: "Provide a stable compilation unit while core/docs/codegen logic live in dedicated files."
+  architecture_notes: "The file is intentionally minimal after refactor to keep large generation logic maintainable."

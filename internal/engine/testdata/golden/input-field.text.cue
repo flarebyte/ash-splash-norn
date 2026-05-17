@@ -1,0 +1,1 @@
+output: {"@fieldsTextInputValue":{"metaArgs":["meta","--status","draft","--app","v1"]},"fieldsTextInputValue":"example value","generatedAt":"deterministic","nodeKind":"text","schemaRef":"input-field","target":"cue"}

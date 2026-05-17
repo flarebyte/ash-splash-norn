@@ -1,0 +1,27 @@
+locator: internal/engine/generate_codegen.go
+meta:
+  function_list:
+    - buildCodegenData
+    - buildDartSource
+    - buildGoSource
+    - dart2DStringSlice
+    - dartStringSlice
+    - extractCommandSpec
+    - go2DStringSlice
+    - goStringSlice
+    - sortedMapKeysSlice
+    - sortedMapKeysSpec
+    - sortedMapKeysString
+    - toLowerCamel
+    - toPascal
+  import_files_list:
+    - bytes
+    - fmt
+    - go/format
+    - sort
+    - strings
+    - unicode
+  language: go
+  purpose: "Emits deterministic Go and Dart source artifacts from normalized codegen input data."
+  responsibilities: "Transform keys, build language-specific maps/types, and serialize command-spec metadata."
+  architecture_notes: "Codegen formatting and identifier-collision guards are intentional to keep outputs compilable and stable."

@@ -1,0 +1,13 @@
+locator: internal/engine/artifact_pattern.go
+meta:
+  function_list:
+    - artifactPatternIssuesToDiag
+    - validateArtifactPatternPolicy
+  import_files_list:
+    - github.com/flarebyte/ash-splash-norn/internal/diag
+    - path/filepath
+    - strings
+  language: go
+  purpose: "Validates artifact pattern tokens and path safety rules before file generation occurs."
+  responsibilities: "Check required/allowed tokens per target and map policy violations to diagnostics."
+  architecture_notes: "Unsafe path rejection and token policy are centralized to keep lint/validate/generate behavior aligned."

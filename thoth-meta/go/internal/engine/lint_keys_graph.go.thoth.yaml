@@ -1,0 +1,16 @@
+locator: internal/engine/lint_keys_graph.go
+meta:
+  function_list:
+    - deriveExpectedKeys
+    - lintKeySet
+    - lintKeys
+    - lintMandatory
+    - toPathCamel
+  import_files_list:
+    - fmt
+    - github.com/flarebyte/ash-splash-norn/internal/diag
+    - strings
+  language: go
+  purpose: "Derives expected key graphs and validates key coverage, cycles, and collisions."
+  responsibilities: "Traverse label graphs, compute expected/mandatory key sets, and compare with config entries."
+  architecture_notes: "Traversal emits stable IDs for cycle/collision issues to keep lint behavior automation-friendly."

@@ -7,6 +7,9 @@
 *.dll
 *.so
 *.dylib
+bin/
+dist/
+build/
 
 # Test binary, built with `go test -c`
 *.test
@@ -20,13 +23,38 @@ profile.cov
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
+# Go cache and local tool state
+.gocache/
+.gomodcache/
+.golangci-lint-cache/
+
 # Go workspace file
 go.work
 go.work.sum
 
+# Node / TypeScript (for e2e and tooling)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+
+# E2E test artifacts
+playwright-report/
+test-results/
+blob-report/
+e2e-results/
+
 # env file
 .env
+
+# local working notes
+scratch/
 
 # Editor/IDE
 # .idea/
 # .vscode/
+
+/temp
+/tmp

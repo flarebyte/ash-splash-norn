@@ -1,0 +1,8 @@
+locator: internal/engine/generate_types.go
+meta:
+  function_list: []
+  import_files_list: []
+  language: go
+  purpose: "Defines generation-time data structures used across generation orchestration and code emitters."
+  responsibilities: "Declare registry/config decode shapes, capability models, and codegen intermediate structures."
+  architecture_notes: "Type centralization avoids drift between orchestration and language-specific emitters."
