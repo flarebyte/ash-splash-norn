@@ -62,30 +62,30 @@ Reference examples in this repo:
 
 ```bash
 # Validate sample inputs
-splash validate \
+ash-splash-norn validate \
   --registry doc/design-meta/examples/input/design-registry.example.cue \
   --registry-schema doc/design-meta/examples/model/design-registry.schema.cue \
   --config doc/design-meta/examples/input/config-key.cue \
   --config-schema doc/design-meta/examples/model/config-key.schema.cue
 
 # Lint all checks
-splash lint \
+ash-splash-norn lint \
   --registry doc/design-meta/examples/input/design-registry.example.cue \
   --config doc/design-meta/examples/input/config-key.cue
 
 # Lint translation coverage only
-splash lint translations \
+ash-splash-norn lint translations \
   --registry doc/design-meta/examples/input/design-registry.example.cue \
   --config doc/design-meta/examples/input/config-key.cue
 
 # Preview output plan
-splash dry-run-preview \
+ash-splash-norn dry-run-preview \
   --registry doc/design-meta/examples/input/design-registry.example.cue \
   --config doc/design-meta/examples/input/config-key.cue \
   --format json
 
 # Generate JSON artifacts
-splash generate json \
+ash-splash-norn generate json \
   --registry doc/design-meta/examples/input/design-registry.example.cue \
   --config doc/design-meta/examples/input/config-key.cue
 ```
